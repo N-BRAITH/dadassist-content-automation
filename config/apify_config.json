@@ -1,0 +1,28 @@
+{
+  "search_queries": [
+    "family law fathers rights Australia",
+    "child support Australia guide",
+    "family violence intervention orders",
+    "parenting arrangements Australia",
+    "custody fathers Australia"
+  ],
+  "target_sites": [
+    "legalaid.vic.gov.au",
+    "familycourt.gov.au", 
+    "ag.gov.au",
+    "lawhandbook.sa.gov.au",
+    "lawaccess.nsw.gov.au"
+  ],
+  "scraping_settings": {
+    "max_articles_per_run": 5,
+    "max_pages_per_query": 2,
+    "results_per_page": 10,
+    "country_code": "AU",
+    "language_code": "en"
+  },
+  "content_filters": {
+    "min_word_count": 300,
+    "max_word_count": 5000,
+    "exclude_keywords": ["advertisement", "sponsored", "cookie policy"]
+  }
+}

@@ -1,0 +1,46 @@
+name: Weekly Legal Content Scraping
+
+on:
+  schedule:
+    # Runs every Monday at 9:00 AM UTC (adjust for your timezone)
+    - cron: '0 9 * * 1'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  scrape-content:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          
+      - name: Run Apify scraper
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+        run: |
+          python scripts/apify_scraper.py
+          
+      - name: Download content
+        run: |
+          python scripts/content_downloader.py
+          
+      - name: Send notification
+        env:
+          NOTIFICATION_WEBHOOK: ${{ secrets.NOTIFICATION_WEBHOOK }}
+        run: |
+          python scripts/notifier.py
+          
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: scraped-content
+          path: downloads/
