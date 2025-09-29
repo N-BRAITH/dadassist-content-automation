@@ -29,18 +29,66 @@ jobs:
         run: |
           python scripts/apify_scraper.py
           
-      - name: Download content
+      - name: Download and extract content
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
         run: |
           python scripts/content_downloader.py
           
+      - name: Create run summary
+        run: |
+          echo "Creating run summary for notification..."
+          python -c "
+          import json
+          import os
+          from datetime import datetime
+          
+          # Load run info
+          with open('downloads/latest_run.json', 'r') as f:
+              run_info = json.load(f)
+          
+          # Load config for summary
+          with open('config/apify_config.json', 'r') as f:
+              config = json.load(f)
+          
+          # Create summary for email
+          summary = {
+              'run_date': datetime.now().isoformat(),
+              'success': run_info.get('success', False),
+              'articles_found': run_info.get('url_count', 0),
+              'quality_articles': run_info.get('quality_articles', 0),
+              'search_terms': config['search_queries'],
+              'target_sites': config['target_sites'],
+              'results_directory': run_info.get('results_dir', ''),
+              'categories': run_info.get('categories', {}),
+              'extraction_method': run_info.get('extraction_method', 'unknown')
+          }
+          
+          with open('run_summary.json', 'w') as f:
+              json.dump(summary, f, indent=2)
+          
+          print(f'Summary created: {summary[\"articles_found\"]} articles found')
+          "
+          
+      - name: Upload extracted content as artifact
+        uses: actions/upload-artifact@v4
+        if: always()  # Upload even if some steps failed
+        with:
+          name: extracted-articles-${{ github.run_number }}
+          path: |
+            downloads/
+            run_summary.json
+            config/apify_config.json
+          retention-days: 30
+          
       - name: Send notification
         env:
-          NOTIFICATION_WEBHOOK: ${{ secrets.NOTIFICATION_WEBHOOK }}
+          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: |
           python scripts/notifier.py
           
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: scraped-content
-          path: downloads/
+      - name: Clean up
+        if: always()
+        run: |
+          echo "Workflow completed. Check artifacts for downloaded content."
