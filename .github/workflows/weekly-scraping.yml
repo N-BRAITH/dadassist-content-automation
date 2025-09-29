@@ -71,7 +71,7 @@ jobs:
           "
           
       - name: Upload extracted content as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4  # Updated to v4 to fix deprecation
         if: always()  # Upload even if some steps failed
         with:
           name: extracted-articles-${{ github.run_number }}
