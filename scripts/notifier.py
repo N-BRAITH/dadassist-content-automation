@@ -50,7 +50,7 @@ def create_email_content(summary):
     <body>
         <div class="header">
             <h1>🤖 DadAssist Content Automation Report</h1>
-            <p>Weekly Legal Content Scraping Results</p>
+            <p>Weekly Legal Content Scraping Results (v{summary.get('automation_version', '1.0.0')})</p>
         </div>
         
         <div class="content">
@@ -58,9 +58,12 @@ def create_email_content(summary):
             <div class="info-box">
                 <p><strong>Status:</strong> <span class="{'status-success' if summary.get('success') else 'status-failed'}">{status}</span></p>
                 <p><strong>Date:</strong> {datetime.fromisoformat(summary.get('run_date', '')).strftime('%A, %B %d, %Y at %I:%M %p')}</p>
+                <p><strong>Automation Version:</strong> v{summary.get('automation_version', '1.0.0')}</p>
+                <p><strong>Config Updated:</strong> {summary.get('config_last_updated', 'Unknown')}</p>
                 <p><strong>Articles Found:</strong> {articles_found} articles discovered</p>
                 <p><strong>Quality Articles:</strong> {quality_articles} articles extracted successfully</p>
                 <p><strong>Extraction Method:</strong> {summary.get('extraction_method', 'Unknown')}</p>
+                <p><strong>Email Provider:</strong> {summary.get('smtp_provider', 'amazon_ses').replace('_', ' ').title()}</p>
             </div>
 
             <h2>🔍 Search Configuration Used</h2>

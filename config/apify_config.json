@@ -1,4 +1,6 @@
 {
+  "version": "1.0.0",
+  "last_updated": "2024-12-18",
   "search_queries": "family law fathers rights Australia OR child support Australia guide OR family violence intervention orders OR parenting arrangements Australia OR custody fathers Australia",
   "target_sites": [
     "legalaid.vic.gov.au",
@@ -18,5 +20,10 @@
     "min_word_count": 300,
     "max_word_count": 5000,
     "exclude_keywords": ["advertisement", "sponsored", "cookie policy"]
+  },
+  "email_settings": {
+    "smtp_provider": "amazon_ses",
+    "sender_address": "admin@dadassist.com.au",
+    "notification_enabled": true
   }
 }

@@ -51,6 +51,8 @@ jobs:
           
           # Create summary for email
           summary = {
+              'automation_version': config.get('version', '1.0.0'),
+              'config_last_updated': config.get('last_updated', 'unknown'),
               'run_date': datetime.now().isoformat(),
               'success': run_info.get('success', False),
               'articles_found': run_info.get('url_count', 0),
@@ -59,13 +61,14 @@ jobs:
               'target_sites': config['target_sites'],
               'results_directory': run_info.get('results_dir', ''),
               'categories': run_info.get('categories', {}),
-              'extraction_method': run_info.get('extraction_method', 'unknown')
+              'extraction_method': run_info.get('extraction_method', 'unknown'),
+              'smtp_provider': config.get('email_settings', {}).get('smtp_provider', 'amazon_ses')
           }
           
           with open('run_summary.json', 'w') as f:
               json.dump(summary, f, indent=2)
           
-          print(f'Summary created: {summary[\"articles_found\"]} articles found')
+          print(f'Summary created: {summary[\"articles_found\"]} articles found (v{summary[\"automation_version\"]})')
           "
           
       - name: Upload content artifacts
