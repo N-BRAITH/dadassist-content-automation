@@ -84,6 +84,7 @@ jobs:
           NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          SES_USERNAME: ${{ secrets.SES_USERNAME }}
         run: |
           python scripts/notifier.py
           
