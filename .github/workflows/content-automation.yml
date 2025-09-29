@@ -2,8 +2,7 @@ name: Weekly Legal Content Scraping
 
 on:
   schedule:
-    # Runs every Monday at 9:00 AM UTC (adjust for your timezone)
-    - cron: '0 9 * * 1'
+    - cron: '0 9 * * 1'  # Every Monday at 9 AM UTC
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
@@ -37,7 +36,6 @@ jobs:
           
       - name: Create run summary
         run: |
-          echo "Creating run summary for notification..."
           python -c "
           import json
           import os
@@ -70,9 +68,9 @@ jobs:
           print(f'Summary created: {summary[\"articles_found\"]} articles found')
           "
           
-      - name: Upload extracted content as artifact
-        uses: actions/upload-artifact@v4  # Updated to v4 to fix deprecation
-        if: always()  # Upload even if some steps failed
+      - name: Upload content artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: extracted-articles-${{ github.run_number }}
           path: |
@@ -85,10 +83,11 @@ jobs:
         env:
           NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
         run: |
           python scripts/notifier.py
           
       - name: Clean up
         if: always()
         run: |
-          echo "Workflow completed. Check artifacts for downloaded content."
+          echo "Workflow completed successfully"
