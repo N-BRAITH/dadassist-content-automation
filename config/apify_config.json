@@ -1,11 +1,5 @@
 {
-  "search_queries": [
-    "family law fathers rights Australia",
-    "child support Australia guide",
-    "family violence intervention orders",
-    "parenting arrangements Australia",
-    "custody fathers Australia"
-  ],
+  "search_queries": "family law fathers rights Australia OR child support Australia guide OR family violence intervention orders OR parenting arrangements Australia OR custody fathers Australia",
   "target_sites": [
     "legalaid.vic.gov.au",
     "familycourt.gov.au", 
@@ -17,7 +11,7 @@
     "max_articles_per_run": 5,
     "max_pages_per_query": 2,
     "results_per_page": 10,
-    "country_code": "AU",
+    "country_code": "au",
     "language_code": "en"
   },
   "content_filters": {
