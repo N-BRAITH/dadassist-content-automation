@@ -190,14 +190,15 @@ def send_email_notification(summary):
     """Send email notification using Microsoft 365 SMTP"""
     
     # Email configuration
-    smtp_server = "smtp.office365.com"
+    smtp_server = "email-smtp.ap-southeast-2.amazonaws.com"
     smtp_port = 587
-    sender_email = os.getenv('SENDER_EMAIL', 'your-email@gmail.com')
+    ses_username = os.getenv('SES_USERNAME')
     sender_password = os.getenv('EMAIL_PASSWORD')
-    recipient_email = os.getenv('NOTIFICATION_EMAIL', 'contact@dadassist.com.au')
+    sender_email = os.getenv('SENDER_EMAIL', 'admin@dadassist.com.au')
+    recipient_email = os.getenv('NOTIFICATION_EMAIL')
     
-    if not sender_password:
-        print("❌ EMAIL_PASSWORD not found in environment variables")
+    if not sender_password or not ses_username:
+        print("❌ SES credentials not found in environment variables")
         return False
     
     # Create message
@@ -217,7 +218,7 @@ def send_email_notification(summary):
         
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()
-        server.login(sender_email, sender_password)
+        server.login(ses_username, sender_password)
         server.send_message(msg)
         server.quit()
         
