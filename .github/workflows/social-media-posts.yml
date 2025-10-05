@@ -1,0 +1,61 @@
+# DadAssist Social Media Automation Workflow
+# Version: 1.0.0
+# Last Updated: 2024-12-18
+# Features: X/Twitter, Facebook, TikTok posting for new articles
+
+name: Weekly Social Media Posts
+
+on:
+  schedule:
+    - cron: '0 18 * * 2'  # Every Tuesday at 6 PM UTC
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  social-media-posts:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4 tweepy facebook-sdk
+          
+      - name: Detect new articles
+        run: |
+          python scripts/detect_new_articles.py
+          
+      - name: Generate social media posts
+        env:
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_SECRET: ${{ secrets.TWITTER_ACCESS_SECRET }}
+          FACEBOOK_ACCESS_TOKEN: ${{ secrets.FACEBOOK_ACCESS_TOKEN }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+        run: |
+          python scripts/social_media_poster.py
+          
+      - name: Upload post results as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: social-media-posts-${{ github.run_number }}
+          path: |
+            social-media/
+            new_articles_found.json
+          retention-days: 30
+          
+      - name: Commit updated article list
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add social-media/previous_articles.json
+          git diff --staged --quiet || git commit -m "Update article list after social media posting"
+          git push
