@@ -5,6 +5,9 @@
 
 name: Social Media Article Detection
 
+permissions:
+  contents: write
+
 on:
   schedule:
     - cron: '0 18 * * 2'  # Every Tuesday at 6 PM UTC
