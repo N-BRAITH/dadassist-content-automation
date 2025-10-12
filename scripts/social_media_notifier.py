@@ -245,27 +245,90 @@ def create_social_media_email_content(results):
             
             <div class="step">
                 <span class="step-number">3</span>
-                <strong>Update Facebook/Instagram Credentials:</strong>
+                <strong>Update Facebook Credentials (DadAssist Social Media App):</strong>
                 <ul>
-                    <li><span class="code">FACEBOOK_ACCESS_TOKEN</span> - Get from <a href="https://developers.facebook.com/tools/explorer/">Facebook Graph API Explorer</a></li>
-                    <li><span class="code">FACEBOOK_PAGE_ID</span> - DadAssist Facebook Page ID</li>
-                    <li><span class="code">INSTAGRAM_ACCOUNT_ID</span> - @dadassist Instagram Account ID</li>
+                    <li>Go to <a href="https://developers.facebook.com/tools/explorer/">Facebook Graph API Explorer</a></li>
+                    <li><strong>Select App:</strong> "DadAssist Social Media" (NOT dadassist_SocialMedia2)</li>
+                    <li><strong>Generate User Token:</strong> With pages_manage_posts + pages_read_engagement permissions</li>
+                    <li><strong>Get Page Token:</strong> Use /me/accounts to get DadAssist page token</li>
+                    <li><strong>Update Secret:</strong> <span class="code">FACEBOOK_ACCESS_TOKEN</span> with DadAssist page token</li>
                 </ul>
             </div>
             
             <div class="step">
                 <span class="step-number">4</span>
-                <strong>Refresh Facebook Token (Every 60 Days):</strong>
+                <strong>Update Instagram Credentials (dadassist_SocialMedia2 App):</strong>
                 <ul>
                     <li>Go to <a href="https://developers.facebook.com/tools/explorer/">Facebook Graph API Explorer</a></li>
-                    <li>Select your DadAssist app</li>
-                    <li>Generate new Page Access Token</li>
-                    <li>Update <span class="code">FACEBOOK_ACCESS_TOKEN</span> secret</li>
+                    <li><strong>Select App:</strong> "dadassist_SocialMedia2" (NOT DadAssist Social Media)</li>
+                    <li><strong>Generate Page Token:</strong> For DadAssist page with Instagram permissions</li>
+                    <li><strong>Update Secret:</strong> <span class="code">INSTAGRAM_ACCESS_TOKEN</span> with new page token</li>
                 </ul>
             </div>
             
             <div class="step">
                 <span class="step-number">5</span>
+                <strong>Required GitHub Secrets (8 total):</strong>
+                <table style="width: 100%; margin-top: 10px; border-collapse: collapse;">
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 8px; border: 1px solid #dee2e6;">Secret Name</th>
+                        <th style="padding: 8px; border: 1px solid #dee2e6;">Platform</th>
+                        <th style="padding: 8px; border: 1px solid #dee2e6;">Source App</th>
+                        <th style="padding: 8px; border: 1px solid #dee2e6;">Expiry</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;"><span class="code">TWITTER_API_KEY</span></td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Twitter</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Twitter Developer Portal</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Permanent</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;"><span class="code">TWITTER_API_SECRET</span></td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Twitter</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Twitter Developer Portal</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Permanent</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;"><span class="code">TWITTER_ACCESS_TOKEN</span></td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Twitter</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Twitter Developer Portal</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Permanent</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;"><span class="code">TWITTER_ACCESS_SECRET</span></td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Twitter</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Twitter Developer Portal</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Permanent</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;"><span class="code">FACEBOOK_ACCESS_TOKEN</span></td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Facebook</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;"><strong>DadAssist Social Media</strong></td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">60 days</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;"><span class="code">INSTAGRAM_ACCESS_TOKEN</span></td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Instagram</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;"><strong>dadassist_SocialMedia2</strong></td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">60 days</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;"><span class="code">FACEBOOK_PAGE_ID</span></td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Facebook</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">DadAssist Page: 737106112829383</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Permanent</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;"><span class="code">INSTAGRAM_ACCOUNT_ID</span></td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Instagram</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">@dadassist: 17841477240606238</td>
+                        <td style="padding: 8px; border: 1px solid #dee2e6;">Permanent</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="step">
+                <span class="step-number">6</span>
                 <strong>Test Credentials:</strong>
                 <ul>
                     <li>Run: <span class="code">python3 scripts/social_media_poster.py --dry-run --sample</span></li>
@@ -273,6 +336,17 @@ def create_social_media_email_content(results):
                     <li>If still failing, verify API permissions and account status</li>
                 </ul>
             </div>
+        </div>
+
+        <h3>⚠️ Token Expiry Reminder</h3>
+        <div class="warning-box">
+            <p><strong>Facebook and Instagram tokens expire every 60 days!</strong></p>
+            <ul>
+                <li><strong>Facebook:</strong> Must use "DadAssist Social Media" app for page token</li>
+                <li><strong>Instagram:</strong> Must use "dadassist_SocialMedia2" app for page token</li>
+                <li><strong>Twitter:</strong> Tokens are permanent (no expiry)</li>
+                <li><strong>Set Calendar Reminder:</strong> Refresh tokens every 50 days to avoid expiry</li>
+            </ul>
         </div>
 
         <h3>📋 Platform-Specific Issues</h3>

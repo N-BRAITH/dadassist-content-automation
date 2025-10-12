@@ -22,7 +22,7 @@ TWITTER_CREDENTIALS = {
 }
 
 FACEBOOK_CREDENTIALS = {
-    'access_token': 'EAFgDFHIYZBS0BPlMz33Qq0UqvQnuJklmso0ApkypyGEXtD0fglNSVSSUPsuYT8kMhH4Xor9h5KJrY4p6bZADvlW5BzrB6pF7xXcaZBiocymaWotgLml5pSLNPc0M9SJeOsUYGUNT8QxZCdUNCWLI8KLMMqwSw08jqxf9jc3kTgbgvZCj5aNyGILo8WTdoV8KP0Rk52ucB0oKWQj6nME6aG9qN4pD0Ay9wWtZCMpgab',
+    'access_token': 'EAFgDFHIYZBS0BPuKM2JuoMFtYoKR27pvnhibeIhB0IxWmCOO2lztqASoXD4u2ZBu4uq4PdtoRQF2rua4g9ZBKpf6N0qH79Jjz03jkxcWj72PtVQjOnICizqCvNb61wVZBUSrZA64J4LXMD8uRo83BQSGKlDSaCxa2La8yCtZB5D8dCVHwwUhhSahSSzlCkLUZCef0wZBMJCQQnLg38LpiSmJ6yHl0xepZBAkRFBBZBMTwZD',
     'page_id': '737106112829383',
     'instagram_id': '17841477240606238'
 }
@@ -76,8 +76,23 @@ def post_to_facebook(post_data):
         return {'success': False, 'platform': 'facebook', 'error': str(e)}
 
 def post_to_instagram(post_data):
-    """Post to Instagram with actual credentials"""
+    """Post to Instagram with actual credentials - handle permission issues"""
     try:
+        # First test if we can access the Instagram account
+        test_response = requests.get(
+            f"https://graph.facebook.com/{FACEBOOK_CREDENTIALS['instagram_id']}",
+            params={
+                'fields': 'username',
+                'access_token': FACEBOOK_CREDENTIALS['access_token']
+            }
+        )
+        
+        if test_response.status_code != 200:
+            error_msg = test_response.json().get('error', {}).get('message', 'Instagram access denied')
+            print(f"📷 ❌ Instagram access issue: {error_msg}")
+            print("📷 ℹ️  This may be due to Instagram API permissions or account linking")
+            return {'success': False, 'platform': 'instagram', 'error': f'Access denied: {error_msg}'}
+        
         # Default DadAssist image
         image_url = "https://dadassist.com.au/images/dadassist-logo.jpg"
         
