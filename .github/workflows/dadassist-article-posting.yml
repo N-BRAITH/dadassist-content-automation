@@ -1,0 +1,51 @@
+name: DadAssist Article Social Media Posting
+
+on:
+  schedule:
+    - cron: '0 10 * * *'  # Daily at 10 AM UTC (9 PM AEDT)
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  post-articles:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          pip install tweepy requests beautifulsoup4
+          
+      - name: Post DadAssist articles to social media
+        env:
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_SECRET: ${{ secrets.TWITTER_ACCESS_SECRET }}
+          FACEBOOK_ACCESS_TOKEN: ${{ secrets.FACEBOOK_ACCESS_TOKEN }}
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          INSTAGRAM_ACCOUNT_ID: ${{ secrets.INSTAGRAM_ACCOUNT_ID }}
+          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          SES_USERNAME: ${{ secrets.SES_USERNAME }}
+        run: |
+          python scripts/social_media_poster.py --live
+          
+      - name: Upload posting results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: social-media-results-${{ github.run_number }}
+          path: |
+            social-media/results/
+            social-media/new_articles_found.json
+            social-media/posted_articles_tracking.json
+          retention-days: 30

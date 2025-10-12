@@ -12,12 +12,12 @@ from datetime import datetime
 class InstagramPoster:
     def __init__(self, dry_run=True):
         self.dry_run = dry_run
-        # DadAssist Instagram API credentials from GitHub Secrets (via Facebook)
-        self.page_access_token = os.getenv('FACEBOOK_ACCESS_TOKEN')
+        # DadAssist Instagram API credentials from GitHub Secrets (separate token)
+        self.instagram_access_token = os.getenv('INSTAGRAM_ACCESS_TOKEN')
         self.instagram_account_id = os.getenv('INSTAGRAM_ACCOUNT_ID')
         
         # Check if credentials are available
-        if not all([self.page_access_token, self.instagram_account_id]):
+        if not all([self.instagram_access_token, self.instagram_account_id]):
             print("⚠️ Instagram credentials not found in environment variables")
         
     def authenticate(self):
@@ -26,7 +26,7 @@ class InstagramPoster:
             print("🔐 [DRY RUN] Instagram authentication - checking credentials")
             return True
         
-        if not all([self.page_access_token, self.instagram_account_id]):
+        if not all([self.instagram_access_token, self.instagram_account_id]):
             print("❌ Instagram credentials missing from environment")
             return False
         
@@ -36,7 +36,7 @@ class InstagramPoster:
                 f'https://graph.facebook.com/{self.instagram_account_id}',
                 params={
                     'fields': 'username,account_type',
-                    'access_token': self.page_access_token
+                    'access_token': self.instagram_access_token
                 }
             )
             
@@ -74,7 +74,7 @@ class InstagramPoster:
                 'url': f'https://instagram.com/p/dry_run_ig_{int(datetime.now().timestamp())}'
             }
         
-        if not all([self.page_access_token, self.instagram_account_id]):
+        if not all([self.instagram_access_token, self.instagram_account_id]):
             return {
                 'success': False,
                 'platform': 'instagram',
@@ -88,7 +88,7 @@ class InstagramPoster:
                 data={
                     'image_url': image_url,
                     'caption': content,
-                    'access_token': self.page_access_token
+                    'access_token': self.instagram_access_token
                 }
             )
             
@@ -108,7 +108,7 @@ class InstagramPoster:
                 f'https://graph.facebook.com/{self.instagram_account_id}/media_publish',
                 data={
                     'creation_id': creation_id,
-                    'access_token': self.page_access_token
+                    'access_token': self.instagram_access_token
                 }
             )
             
