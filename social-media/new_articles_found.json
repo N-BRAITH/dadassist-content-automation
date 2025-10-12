@@ -1,14 +1,55 @@
 {
-  "scan_date": "2025-10-12T16:00:00.000000",
-  "new_articles_count": 1,
+  "detection_date": "2025-10-12T11:40:17.103288",
+  "new_articles_count": 7,
   "new_articles": [
     {
-      "filename": "understanding-family-court-processes.html",
-      "title": "Understanding Family Court Processes",
-      "description": "A comprehensive guide to navigating Australian family court procedures and what fathers need to know.",
-      "url": "https://dadassist.com.au/posts/articles/understanding-family-court-processes.html",
-      "discovered_date": "2025-10-12T16:00:00.000000"
+      "filename": "independent-childrens-lawyers-australia.html",
+      "title": "Independent Children's Lawyers in Australia",
+      "description": "Everything fathers need to know about independent children's lawyers and their role",
+      "url": "https://dadassist.com.au/posts/articles/independent-childrens-lawyers-australia.html",
+      "discovered_date": "2025-10-12T11:40:17.101075"
+    },
+    {
+      "filename": "creating-effective-parenting-plans-in-australia.html",
+      "title": "Creating Effective Parenting Plans in Australia",
+      "description": "Expert legal advice for Australian fathers on creating effective parenting plans in australia",
+      "url": "https://dadassist.com.au/posts/articles/creating-effective-parenting-plans-in-australia.html",
+      "discovered_date": "2025-10-12T11:40:17.101095"
+    },
+    {
+      "filename": "property-settlement-guide-for-australian-fathers.html",
+      "title": "Property Settlement Guide for Australian Fathers",
+      "description": "Expert legal advice for Australian fathers on property settlement guide for australian fathers",
+      "url": "https://dadassist.com.au/posts/articles/property-settlement-guide-for-australian-fathers.html",
+      "discovered_date": "2025-10-12T11:40:17.101292"
+    },
+    {
+      "filename": "legal-financial-assistance-disbursements-australia.html",
+      "title": "Legal Financial Assistance for Disbursements",
+      "description": "Guide to getting financial assistance for legal costs and disbursements",
+      "url": "https://dadassist.com.au/posts/articles/legal-financial-assistance-disbursements-australia.html",
+      "discovered_date": "2025-10-12T11:40:17.101510"
+    },
+    {
+      "filename": "understanding-child-support-obligations-in-australia.html",
+      "title": "Understanding Child Support Obligations in Australia",
+      "description": "Comprehensive guide to child support obligations, assessments, and your rights as a father",
+      "url": "https://dadassist.com.au/posts/articles/understanding-child-support-obligations-in-australia.html",
+      "discovered_date": "2025-10-12T11:40:17.101678"
+    },
+    {
+      "filename": "family-mediation-for-australian-fathers.html",
+      "title": "Family Mediation for Australian Fathers",
+      "description": "Expert legal advice for Australian fathers on family mediation for australian fathers",
+      "url": "https://dadassist.com.au/posts/articles/family-mediation-for-australian-fathers.html",
+      "discovered_date": "2025-10-12T11:40:17.101770"
+    },
+    {
+      "filename": "understanding-family-violence-intervention-orders-in-australia.html",
+      "title": "Understanding Family Violence Intervention Orders in Australia",
+      "description": "Expert legal advice for Australian fathers on understanding family violence intervention orders in australia",
+      "url": "https://dadassist.com.au/posts/articles/understanding-family-violence-intervention-orders-in-australia.html",
+      "discovered_date": "2025-10-12T11:40:17.101948"
     }
-  ],
-  "total_articles_found": 1
+  ]
 }
