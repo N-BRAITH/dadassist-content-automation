@@ -4,6 +4,8 @@ on:
   schedule:
     - cron: '0 10 * * 1'  # Weekly on Mondays at 10 AM UTC (9 PM AEDT)
   workflow_dispatch:  # Allow manual triggering
+  repository_dispatch:
+    types: [new_articles_ready]  # Triggered by detection workflow
 
 jobs:
   post-weekly-article:
@@ -23,6 +25,18 @@ jobs:
       - name: Install dependencies
         run: |
           pip install tweepy requests beautifulsoup4
+          
+      - name: Check trigger type
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "🚀 Triggered by new article detection"
+            echo "📊 New articles count: ${{ github.event.client_payload.new_articles_count }}"
+            echo "📝 Source: ${{ github.event.client_payload.trigger_source }}"
+          elif [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "⏰ Triggered by weekly schedule"
+          else
+            echo "🔧 Triggered manually"
+          fi
           
       - name: Post 1 DadAssist article to social media (weekly)
         env:
