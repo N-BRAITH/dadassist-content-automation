@@ -1,5 +1,9 @@
 name: Generate DadAssist Article
 
+permissions:
+  contents: write
+  actions: write
+
 on:
   workflow_dispatch:
     inputs:
