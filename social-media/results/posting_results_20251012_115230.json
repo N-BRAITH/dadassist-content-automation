@@ -1,0 +1,105 @@
+{
+  "run_date": "2025-10-12T11:52:30.479407",
+  "dry_run": false,
+  "articles_processed": 1,
+  "total_posts_attempted": 4,
+  "results": [
+    {
+      "article": {
+        "title": "Child Custody Arrangements Guide for Australian Fathers",
+        "filename": "child-custody-arrangements-guide-for-australian-fathers.html",
+        "url": "https://dadassist.com.au/posts/articles/child-custody-arrangements-guide-for-australian-fathers.html"
+      },
+      "posts_generated": {
+        "twitter": {
+          "platform": "twitter",
+          "content": "\u2696\ufe0f Child Custody Arrangements Guide for Australian Fathers\n\nGet personalized legal guidance for your situation.\n\n\ud83d\udd17 Get help: https://dadassist.com.au/SubmitForm.html\n\ud83d\udcd6 Read guide: dadassist.com.au/posts/articles/\n\n#Divorce #FathersRights",
+          "character_count": 237,
+          "hashtags": [
+            "#Divorce",
+            "#FathersRights"
+          ],
+          "links": [
+            "https://dadassist.com.au/SubmitForm.html",
+            "https://dadassist.com.au/posts/articles/"
+          ]
+        },
+        "facebook": {
+          "platform": "facebook",
+          "content": "\ud83d\udcda New Legal Resource: Child Custody Arrangements Guide for Australian Fathers\n\nExpert legal advice for Australian fathers on child custody arrangements guide for australian fathers\n\nGoing through separation or divorce? You don't have to navigate family law alone. Our expert guides provide father-focused legal advice to help you understand your rights and protect your relationship with your children.\n\n\ud83d\udd17 Get personalized legal guidance: https://dadassist.com.au/SubmitForm.html\n\n\ud83d\udcd6 Read the complete guide: https://dadassist.com.au/posts/articles/child-custody-arrangements-guide-for-australian-fathers.html\n\nAt DadAssist, we empower Australian fathers with expert legal support and practical resources.\n\n#FamilyLaw #Australia #DadAssist",
+          "character_count": 738,
+          "hashtags": [
+            "#FamilyLaw",
+            "#Australia",
+            "#DadAssist"
+          ],
+          "links": [
+            "https://dadassist.com.au/SubmitForm.html",
+            "https://dadassist.com.au/posts/articles/child-custody-arrangements-guide-for-australian-fathers.html"
+          ]
+        },
+        "instagram": {
+          "platform": "instagram",
+          "content": "\ud83d\udcd6 New Guide for Fathers: Child Custody Arrangements Guide for Australian Fathers\n\nExpert legal advice for Australian fathers on child custody arrangements guide f...\n\nNavigating family law challenges? Get expert guidance tailored to your situation.\n\n\ud83d\udd17 Link in bio: dadassist.com.au\n\ud83d\udccb Get personalized help: SubmitForm.html\n\n#Divorce #Separation #Parenting #RelationshipAdvice #FathersRights #FamilyLaw #Australia #DadAssist #ChildCustody #CoParenting",
+          "character_count": 450,
+          "image_suggestion": "Professional image with title: 'Child Custody Arrangements Guide for Australian Fathers' and DadAssist branding",
+          "hashtags": [
+            "#Divorce",
+            "#Separation",
+            "#Parenting",
+            "#RelationshipAdvice",
+            "#FathersRights",
+            "#FamilyLaw",
+            "#Australia",
+            "#DadAssist",
+            "#ChildCustody",
+            "#CoParenting"
+          ],
+          "links": [
+            "https://dadassist.com.au",
+            "https://dadassist.com.au/SubmitForm.html"
+          ]
+        },
+        "tiktok": {
+          "platform": "tiktok",
+          "content": "\ud83d\udcda Child Custody Arrangements Guide for Australian Fathers\n\nGoing through separation? You're not alone \ud83d\udcaa\n\nGet expert legal guidance at dadassist.com.au\n\nCheck bio for SubmitForm link \ud83d\udc46\n\n#Parenting #FathersRights #DadTok #LegalAdvice",
+          "character_count": 231,
+          "video_suggestion": "Text overlay video with key points from: 'Child Custody Arrangements Guide for Australian Fathers' + DadAssist branding",
+          "hashtags": [
+            "#Parenting",
+            "#FathersRights",
+            "#DadTok",
+            "#LegalAdvice"
+          ],
+          "links": [
+            "https://dadassist.com.au",
+            "https://dadassist.com.au/SubmitForm.html"
+          ]
+        }
+      },
+      "posting_results": [
+        {
+          "success": true,
+          "platform": "twitter",
+          "post_id": "1977341555754361063",
+          "url": "https://twitter.com/dad_assist/status/1977341555754361063",
+          "message": "Tweet posted successfully"
+        },
+        {
+          "success": true,
+          "platform": "facebook",
+          "post_id": "737106112829383_122104524465053839",
+          "url": "https://facebook.com/DadAssist/posts/122104524465053839",
+          "message": "Facebook post successful"
+        },
+        {
+          "success": true,
+          "platform": "instagram",
+          "post_id": "18094908001705017",
+          "url": "https://instagram.com/p/18094908001705017",
+          "message": "Instagram post successful"
+        }
+      ]
+    }
+  ]
+}
