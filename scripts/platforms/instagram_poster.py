@@ -56,9 +56,9 @@ class InstagramPoster:
         """Create Instagram image post"""
         content = post_data['content']
         
-        # Default DadAssist branded image if none provided
+        # Default professional image if none provided (reliable stock photo)
         if not image_url:
-            image_url = "https://dadassist.com.au/images/dadassist-social-default.jpg"
+            image_url = "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1080&h=1080&fit=crop&crop=center"
         
         if self.dry_run:
             print("📷 [DRY RUN] Would post to Instagram:")

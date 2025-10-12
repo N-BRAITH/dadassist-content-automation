@@ -1,13 +1,13 @@
 {
-  "scan_date": "2025-10-12T15:30:00.000000",
+  "scan_date": "2025-10-12T16:00:00.000000",
   "new_articles_count": 1,
   "new_articles": [
     {
-      "filename": "financial-support-obligations.html",
-      "title": "Financial Support Obligations",
-      "description": "Understanding your financial responsibilities and rights during separation and divorce.",
-      "url": "https://dadassist.com.au/posts/articles/financial-support-obligations.html",
-      "discovered_date": "2025-10-12T15:30:00.000000"
+      "filename": "understanding-family-court-processes.html",
+      "title": "Understanding Family Court Processes",
+      "description": "A comprehensive guide to navigating Australian family court procedures and what fathers need to know.",
+      "url": "https://dadassist.com.au/posts/articles/understanding-family-court-processes.html",
+      "discovered_date": "2025-10-12T16:00:00.000000"
     }
   ],
   "total_articles_found": 1
