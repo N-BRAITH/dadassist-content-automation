@@ -1,0 +1,45 @@
+name: Test SSH Connection
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  test-ssh:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Test SSH Connection
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: 13.239.163.33
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "🔍 SSH Connection Test"
+            echo "====================="
+            echo "✅ SSH connection successful!"
+            echo "📍 Current user: $(whoami)"
+            echo "📍 Current directory: $(pwd)"
+            echo "📍 Server hostname: $(hostname)"
+            echo "🐍 Python version: $(python3 --version)"
+            echo "📄 Article script exists: $(ls -la /home/ubuntu/generate_article.py 2>/dev/null || echo 'NOT FOUND')"
+            echo "🔧 AWS CLI configured: $(aws --version 2>/dev/null || echo 'NOT FOUND')"
+            echo "📊 Disk space: $(df -h / | tail -1)"
+            echo "🕐 Server time: $(date)"
+            
+      - name: Test Alternative SSH Action
+        if: failure()
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: |
+            13.239.163.33 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC7
+            
+      - name: Alternative SSH Test
+        if: failure()
+        run: |
+          echo "🔧 Testing alternative SSH method..."
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > /tmp/ssh_key
+          chmod 600 /tmp/ssh_key
+          ssh -o StrictHostKeyChecking=no -i /tmp/ssh_key ubuntu@13.239.163.33 "echo 'Alternative SSH works!'"
+          rm /tmp/ssh_key
