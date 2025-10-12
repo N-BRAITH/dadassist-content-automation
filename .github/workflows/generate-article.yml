@@ -1,0 +1,111 @@
+name: Generate DadAssist Article
+
+on:
+  workflow_dispatch:
+    inputs:
+      scraped_content:
+        description: 'Scraped legal content (paste the raw text here)'
+        required: true
+        type: string
+      article_title:
+        description: 'Article title'
+        required: true
+        type: string
+      category:
+        description: 'Article category'
+        required: true
+        type: choice
+        options:
+          - 'Child Support'
+          - 'Parenting & Custody'
+          - 'Legal Procedures'
+          - 'Property Settlement'
+          - 'Family Violence'
+          - 'Conflict Resolution'
+
+jobs:
+  generate-article:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Generate Article on Server
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: 13.239.163.33
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "🤖 Starting article generation..."
+            echo "📝 Title: ${{ github.event.inputs.article_title }}"
+            echo "📂 Category: ${{ github.event.inputs.category }}"
+            echo ""
+            
+            # Run the article generator
+            RESULT=$(python3 /home/ubuntu/generate_article.py \
+              --content "${{ github.event.inputs.scraped_content }}" \
+              --title "${{ github.event.inputs.article_title }}" \
+              --category "${{ github.event.inputs.category }}")
+            
+            echo "$RESULT"
+            
+            # Check if successful
+            if echo "$RESULT" | grep -q "SUCCESS:"; then
+              ARTICLE_URL=$(echo "$RESULT" | grep "SUCCESS:" | cut -d':' -f2)
+              FILENAME=$(echo "$RESULT" | grep "SUCCESS:" | cut -d':' -f3)
+              
+              echo ""
+              echo "🎉 Article generation completed successfully!"
+              echo "🌐 Live URL: $ARTICLE_URL"
+              echo "📄 Filename: $FILENAME"
+              
+              # Set outputs for potential use by other workflows
+              echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_ENV
+              echo "FILENAME=$FILENAME" >> $GITHUB_ENV
+              
+              exit 0
+            else
+              echo "❌ Article generation failed"
+              exit 1
+            fi
+            
+      - name: Trigger Social Media Detection
+        if: success()
+        run: |
+          echo "🚀 Triggering social media detection workflow..."
+          
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/dispatches \
+            -d '{
+              "event_type": "article_created",
+              "client_payload": {
+                "article_url": "'${{ env.ARTICLE_URL }}'",
+                "article_title": "${{ github.event.inputs.article_title }}",
+                "category": "${{ github.event.inputs.category }}",
+                "filename": "'${{ env.FILENAME }}'"
+              }
+            }'
+          
+          echo "✅ Social media detection workflow triggered"
+          
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Article Generation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ **Status:** Success" >> $GITHUB_STEP_SUMMARY
+            echo "🌐 **Live URL:** ${{ env.ARTICLE_URL }}" >> $GITHUB_STEP_SUMMARY
+            echo "📝 **Title:** ${{ github.event.inputs.article_title }}" >> $GITHUB_STEP_SUMMARY
+            echo "📂 **Category:** ${{ github.event.inputs.category }}" >> $GITHUB_STEP_SUMMARY
+            echo "🤖 **Social Media:** Detection workflow triggered" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Status:** Failed" >> $GITHUB_STEP_SUMMARY
+            echo "📝 **Title:** ${{ github.event.inputs.article_title }}" >> $GITHUB_STEP_SUMMARY
+            echo "📂 **Category:** ${{ github.event.inputs.category }}" >> $GITHUB_STEP_SUMMARY
+          fi
