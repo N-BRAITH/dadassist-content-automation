@@ -1,0 +1,47 @@
+name: DadAssist Content Discovery
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Weekly on Mondays at 9 AM UTC (before social posting)
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  discover-content:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4
+          
+      - name: Discover new DadNow articles
+        run: |
+          # TODO: Implement DadNow website scanning
+          # python scripts/content_discovery.py --scan-dadnow
+          echo "Content discovery workflow - to be implemented"
+          
+      - name: Commit updated article index
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add social-media/previous_articles.json social-media/new_articles_found.json
+          git commit -m "Update article discovery index [skip ci]" || exit 0
+          git push
+          
+      - name: Upload discovery results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: content-discovery-results-${{ github.run_number }}
+          path: |
+            social-media/previous_articles.json
+            social-media/new_articles_found.json
+          retention-days: 30
