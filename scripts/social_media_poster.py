@@ -215,11 +215,26 @@ def main():
         print("✅ No new articles found - no social media posts needed")
         return
     
-    # Process each new article
+    # Process only 1 article per run (weekly posting)
+    articles_to_process = articles_data['new_articles'][:1]  # Limit to 1 article
+    
+    print(f"📋 Processing 1 article from {articles_data['new_articles_count']} available articles")
+    
     all_results = []
-    for article in articles_data['new_articles']:
+    for article in articles_to_process:
         result = post_to_all_platforms(article, dry_run=dry_run)
         all_results.append(result)
+    
+    # Track posted articles and remove from queue
+    if not dry_run:
+        tracker = ArticleTracker()
+        for result in all_results:
+            article_filename = result['article']['filename']
+            for post_result in result['posting_results']:
+                tracker.mark_article_posted(article_filename, post_result['platform'], post_result)
+        
+        # Remove posted article from new articles queue
+        tracker.remove_posted_from_queue()
     
     # Save and display results
     results_file = save_posting_results(all_results, dry_run=dry_run)
