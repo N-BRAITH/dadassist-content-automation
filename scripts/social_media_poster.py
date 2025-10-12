@@ -261,15 +261,8 @@ def main():
         result = post_to_all_platforms(article, dry_run=dry_run)
         all_results.append(result)
     
-    # Track posted articles and update previous articles index
-    if not dry_run:
-        tracker = ArticleTracker()
-        for result in all_results:
-            article_filename = result['article']['filename']
-            for post_result in result['posting_results']:
-                tracker.mark_article_posted(article_filename, post_result['platform'], post_result)
-        
-        # Add posted article to previous_articles.json to prevent re-discovery
+    # Update previous articles index with posted article
+    if not dry_run and all_results:
         posted_article = all_results[0]['article']  # We only post 1 article per run
         update_previous_articles_index(posted_article)
     
