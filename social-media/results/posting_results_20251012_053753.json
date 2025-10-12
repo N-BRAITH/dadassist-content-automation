@@ -1,0 +1,103 @@
+{
+  "run_date": "2025-10-12T05:37:53.650035",
+  "dry_run": false,
+  "articles_processed": 1,
+  "total_posts_attempted": 4,
+  "results": [
+    {
+      "article": {
+        "title": "Understanding Family Court Processes",
+        "filename": "understanding-family-court-processes.html",
+        "url": "https://dadassist.com.au/posts/articles/understanding-family-court-processes.html"
+      },
+      "posts_generated": {
+        "twitter": {
+          "platform": "twitter",
+          "content": "\u2696\ufe0f Understanding Family Court Processes\n\nGet personalized legal guidance for your situation.\n\n\ud83d\udd17 Get help: https://dadassist.com.au/SubmitForm.html\n\ud83d\udcd6 Read guide: dadassist.com.au/posts/articles/\n\n#Divorce #FathersRights",
+          "character_count": 218,
+          "hashtags": [
+            "#Divorce",
+            "#FathersRights"
+          ],
+          "links": [
+            "https://dadassist.com.au/SubmitForm.html",
+            "https://dadassist.com.au/posts/articles/"
+          ]
+        },
+        "facebook": {
+          "platform": "facebook",
+          "content": "\ud83d\udcda New Legal Resource: Understanding Family Court Processes\n\nA comprehensive guide to navigating Australian family court procedures and what fathers need to know.\n\nGoing through separation or divorce? You don't have to navigate family law alone. Our expert guides provide father-focused legal advice to help you understand your rights and protect your relationship with your children.\n\n\ud83d\udd17 Get personalized legal guidance: https://dadassist.com.au/SubmitForm.html\n\n\ud83d\udcd6 Read the complete guide: https://dadassist.com.au/posts/articles/understanding-family-court-processes.html\n\nAt DadAssist, we empower Australian fathers with expert legal support and practical resources.\n\n#FamilyLaw #Australia #DadAssist",
+          "character_count": 700,
+          "hashtags": [
+            "#FamilyLaw",
+            "#Australia",
+            "#DadAssist"
+          ],
+          "links": [
+            "https://dadassist.com.au/SubmitForm.html",
+            "https://dadassist.com.au/posts/articles/understanding-family-court-processes.html"
+          ]
+        },
+        "instagram": {
+          "platform": "instagram",
+          "content": "\ud83d\udcd6 New Guide for Fathers: Understanding Family Court Processes\n\nA comprehensive guide to navigating Australian family court procedures and what ...\n\nNavigating family law challenges? Get expert guidance tailored to your situation.\n\n\ud83d\udd17 Link in bio: dadassist.com.au\n\ud83d\udccb Get personalized help: SubmitForm.html\n\n#Divorce #Separation #Parenting #RelationshipAdvice #FathersRights #FamilyLaw #Australia #DadAssist #ChildCustody #CoParenting",
+          "character_count": 431,
+          "image_suggestion": "Professional image with title: 'Understanding Family Court Processes' and DadAssist branding",
+          "hashtags": [
+            "#Divorce",
+            "#Separation",
+            "#Parenting",
+            "#RelationshipAdvice",
+            "#FathersRights",
+            "#FamilyLaw",
+            "#Australia",
+            "#DadAssist",
+            "#ChildCustody",
+            "#CoParenting"
+          ],
+          "links": [
+            "https://dadassist.com.au",
+            "https://dadassist.com.au/SubmitForm.html"
+          ]
+        },
+        "tiktok": {
+          "platform": "tiktok",
+          "content": "\ud83d\udcda Understanding Family Court Processes\n\nGoing through separation? You're not alone \ud83d\udcaa\n\nGet expert legal guidance at dadassist.com.au\n\nCheck bio for SubmitForm link \ud83d\udc46\n\n#Parenting #FathersRights #DadTok #LegalAdvice",
+          "character_count": 212,
+          "video_suggestion": "Text overlay video with key points from: 'Understanding Family Court Processes' + DadAssist branding",
+          "hashtags": [
+            "#Parenting",
+            "#FathersRights",
+            "#DadTok",
+            "#LegalAdvice"
+          ],
+          "links": [
+            "https://dadassist.com.au",
+            "https://dadassist.com.au/SubmitForm.html"
+          ]
+        }
+      },
+      "posting_results": [
+        {
+          "success": false,
+          "platform": "twitter",
+          "error": "Authentication failed"
+        },
+        {
+          "success": true,
+          "platform": "facebook",
+          "post_id": "737106112829383_122104441161053839",
+          "url": "https://facebook.com/DadAssist/posts/122104441161053839",
+          "message": "Facebook post successful"
+        },
+        {
+          "success": true,
+          "platform": "instagram",
+          "post_id": "17910302634236604",
+          "url": "https://instagram.com/p/17910302634236604",
+          "message": "Instagram post successful"
+        }
+      ]
+    }
+  ]
+}
