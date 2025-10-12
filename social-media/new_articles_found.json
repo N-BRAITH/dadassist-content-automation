@@ -1,28 +1,14 @@
 {
-  "scan_date": "2025-10-12T14:56:01.861970",
-  "new_articles_count": 3,
+  "scan_date": "2025-10-12T15:30:00.000000",
+  "new_articles_count": 1,
   "new_articles": [
-    {
-      "filename": "understanding-family-court-processes.html",
-      "title": "Understanding Family Court Processes",
-      "description": "A comprehensive guide to navigating Australian family court procedures and what fathers need to know.",
-      "url": "https://dadassist.com.au/posts/articles/understanding-family-court-processes.html",
-      "discovered_date": "2025-10-12T14:56:01.861946"
-    },
-    {
-      "filename": "child-custody-arrangements-guide.html",
-      "title": "Child Custody Arrangements Guide",
-      "description": "Essential information about different custody arrangements and how to protect your parental rights.",
-      "url": "https://dadassist.com.au/posts/articles/child-custody-arrangements-guide.html",
-      "discovered_date": "2025-10-12T14:56:01.861964"
-    },
     {
       "filename": "financial-support-obligations.html",
       "title": "Financial Support Obligations",
       "description": "Understanding your financial responsibilities and rights during separation and divorce.",
       "url": "https://dadassist.com.au/posts/articles/financial-support-obligations.html",
-      "discovered_date": "2025-10-12T14:56:01.861967"
+      "discovered_date": "2025-10-12T15:30:00.000000"
     }
   ],
-  "total_articles_found": 3
+  "total_articles_found": 1
 }
