@@ -8,6 +8,8 @@ on:
 jobs:
   post-weekly-article:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Allow pushing changes back to repository
     
     steps:
       - name: Checkout repository

@@ -35,7 +35,7 @@ class InstagramPoster:
             response = requests.get(
                 f'https://graph.facebook.com/{self.instagram_account_id}',
                 params={
-                    'fields': 'username,account_type',
+                    'fields': 'username',
                     'access_token': self.instagram_access_token
                 }
             )
