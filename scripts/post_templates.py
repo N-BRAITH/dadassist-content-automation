@@ -42,7 +42,7 @@ def generate_twitter_post(article):
 Get personalized legal guidance for your situation.
 
 🔗 Get help: {urls['form']}
-📖 Read guide: {urls['base']}/posts/articles/
+📖 Read guide: {article.get('url', f"{urls['website']}/posts/articles/")}
 
 {twitter_tags}"""
     
@@ -66,7 +66,7 @@ Get personalized legal guidance.
         'content': post,
         'character_count': len(post),
         'hashtags': [hashtags['core'][0], hashtags['brand'][0]],
-        'links': [urls['form'], f"{urls['website']}/posts/articles/"]
+        'links': [urls['form'], article.get('url', f"{urls['website']}/posts/articles/")]
     }
 
 def generate_facebook_post(article):
