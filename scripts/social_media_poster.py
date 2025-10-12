@@ -168,6 +168,42 @@ def validate_credentials():
         print("✅ All credentials found in environment")
         return True
 
+def update_previous_articles_index(posted_article):
+    """Add posted article to previous_articles.json to prevent re-discovery"""
+    try:
+        previous_file = 'social-media/previous_articles.json'
+        
+        # Load existing previous articles
+        if os.path.exists(previous_file):
+            with open(previous_file, 'r') as f:
+                previous_articles = json.load(f)
+        else:
+            previous_articles = []
+        
+        # Check if article already exists
+        exists = any(article['filename'] == posted_article['filename'] for article in previous_articles)
+        
+        if not exists:
+            # Add posted article to previous articles index
+            previous_articles.append({
+                'filename': posted_article['filename'],
+                'title': posted_article['title'],
+                'description': posted_article.get('description', ''),
+                'url': posted_article['url'],
+                'discovered_date': datetime.now().isoformat()
+            })
+            
+            # Save updated previous articles
+            with open(previous_file, 'w') as f:
+                json.dump(previous_articles, f, indent=2)
+            
+            print(f"✅ Added '{posted_article['title']}' to previous articles index")
+        else:
+            print(f"ℹ️  '{posted_article['title']}' already in previous articles index")
+            
+    except Exception as e:
+        print(f"⚠️ Warning: Could not update previous articles index: {e}")
+
 def main():
     """Main social media posting function"""
     parser = argparse.ArgumentParser(description='DadAssist Social Media Poster')
@@ -225,7 +261,7 @@ def main():
         result = post_to_all_platforms(article, dry_run=dry_run)
         all_results.append(result)
     
-    # Track posted articles and remove from queue
+    # Track posted articles and update previous articles index
     if not dry_run:
         tracker = ArticleTracker()
         for result in all_results:
@@ -233,8 +269,9 @@ def main():
             for post_result in result['posting_results']:
                 tracker.mark_article_posted(article_filename, post_result['platform'], post_result)
         
-        # Remove posted article from new articles queue
-        tracker.remove_posted_from_queue()
+        # Add posted article to previous_articles.json to prevent re-discovery
+        posted_article = all_results[0]['article']  # We only post 1 article per run
+        update_previous_articles_index(posted_article)
     
     # Save and display results
     results_file = save_posting_results(all_results, dry_run=dry_run)
