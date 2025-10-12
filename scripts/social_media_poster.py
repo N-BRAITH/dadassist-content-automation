@@ -39,18 +39,17 @@ def load_new_articles():
         return None
 
 def post_to_all_platforms(article, dry_run=True):
-    """Post article to all social media platforms"""
+    """Post article to social media platforms (excluding TikTok for now)"""
     print(f"\n📝 Processing article: {article['title']}")
     print(f"   File: {article['filename']}")
     
     # Generate platform-specific posts
     all_posts = generate_all_posts(article)
     
-    # Initialize platform posters
+    # Initialize platform posters (excluding TikTok)
     twitter = TwitterPoster(dry_run=dry_run)
     facebook = FacebookPoster(dry_run=dry_run)
     instagram = InstagramPoster(dry_run=dry_run)
-    tiktok = TikTokPoster(dry_run=dry_run)
     
     results = []
     
@@ -78,13 +77,8 @@ def post_to_all_platforms(article, dry_run=True):
     else:
         results.append({'success': False, 'platform': 'instagram', 'error': 'Authentication failed'})
     
-    # Post to TikTok
-    print(f"\n🎵 Posting to TikTok...")
-    if tiktok.authenticate():
-        result = tiktok.create_text_post(all_posts['posts']['tiktok'])
-        results.append(result)
-    else:
-        results.append({'success': False, 'platform': 'tiktok', 'error': 'Authentication failed'})
+    # Skip TikTok for now
+    print(f"\n🎵 Skipping TikTok (not configured)")
     
     return {
         'article': all_posts['article'],
@@ -143,6 +137,37 @@ def print_summary(all_results, dry_run=True):
     
     print(f"{'='*60}")
 
+def validate_credentials():
+    """Validate that all required credentials are available"""
+    print("🔐 Validating API credentials...")
+    
+    missing_credentials = []
+    
+    # Check Twitter credentials
+    twitter_creds = ['TWITTER_API_KEY', 'TWITTER_API_SECRET', 'TWITTER_ACCESS_TOKEN', 'TWITTER_ACCESS_SECRET']
+    for cred in twitter_creds:
+        if not os.getenv(cred):
+            missing_credentials.append(f"Twitter: {cred}")
+    
+    # Check Facebook/Instagram credentials
+    facebook_creds = ['FACEBOOK_ACCESS_TOKEN', 'FACEBOOK_PAGE_ID', 'INSTAGRAM_ACCOUNT_ID']
+    for cred in facebook_creds:
+        if not os.getenv(cred):
+            missing_credentials.append(f"Facebook/Instagram: {cred}")
+    
+    if missing_credentials:
+        print("❌ Missing credentials:")
+        for cred in missing_credentials:
+            print(f"   - {cred}")
+        print("\n🔧 To fix this:")
+        print("1. Go to: https://github.com/N-BRAITH/dadassist-content-automation/settings/secrets/actions")
+        print("2. Add the missing secrets")
+        print("3. Re-run the automation")
+        return False
+    else:
+        print("✅ All credentials found in environment")
+        return True
+
 def main():
     """Main social media posting function"""
     parser = argparse.ArgumentParser(description='DadAssist Social Media Poster')
@@ -162,6 +187,13 @@ def main():
     print(f"⏰ Run time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}")
     print(f"🔧 Mode: {'DRY RUN' if dry_run else 'LIVE POSTING'}")
     print()
+    
+    # Validate credentials (skip for dry run)
+    if not dry_run:
+        if not validate_credentials():
+            print("❌ Cannot proceed without valid credentials")
+            return
+        print()
     
     if args.sample:
         # Use sample data for testing
@@ -190,8 +222,22 @@ def main():
         all_results.append(result)
     
     # Save and display results
-    save_posting_results(all_results, dry_run=dry_run)
+    results_file = save_posting_results(all_results, dry_run=dry_run)
     print_summary(all_results, dry_run=dry_run)
+    
+    # Send notification email
+    try:
+        from social_media_notifier import send_social_media_notification
+        
+        # Load the results we just saved
+        with open(results_file, 'r') as f:
+            notification_data = json.load(f)
+        
+        print(f"\n📧 Sending notification email...")
+        send_social_media_notification(notification_data)
+        
+    except Exception as e:
+        print(f"⚠️ Could not send notification email: {e}")
     
     if dry_run:
         print("\n💡 This was a dry run. To post live, use: --live flag")
