@@ -491,8 +491,8 @@ def send_social_media_notification(results):
     msg.attach(html_part)
     
     try:
-        # Send via Amazon SES (same as existing notifier)
-        server = smtplib.SMTP('email-smtp.us-east-1.amazonaws.com', 587)
+        # Send via Amazon SES (same region as existing notifier)
+        server = smtplib.SMTP('email-smtp.ap-southeast-2.amazonaws.com', 587)
         server.starttls()
         server.login(ses_username, email_password)
         server.send_message(msg)
