@@ -82,15 +82,15 @@ def filter_search_results(client, dataset_id, config):
         "legalaid.nt.gov.au"
     ]
     
-    target_sites = config["target_sites"]
-    
     for item in all_organic_results:
         url = item.get('url', '')
         title = item.get('title', '')
         description = item.get('description', '')
         
-        # Filter by trusted domains OR target sites
-        domain_match = any(domain in url for domain in trusted_domains + target_sites)
+        # Filter by trusted domains OR any Australian legal content
+        domain_match = any(domain in url for domain in trusted_domains)
+        australian_legal = ('.gov.au' in url or '.edu.au' in url or 
+                          'australia' in url.lower() or 'australian' in title.lower())
         
         # Check if it's likely a legal article
         legal_keywords = ['family', 'child', 'custody', 'support', 'law', 'court', 'legal', 
@@ -99,7 +99,7 @@ def filter_search_results(client, dataset_id, config):
         title_relevant = len(title) > 10 and any(keyword in title.lower() for keyword in legal_keywords)
         desc_relevant = any(keyword in description.lower() for keyword in legal_keywords)
         
-        if domain_match and (title_relevant or desc_relevant):
+        if (domain_match or australian_legal) and (title_relevant or desc_relevant):
             filtered_urls.append({
                 'url': url,
                 'title': title,
