@@ -13,10 +13,12 @@ def clean_title(title):
     return re.sub(r'\s+', ' ', title.strip())
 
 def get_mandatory_hashtags():
-    """Return mandatory hashtags for all DadAssist posts"""
+    """Return aspirational hashtags for all DadAssist posts"""
     return {
-        'core': ['#Divorce', '#Separation', '#Parenting', '#RelationshipAdvice'],
-        'brand': ['#FathersRights', '#FamilyLaw', '#Australia', '#DadAssist']
+        'core': ['#UnbrokenDad', '#Fatherhood', '#PresentFather', '#ForTheKids'],
+        'brand': ['#FathersRights', '#DivorcedDads', '#CycleBreakers', '#DadAssist'],
+        'aspirational': ['#Leadership', '#Authenticity', '#DivorceRecovery', '#BlueCollarStrong'],
+        'legal': ['#FamilyCourt', '#FamilyLaw', '#Australia']
     }
 
 def get_dadassist_urls():
@@ -33,8 +35,8 @@ def generate_twitter_post(article):
     urls = get_dadassist_urls()
     hashtags = get_mandatory_hashtags()
     
-    # Twitter-optimized hashtags (2 max for best engagement)
-    twitter_tags = f"{hashtags['core'][0]} {hashtags['brand'][0]}"  # #Divorce #FathersRights
+    # Twitter-optimized hashtags (3 max for best engagement)
+    twitter_tags = f"{hashtags['core'][0]} {hashtags['brand'][0]} {hashtags['core'][3]}"  # #UnbrokenDad #FathersRights #ForTheKids
     
     # Create post with SubmitForm.html reference
     post = f"""⚖️ {title}
@@ -65,7 +67,7 @@ Get personalized legal guidance.
         'platform': 'twitter',
         'content': post,
         'character_count': len(post),
-        'hashtags': [hashtags['core'][0], hashtags['brand'][0]],
+        'hashtags': [hashtags['core'][0], hashtags['brand'][0], hashtags['core'][3]],
         'links': [urls['form'], article.get('url', f"{urls['website']}/posts/articles/")]
     }
 
@@ -76,8 +78,8 @@ def generate_facebook_post(article):
     urls = get_dadassist_urls()
     hashtags = get_mandatory_hashtags()
     
-    # Facebook hashtags (3 recommended)
-    fb_tags = f"{hashtags['brand'][1]} {hashtags['brand'][2]} {hashtags['brand'][3]}"  # #FamilyLaw #Australia #DadAssist
+    # Facebook hashtags (5-6 for better reach)
+    fb_tags = f"{hashtags['core'][0]} {hashtags['brand'][0]} {hashtags['aspirational'][0]} {hashtags['legal'][0]} {hashtags['brand'][2]}"  # #UnbrokenDad #FathersRights #Leadership #FamilyCourt #CycleBreakers
     
     post = f"""📚 New Legal Resource: {title}
 
@@ -97,7 +99,7 @@ At DadAssist, we empower Australian fathers with expert legal support and practi
         'platform': 'facebook',
         'content': post,
         'character_count': len(post),
-        'hashtags': [hashtags['brand'][1], hashtags['brand'][2], hashtags['brand'][3]],
+        'hashtags': [hashtags['core'][0], hashtags['brand'][0], hashtags['aspirational'][0], hashtags['legal'][0], hashtags['brand'][2]],
         'links': [urls['form'], article.get('url', f"{urls['website']}/posts/articles/")]
     }
 
@@ -108,8 +110,8 @@ def generate_instagram_post(article):
     urls = get_dadassist_urls()
     hashtags = get_mandatory_hashtags()
     
-    # Instagram hashtags (10 optimal for engagement)
-    all_hashtags = hashtags['core'] + hashtags['brand'] + ['#ChildCustody', '#CoParenting']
+    # Instagram hashtags (10+ optimal for engagement)
+    all_hashtags = hashtags['core'] + hashtags['brand'] + hashtags['aspirational'] + hashtags['legal'] + ['#Parenting', '#Breakup']
     ig_tags = ' '.join(all_hashtags)
     
     caption = f"""📖 New Guide for Fathers: {title}
