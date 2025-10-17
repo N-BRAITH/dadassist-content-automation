@@ -7,6 +7,7 @@ Sends comprehensive email notifications with run results and instructions
 import os
 import json
 import smtplib
+from datetime import datetime, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
@@ -175,7 +176,7 @@ def create_email_content(summary):
                 <p><strong>Repository:</strong> <a href="https://github.com/N-BRAITH/dadassist-content-automation">dadassist-content-automation</a></p>
                 <p><strong>Schedule:</strong> Every Monday at 9:00 AM UTC</p>
                 <p><strong>Retention:</strong> Artifacts kept for 30 days</p>
-                <p><strong>Next Run:</strong> {(datetime.now().replace(hour=9, minute=0, second=0, microsecond=0) + datetime.timedelta(days=(7-datetime.now().weekday()))).strftime('%A, %B %d at 9:00 AM UTC') if datetime.now().weekday() != 0 else 'Next Monday at 9:00 AM UTC'}</p>
+                <p><strong>Next Run:</strong> {(datetime.now().replace(hour=9, minute=0, second=0, microsecond=0) + timedelta(days=(7-datetime.now().weekday()))).strftime('%A, %B %d at 9:00 AM UTC') if datetime.now().weekday() != 0 else 'Next Monday at 9:00 AM UTC'}</p>
             </div>
 
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px;">
