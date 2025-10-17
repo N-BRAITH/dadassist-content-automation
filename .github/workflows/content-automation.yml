@@ -1,5 +1,9 @@
 name: Weekly Legal Content Scraping
 
+permissions:
+  contents: write
+  actions: write
+
 on:
   schedule:
     - cron: '0 9 * * 1'  # Every Monday at 9 AM UTC
@@ -90,6 +94,46 @@ jobs:
           SES_USERNAME: ${{ secrets.SES_USERNAME }}
         run: |
           python scripts/notifier.py
+          
+      - name: Extract Content for Article Generation
+        run: |
+          # Extract first article from scraped content
+          CONTENT=$(jq -r '.articles[0].content' downloads/*/q_developer_input.json)
+          TITLE=$(jq -r '.articles[0].title' downloads/*/q_developer_input.json)
+          
+          echo "ARTICLE_CONTENT<<EOF" >> $GITHUB_ENV
+          echo "$CONTENT" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "ARTICLE_TITLE=$TITLE" >> $GITHUB_ENV
+          
+          echo "📝 Extracted article: $TITLE"
+          echo "📊 Content length: $(echo "$CONTENT" | wc -c) characters"
+
+      - name: Generate Article on Ubuntu Server
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: 13.239.163.33
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "🤖 Starting article generation from scraped content..."
+            
+            RESULT=$(python3 /home/ubuntu/generate_article.py \
+              --content "${{ env.ARTICLE_CONTENT }}" \
+              --title "${{ env.ARTICLE_TITLE }}" \
+              --category "Legal Procedures")
+            
+            echo "$RESULT"
+            
+            if echo "$RESULT" | grep -q "SUCCESS:"; then
+              ARTICLE_URL=$(echo "$RESULT" | grep "SUCCESS:" | cut -d':' -f2)
+              echo "🎉 Article generated successfully!"
+              echo "🌐 Live URL: $ARTICLE_URL"
+              exit 0
+            else
+              echo "❌ Article generation failed"
+              exit 1
+            fi
           
       - name: Clean up
         if: always()
