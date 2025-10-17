@@ -134,6 +134,25 @@ jobs:
               echo "❌ Article generation failed"
               exit 1
             fi
+            
+      - name: Trigger Social Media Detection
+        if: success()
+        run: |
+          echo "🚀 Triggering social media detection workflow..."
+          
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/dispatches \
+            -d '{
+              "event_type": "article_created",
+              "client_payload": {
+                "trigger_source": "content_automation",
+                "article_generated": true
+              }
+            }'
+          
+          echo "✅ Social media detection workflow triggered"
           
       - name: Clean up
         if: always()
