@@ -22,9 +22,9 @@
     ]
   },
   "scraping_settings": {
-    "max_articles_per_run": 8,
-    "max_pages_per_query": 3,
-    "results_per_page": 15,
+    "max_articles_per_run": 1,
+    "max_pages_per_query": 1,
+    "results_per_page": 10,
     "country_code": "au",
     "language_code": "en"
   },
