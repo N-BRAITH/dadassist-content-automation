@@ -13,12 +13,13 @@ def clean_title(title):
     return re.sub(r'\s+', ' ', title.strip())
 
 def get_mandatory_hashtags():
-    """Return aspirational hashtags for all DadAssist posts"""
+    """Return comprehensive hashtags for all DadAssist posts"""
     return {
-        'core': ['#UnbrokenDad', '#Fatherhood', '#PresentFather', '#ForTheKids'],
-        'brand': ['#FathersRights', '#DivorcedDads', '#CycleBreakers', '#DadAssist'],
-        'aspirational': ['#Leadership', '#Authenticity', '#DivorceRecovery', '#BlueCollarStrong'],
-        'legal': ['#FamilyCourt', '#FamilyLaw', '#Australia']
+        'aspirational': ['#UnbrokenDad', '#Fatherhood', '#PresentFather', '#ForTheKids', '#CycleBreakers', '#DivorceRecovery'],
+        'legal': ['#ChildCustody', '#FamilyCourt', '#ParentalRights', '#CoParenting', '#FathersRights', '#FamilyLawyer'],
+        'divorce': ['#Divorce', '#Divorced', '#DivorcedLife', '#DivorceSupport', '#DivorceHelp', '#DivorceSurvivor'],
+        'custody': ['#JointCustody', '#SoleCustody', '#VisitationRights', '#ParentingPlan', '#ParentingTime', '#LegalCustody'],
+        'support': ['#ChildSupport', '#Alimony', '#Mediation', '#DivorceCoach', '#DivorceCommunity', '#DivorceAttorney']
     }
 
 def get_dadassist_urls():
@@ -36,7 +37,7 @@ def generate_twitter_post(article):
     hashtags = get_mandatory_hashtags()
     
     # Twitter-optimized hashtags (3 max for best engagement)
-    twitter_tags = f"{hashtags['core'][0]} {hashtags['brand'][0]} {hashtags['core'][3]}"  # #UnbrokenDad #FathersRights #ForTheKids
+    twitter_tags = f"{hashtags['aspirational'][0]} {hashtags['legal'][4]} {hashtags['divorce'][0]}"  # #UnbrokenDad #FathersRights #Divorce
     
     # Create post with SubmitForm.html reference
     post = f"""⚖️ {title}
@@ -67,7 +68,7 @@ Get personalized legal guidance.
         'platform': 'twitter',
         'content': post,
         'character_count': len(post),
-        'hashtags': [hashtags['core'][0], hashtags['brand'][0], hashtags['core'][3]],
+        'hashtags': [hashtags['aspirational'][0], hashtags['legal'][4], hashtags['divorce'][0]],
         'links': [urls['form'], article.get('url', f"{urls['website']}/posts/articles/")]
     }
 
@@ -79,7 +80,7 @@ def generate_facebook_post(article):
     hashtags = get_mandatory_hashtags()
     
     # Facebook hashtags (5-6 for better reach)
-    fb_tags = f"{hashtags['core'][0]} {hashtags['brand'][0]} {hashtags['aspirational'][0]} {hashtags['legal'][0]} {hashtags['brand'][2]}"  # #UnbrokenDad #FathersRights #Leadership #FamilyCourt #CycleBreakers
+    fb_tags = f"{hashtags['aspirational'][0]} {hashtags['legal'][4]} {hashtags['divorce'][0]} {hashtags['custody'][0]} {hashtags['legal'][1]}"  # #UnbrokenDad #FathersRights #Divorce #JointCustody #FamilyCourt
     
     post = f"""📚 New Legal Resource: {title}
 
@@ -99,7 +100,7 @@ At DadAssist, we empower Australian fathers with expert legal support and practi
         'platform': 'facebook',
         'content': post,
         'character_count': len(post),
-        'hashtags': [hashtags['core'][0], hashtags['brand'][0], hashtags['aspirational'][0], hashtags['legal'][0], hashtags['brand'][2]],
+        'hashtags': [hashtags['aspirational'][0], hashtags['legal'][4], hashtags['divorce'][0], hashtags['custody'][0], hashtags['legal'][1]],
         'links': [urls['form'], article.get('url', f"{urls['website']}/posts/articles/")]
     }
 
@@ -110,8 +111,9 @@ def generate_instagram_post(article):
     urls = get_dadassist_urls()
     hashtags = get_mandatory_hashtags()
     
-    # Instagram hashtags (10+ optimal for engagement)
-    all_hashtags = hashtags['core'] + hashtags['brand'] + hashtags['aspirational'] + hashtags['legal'] + ['#Parenting', '#Breakup']
+    # Instagram hashtags (15+ optimal for engagement)
+    all_hashtags = (hashtags['aspirational'][:3] + hashtags['legal'][:4] + 
+                   hashtags['divorce'][:3] + hashtags['custody'][:3] + hashtags['support'][:2])
     ig_tags = ' '.join(all_hashtags)
     
     caption = f"""📖 New Guide for Fathers: {title}
