@@ -16,12 +16,19 @@ def load_config():
         return json.load(f)
 
 def run_google_search_scraper(client, config):
-    """Run Google Search Results Scraper to find legal articles"""
+    """Run Google Search Results Scraper with cycling search queries"""
     print("🔍 Starting Google search for legal content...")
+    
+    # Get current search from rotation
+    search_rotation = config["search_rotation"]
+    current_index = search_rotation["current_search"]
+    current_query = search_rotation["searches"][current_index]
+    
+    print(f"📋 Using search query #{current_index + 1}: {current_query}")
     
     # Configure search input
     search_input = {
-        "queries": config["search_queries"],
+        "queries": current_query,
         "maxPagesPerQuery": config["scraping_settings"]["max_pages_per_query"],
         "resultsPerPage": config["scraping_settings"]["results_per_page"],
         "countryCode": config["scraping_settings"]["country_code"],
@@ -144,6 +151,24 @@ def save_results_simple(filtered_urls, config):
     print(f"✅ Saved {len(filtered_urls)} URLs to {results_dir}")
     return results_dir, len(filtered_urls)
 
+def update_search_rotation(config):
+    """Update the search rotation to use next query"""
+    search_rotation = config["search_rotation"]
+    current_index = search_rotation["current_search"]
+    total_searches = len(search_rotation["searches"])
+    
+    # Move to next search (cycle back to 0 after last search)
+    next_index = (current_index + 1) % total_searches
+    config["search_rotation"]["current_search"] = next_index
+    
+    print(f"🔄 Updated search rotation: {current_index + 1} → {next_index + 1}")
+    
+    # Save updated config
+    with open('config/apify_config.json', 'w') as f:
+        json.dump(config, f, indent=2)
+    
+    return next_index
+
 def main():
     """Main scraping function"""
     print("🚀 Starting DadAssist content scraping...")
@@ -191,6 +216,9 @@ def main():
         
         with open("downloads/latest_run.json", 'w') as f:
             json.dump(run_info, f, indent=2)
+        
+        # Update search rotation for next run
+        update_search_rotation(config)
         
         return True
         
