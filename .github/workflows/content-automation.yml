@@ -109,7 +109,27 @@ jobs:
           echo "📝 Extracted article: $TITLE"
           echo "📊 Content length: $(echo "$CONTENT" | wc -c) characters"
 
+      - name: Check for Duplicate Articles
+        run: |
+          # Generate filename from title for duplicate check
+          CLEAN_TITLE=$(echo "${{ env.ARTICLE_TITLE }}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
+          FILENAME="${CLEAN_TITLE}.html"
+          
+          echo "🔍 Checking for duplicate article: $FILENAME"
+          
+          # Check if article already exists on website
+          if curl -s --head "https://dadassist.com.au/posts/articles/$FILENAME" | grep -q "200 OK"; then
+            echo "⚠️ Article already exists: https://dadassist.com.au/posts/articles/$FILENAME"
+            echo "SKIP_GENERATION=true" >> $GITHUB_ENV
+          else
+            echo "✅ New article - proceeding with generation"
+            echo "SKIP_GENERATION=false" >> $GITHUB_ENV
+          fi
+          
+          echo "ARTICLE_FILENAME=$FILENAME" >> $GITHUB_ENV
+
       - name: Generate Article on Ubuntu Server
+        if: env.SKIP_GENERATION == 'false'
         uses: appleboy/ssh-action@v0.1.5
         with:
           host: 13.239.163.33
@@ -135,7 +155,14 @@ jobs:
               exit 1
             fi
             
+      - name: Skip Duplicate Article
+        if: env.SKIP_GENERATION == 'true'
+        run: |
+          echo "⏭️ Skipping article generation - duplicate detected"
+          echo "🔄 Search rotation will advance to next query for fresh content"
+          
       - name: Trigger Social Media Detection
+        if: env.SKIP_GENERATION == 'false'
         if: success()
         run: |
           echo "🚀 Triggering social media detection workflow..."
