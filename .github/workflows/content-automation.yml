@@ -162,8 +162,7 @@ jobs:
           echo "🔄 Search rotation will advance to next query for fresh content"
           
       - name: Trigger Social Media Detection
-        if: env.SKIP_GENERATION == 'false'
-        if: success()
+        if: env.SKIP_GENERATION == 'false' && success()
         run: |
           echo "🚀 Triggering social media detection workflow..."
           
