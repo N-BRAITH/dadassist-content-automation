@@ -107,10 +107,6 @@ def filter_search_results(client, dataset_id, config):
                 'position': item.get('position', 0),
                 'date': item.get('date', '')
             })
-            
-            # Stop after finding the first quality article
-            if len(filtered_urls) >= 1:
-                break
     
     # Limit to max articles per run
     max_articles = config["scraping_settings"]["max_articles_per_run"]
