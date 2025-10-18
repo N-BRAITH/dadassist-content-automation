@@ -95,38 +95,62 @@ jobs:
         run: |
           python scripts/notifier.py
           
-      - name: Extract Content for Article Generation
+      - name: Process Articles with Duplicate Checking
         run: |
-          # Extract first article from scraped content
-          CONTENT=$(jq -r '.articles[0].content' downloads/*/q_developer_input.json)
-          TITLE=$(jq -r '.articles[0].title' downloads/*/q_developer_input.json)
+          echo "🔍 Processing scraped articles with duplicate checking..."
           
-          echo "ARTICLE_CONTENT<<EOF" >> $GITHUB_ENV
-          echo "$CONTENT" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          echo "ARTICLE_TITLE=$TITLE" >> $GITHUB_ENV
-          
-          echo "📝 Extracted article: $TITLE"
-          echo "📊 Content length: $(echo "$CONTENT" | wc -c) characters"
-
-      - name: Check for Duplicate Articles
-        run: |
-          # Generate filename from title for duplicate check
-          CLEAN_TITLE=$(echo "${{ env.ARTICLE_TITLE }}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
-          FILENAME="${CLEAN_TITLE}.html"
-          
-          echo "🔍 Checking for duplicate article: $FILENAME"
-          
-          # Check if article already exists on website
-          if curl -s --head "https://dadassist.com.au/posts/articles/$FILENAME" | grep -q "200 OK"; then
-            echo "⚠️ Article already exists: https://dadassist.com.au/posts/articles/$FILENAME"
-            echo "SKIP_GENERATION=true" >> $GITHUB_ENV
-          else
-            echo "✅ New article - proceeding with generation"
-            echo "SKIP_GENERATION=false" >> $GITHUB_ENV
+          # Load all articles from content downloader
+          if [ ! -f downloads/*/q_developer_input.json ]; then
+            echo "❌ No articles found to process"
+            exit 1
           fi
           
-          echo "ARTICLE_FILENAME=$FILENAME" >> $GITHUB_ENV
+          # Get total article count
+          TOTAL_ARTICLES=$(jq '.articles | length' downloads/*/q_developer_input.json)
+          echo "📋 Found $TOTAL_ARTICLES articles to check"
+          
+          # Loop through articles until we find a non-duplicate
+          ARTICLE_GENERATED=false
+          
+          for i in $(seq 0 $((TOTAL_ARTICLES-1))); do
+            echo "🔍 Checking article $((i+1))/$TOTAL_ARTICLES..."
+            
+            # Extract article data
+            CONTENT=$(jq -r ".articles[$i].content" downloads/*/q_developer_input.json)
+            TITLE=$(jq -r ".articles[$i].title" downloads/*/q_developer_input.json)
+            
+            # Generate filename for duplicate check
+            CLEAN_TITLE=$(echo "$TITLE" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
+            FILENAME="${CLEAN_TITLE}.html"
+            
+            echo "   Title: $TITLE"
+            echo "   Filename: $FILENAME"
+            
+            # Check if article already exists
+            if curl -s --head "https://dadassist.com.au/posts/articles/$FILENAME" | grep -q "200 OK"; then
+              echo "   ⚠️ Duplicate found - trying next article"
+              continue
+            else
+              echo "   ✅ Unique article found - proceeding with generation"
+              
+              # Set environment variables for article generation
+              echo "ARTICLE_CONTENT<<EOF" >> $GITHUB_ENV
+              echo "$CONTENT" >> $GITHUB_ENV
+              echo "EOF" >> $GITHUB_ENV
+              
+              echo "ARTICLE_TITLE=$TITLE" >> $GITHUB_ENV
+              echo "ARTICLE_FILENAME=$FILENAME" >> $GITHUB_ENV
+              echo "SKIP_GENERATION=false" >> $GITHUB_ENV
+              
+              ARTICLE_GENERATED=true
+              break
+            fi
+          done
+          
+          if [ "$ARTICLE_GENERATED" = false ]; then
+            echo "⚠️ All articles are duplicates - no new content to generate"
+            echo "SKIP_GENERATION=true" >> $GITHUB_ENV
+          fi
 
       - name: Generate Article on Ubuntu Server
         if: env.SKIP_GENERATION == 'false'

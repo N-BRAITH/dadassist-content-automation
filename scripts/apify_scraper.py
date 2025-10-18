@@ -7,6 +7,7 @@ Handles web scraping using Apify API for legal content discovery
 import os
 import json
 import time
+import random
 from datetime import datetime
 from apify_client import ApifyClient
 
@@ -122,8 +123,41 @@ def filter_search_results(client, dataset_id, config):
     return filtered_urls
 
 def save_results_simple(filtered_urls, config):
-    """Save filtered URLs without content extraction for testing"""
-    print("💾 Saving filtered results...")
+    """Save filtered URLs with randomization and duplicate URL prevention"""
+    print("💾 Saving filtered results with randomization...")
+    
+    if not filtered_urls:
+        print("⚠️  No URLs to save")
+        return None, 0
+    
+    # Load previously used URLs to avoid repeats
+    used_urls_file = 'downloads/used_urls.json'
+    used_urls = set()
+    
+    try:
+        if os.path.exists(used_urls_file):
+            with open(used_urls_file, 'r') as f:
+                used_urls = set(json.load(f))
+    except:
+        used_urls = set()
+    
+    # Filter out previously used URLs
+    fresh_urls = [url for url in filtered_urls if url['url'] not in used_urls]
+    
+    if not fresh_urls:
+        print("⚠️  All URLs have been used recently - using original list")
+        fresh_urls = filtered_urls
+    
+    # Randomize selection from available URLs
+    max_articles = config["scraping_settings"]["max_articles_per_run"]
+    
+    if len(fresh_urls) > max_articles:
+        # Randomly select articles instead of taking first ones
+        selected_urls = random.sample(fresh_urls, max_articles)
+        print(f"🎲 Randomly selected {max_articles} articles from {len(fresh_urls)} available")
+    else:
+        selected_urls = fresh_urls
+        print(f"📋 Using all {len(selected_urls)} available articles")
     
     # Create results directory
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -133,20 +167,32 @@ def save_results_simple(filtered_urls, config):
     # Save results
     results_file = f"{results_dir}/filtered_urls.json"
     with open(results_file, 'w', encoding='utf-8') as f:
-        json.dump(filtered_urls, f, indent=2, ensure_ascii=False)
+        json.dump(selected_urls, f, indent=2, ensure_ascii=False)
     
     # Save summary
     summary = {
         "timestamp": timestamp,
-        "total_urls": len(filtered_urls),
+        "total_urls": len(selected_urls),
         "urls": [{"title": item.get('title'), "url": item.get('url'), "description": item.get('description')} 
-                for item in filtered_urls],
+                for item in selected_urls],
         "config_used": config
     }
     
     summary_file = f"{results_dir}/summary.json"
     with open(summary_file, 'w', encoding='utf-8') as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
+    
+    # Update used URLs list
+    new_used_urls = list(used_urls) + [url['url'] for url in selected_urls]
+    # Keep only last 100 URLs to prevent file from growing too large
+    if len(new_used_urls) > 100:
+        new_used_urls = new_used_urls[-100:]
+    
+    with open(used_urls_file, 'w') as f:
+        json.dump(new_used_urls, f, indent=2)
+    
+    print(f"✅ Saved {len(selected_urls)} URLs to {results_dir}")
+    print(f"🔄 Updated used URLs list ({len(new_used_urls)} total tracked)")
     
     print(f"✅ Saved {len(filtered_urls)} URLs to {results_dir}")
     return results_dir, len(filtered_urls)
