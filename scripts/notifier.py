@@ -12,6 +12,57 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 
+def get_article_section(article_title, article_content=""):
+    """Determine which index section the article belongs to based on content"""
+    
+    # Define section keywords
+    sections = {
+        "👨‍👧‍👦 Parenting Arrangements": [
+            "parenting", "custody", "child contact", "visitation", "parenting plan", 
+            "joint custody", "sole custody", "parenting time", "child arrangements"
+        ],
+        "🏠 Property Settlement": [
+            "property", "assets", "financial", "settlement", "division", "superannuation",
+            "binding financial agreement", "prenup", "postnup", "asset protection"
+        ],
+        "⚖️ Legal Procedures": [
+            "court", "legal process", "application", "orders", "mediation", "lawyer",
+            "family court", "legal advice", "representation", "proceedings"
+        ],
+        "💰 Child Support": [
+            "child support", "maintenance", "financial support", "payment", "assessment",
+            "child support agency", "spousal maintenance", "alimony"
+        ],
+        "🚨 Family Violence": [
+            "family violence", "intervention order", "domestic violence", "protection order",
+            "safety", "abuse", "restraining order", "violence"
+        ],
+        "🧠 Mental Health": [
+            "mental health", "wellbeing", "stress", "anxiety", "depression", "counselling",
+            "therapy", "support", "emotional", "psychological"
+        ],
+        "💪 Self Care": [
+            "self care", "coping", "resilience", "health", "fitness", "lifestyle",
+            "personal development", "recovery", "healing"
+        ]
+    }
+    
+    # Combine title and content for analysis
+    text_to_analyze = f"{article_title} {article_content}".lower()
+    
+    # Score each section based on keyword matches
+    section_scores = {}
+    for section, keywords in sections.items():
+        score = sum(1 for keyword in keywords if keyword in text_to_analyze)
+        if score > 0:
+            section_scores[section] = score
+    
+    # Return the section with highest score, or default
+    if section_scores:
+        return max(section_scores, key=section_scores.get)
+    else:
+        return "⚖️ Legal Procedures"  # Default section
+
 def load_run_summary():
     """Load the run summary created by GitHub Actions"""
     try:

@@ -93,6 +93,22 @@ def save_posting_results(all_results, dry_run=True):
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     filename = f'social-media/results/posting_results_{timestamp}.json'
     
+    # Import section detection function
+    import sys
+    sys.path.append('scripts')
+    from notifier import get_article_section
+    
+    # Add section information to results
+    for result in all_results:
+        if 'article' in result:
+            article = result['article']
+            article_title = article.get('title', '')
+            article_content = article.get('content', '')
+            
+            # Determine which section this article belongs to
+            section = get_article_section(article_title, article_content)
+            result['index_section'] = section
+    
     summary = {
         'run_date': datetime.now().isoformat(),
         'dry_run': dry_run,
