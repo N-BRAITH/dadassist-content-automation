@@ -143,7 +143,7 @@ def generate_tiktok_post(article):
     hashtags = get_mandatory_hashtags()
     
     # TikTok hashtags (casual + brand)
-    tiktok_tags = f"{hashtags['core'][2]} {hashtags['brand'][0]} #DadTok #LegalAdvice"  # #Parenting #FathersRights #DadTok #LegalAdvice
+    tiktok_tags = f"{hashtags['aspirational'][1]} {hashtags['legal'][4]} #DadTok #LegalAdvice"  # #Fatherhood #FathersRights #DadTok #LegalAdvice
     
     caption = f"""📚 {title}
 
@@ -160,7 +160,7 @@ Check bio for SubmitForm link 👆
         'content': caption,
         'character_count': len(caption),
         'video_suggestion': f"Text overlay video with key points from: '{title}' + DadAssist branding",
-        'hashtags': ['#Parenting', '#FathersRights', '#DadTok', '#LegalAdvice'],
+        'hashtags': ['#Fatherhood', '#FathersRights', '#DadTok', '#LegalAdvice'],
         'links': [urls['website'], urls['form']]
     }
 
