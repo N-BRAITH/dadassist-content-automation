@@ -5,6 +5,9 @@
 
 name: Weekly Social Media Posts
 
+permissions:
+  contents: write
+
 on:
   repository_dispatch:
     types: [post_article]  # Triggered by content automation workflow
@@ -36,17 +39,22 @@ jobs:
           # Extract filename from URL
           FILENAME=$(echo "${{ github.event.client_payload.url }}" | sed 's|.*/||')
           
-          # Create social media post data
+          # Create social media post data matching detect_new_articles.py format
           mkdir -p social-media
           echo '{
+            "detection_date": "'$(date -u +"%Y-%m-%dT%H:%M:%S.%fZ")'",
             "new_articles_count": 1,
             "new_articles": [{
+              "filename": "'$FILENAME'",
               "title": "${{ github.event.client_payload.title }}",
+              "description": "Expert legal advice for Australian fathers",
               "url": "${{ github.event.client_payload.url }}",
-              "category": "${{ github.event.client_payload.category }}",
-              "filename": "'$FILENAME'"
+              "discovered_date": "'$(date -u +"%Y-%m-%dT%H:%M:%S.%fZ")'"
             }]
           }' > social-media/new_articles_found.json
+          
+          echo "✅ Created social media data file"
+          cat social-media/new_articles_found.json
           
       - name: Generate social media posts
         env:
@@ -58,6 +66,34 @@ jobs:
           FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
         run: |
           python scripts/social_media_poster.py
+          
+      - name: Upload post results as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: social-media-posts-${{ github.run_number }}
+          path: |
+            social-media/
+          retention-days: 30
+          
+      - name: Update article tracking
+        run: |
+          # Create/update previous articles list
+          if [ ! -f social-media/previous_articles.json ]; then
+            echo '[]' > social-media/previous_articles.json
+          fi
+          
+          # Add new article to previous articles list
+          jq '. += [{"filename": "'$FILENAME'", "title": "${{ github.event.client_payload.title }}", "url": "${{ github.event.client_payload.url }}"}]' social-media/previous_articles.json > temp.json
+          mv temp.json social-media/previous_articles.json
+          
+      - name: Commit updated files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add social-media/previous_articles.json
+          git diff --staged --quiet || git commit -m "Update article list after social media posting"
+          git push
           
       - name: Upload post results as artifact
         uses: actions/upload-artifact@v4
