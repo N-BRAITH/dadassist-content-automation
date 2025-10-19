@@ -1,8 +1,8 @@
 # Complete DadAssist Automation Workflow
-# Version: 3.2.0
+# Version: 3.3.0
 # Last Updated: 2024-10-19
 # Features: Content scraping, article generation, social media posting in one workflow
-# Updated: Fixed URL extraction using server file method
+# Updated: Fixed URL capture using file-based method
 
 name: Complete DadAssist Automation
 
@@ -26,9 +26,9 @@ jobs:
       - name: Display Workflow Version
         run: |
           echo "🚀 Complete DadAssist Automation Workflow"
-          echo "📋 Version: 3.2.0"
+          echo "📋 Version: 3.3.0"
           echo "📅 Last Updated: 2024-10-19"
-          echo "🔧 Features: URL extraction using server file method"
+          echo "🔧 Features: Fixed URL capture using file-based method"
           echo "==========================================="
         
       - name: Set up Python
@@ -226,8 +226,8 @@ jobs:
                 echo "⚠️ HTML file not found at expected location"
               fi
               
-              # Write URL to GitHub environment file
-              echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_ENV
+              # Write URL to a temporary file for retrieval
+              echo "$ARTICLE_URL" > /tmp/generated_article_url.txt
               
               echo "✅ Article generation completed successfully"
               exit 0
@@ -237,17 +237,32 @@ jobs:
               exit 1
             fi
             
-      - name: Verify Article URL
+      - name: Retrieve Article URL
+        if: env.SKIP_GENERATION == 'false'
+        id: retrieve_url
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: 13.239.163.33
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "🔍 Retrieving generated article URL..."
+            if [ -f /tmp/generated_article_url.txt ]; then
+              ARTICLE_URL=$(cat /tmp/generated_article_url.txt)
+              echo "🌐 Retrieved URL: $ARTICLE_URL"
+              echo "ARTICLE_URL=$ARTICLE_URL"
+            else
+              echo "❌ URL file not found"
+              exit 1
+            fi
+            
+      - name: Set Article URL
         if: env.SKIP_GENERATION == 'false'
         run: |
-          echo "🔍 Checking if article URL was captured..."
-          echo "🌐 Article URL: ${{ env.ARTICLE_URL }}"
-          if [ -z "${{ env.ARTICLE_URL }}" ]; then
-            echo "❌ Article URL is still empty!"
-            exit 1
-          else
-            echo "✅ Article URL captured successfully"
-          fi
+          echo "🔍 Extracting URL from SSH output..."
+          ARTICLE_URL=$(echo '${{ steps.retrieve_url.outputs.stdout }}' | grep "ARTICLE_URL=" | cut -d'=' -f2-)
+          echo "🌐 Final URL: $ARTICLE_URL"
+          echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_ENV
             
       - name: Post to Social Media
         if: env.SKIP_GENERATION == 'false'
@@ -307,7 +322,7 @@ jobs:
           echo "📊 WORKFLOW SUMMARY"
           echo "==================="
           echo "📅 Completion time: $(date)"
-          echo "🔧 Workflow version: 3.2.0"
+          echo "🔧 Workflow version: 3.3.0"
           
           if [ "${{ env.SKIP_GENERATION }}" = "true" ]; then
             echo "⚠️ RESULT: No new articles generated - all were duplicates"
