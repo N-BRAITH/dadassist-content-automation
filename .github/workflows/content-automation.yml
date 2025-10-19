@@ -173,11 +173,30 @@ jobs:
               ARTICLE_URL=$(echo "$RESULT" | grep "SUCCESS:" | cut -d':' -f2)
               echo "🎉 Article generated successfully!"
               echo "🌐 Live URL: $ARTICLE_URL"
+              echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_ENV
               exit 0
             else
               echo "❌ Article generation failed"
               exit 1
             fi
+            
+      - name: Trigger Social Media Posting
+        if: env.SKIP_GENERATION == 'false'
+        run: |
+          echo "🚀 Triggering social media posting for new article..."
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/dispatches \
+            -d '{
+              "event_type": "post_article",
+              "client_payload": {
+                "title": "${{ env.ARTICLE_TITLE }}",
+                "url": "${{ env.ARTICLE_URL }}",
+                "category": "Legal Procedures"
+              }
+            }'
+          echo "✅ Social media posting triggered"
             
       - name: Skip Duplicate Article
         if: env.SKIP_GENERATION == 'true'

@@ -1,13 +1,13 @@
 # DadAssist Social Media Automation Workflow
-# Version: 1.0.0
-# Last Updated: 2024-12-18
+# Version: 2.0.0
+# Last Updated: 2024-10-19
 # Features: X/Twitter, Facebook, TikTok posting for new articles
 
 name: Weekly Social Media Posts
 
 on:
-  schedule:
-    - cron: '0 18 * * 2'  # Every Tuesday at 6 PM UTC
+  repository_dispatch:
+    types: [post_article]  # Triggered by content automation workflow
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
@@ -27,9 +27,22 @@ jobs:
         run: |
           pip install requests beautifulsoup4 tweepy facebook-sdk
           
-      - name: Detect new articles
+      - name: Process Article for Social Media
         run: |
-          python scripts/detect_new_articles.py
+          echo "📝 Article: ${{ github.event.client_payload.title }}"
+          echo "🌐 URL: ${{ github.event.client_payload.url }}"
+          echo "📂 Category: ${{ github.event.client_payload.category }}"
+          
+          # Create social media post data
+          mkdir -p social-media
+          echo '{
+            "new_articles_count": 1,
+            "articles": [{
+              "title": "${{ github.event.client_payload.title }}",
+              "url": "${{ github.event.client_payload.url }}",
+              "category": "${{ github.event.client_payload.category }}"
+            }]
+          }' > social-media/new_articles_found.json
           
       - name: Generate social media posts
         env:

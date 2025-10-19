@@ -1,7 +1,6 @@
 # DadAssist Social Media - Article Detection
 # Version: 1.1.0
-# Runs every Tuesday to detect new articles for social media posting
-# Also triggered immediately when new articles are created
+# Backup detection workflow - not scheduled, kept for manual use only
 
 name: Social Media Article Detection
 
@@ -9,9 +8,7 @@ permissions:
   contents: write
 
 on:
-  schedule:
-    - cron: '0 18 * * 2'  # Every Tuesday at 6 PM UTC
-  workflow_dispatch:  # Allow manual triggering
+  workflow_dispatch:  # Allow manual triggering only
   repository_dispatch:
     types: [article_created]  # Triggered by article generation workflow
 
