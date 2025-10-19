@@ -1,8 +1,8 @@
 # Complete DadAssist Automation Workflow
-# Version: 3.1.1
+# Version: 3.2.0
 # Last Updated: 2024-10-19
 # Features: Content scraping, article generation, social media posting in one workflow
-# Updated: Fixed URL extraction and social media posting integration
+# Updated: Fixed URL extraction using server file method
 
 name: Complete DadAssist Automation
 
@@ -22,6 +22,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        
+      - name: Display Workflow Version
+        run: |
+          echo "🚀 Complete DadAssist Automation Workflow"
+          echo "📋 Version: 3.2.0"
+          echo "📅 Last Updated: 2024-10-19"
+          echo "🔧 Features: URL extraction using server file method"
+          echo "==========================================="
         
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -143,8 +151,10 @@ jobs:
             CONTENT=$(jq -r ".articles[$i].content" downloads/*/q_developer_input.json)
             TITLE=$(jq -r ".articles[$i].title" downloads/*/q_developer_input.json)
             
-            # Generate filename for duplicate check
+            # Generate filename for duplicate check (match server logic)
             CLEAN_TITLE=$(echo "$TITLE" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
+            # Remove hyphens around numbers to match server behavior (50-50 becomes 5050)
+            CLEAN_TITLE=$(echo "$CLEAN_TITLE" | sed 's/\([0-9]\)-\([0-9]\)/\1\2/g')
             FILENAME="${CLEAN_TITLE}.html"
             
             echo "   Title: $TITLE"
@@ -216,8 +226,8 @@ jobs:
                 echo "⚠️ HTML file not found at expected location"
               fi
               
-              # Output URL for next step (use echo instead of redirect)
-              echo "ARTICLE_URL=$ARTICLE_URL"
+              # Write URL to GitHub environment file
+              echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_ENV
               
               echo "✅ Article generation completed successfully"
               exit 0
@@ -227,13 +237,17 @@ jobs:
               exit 1
             fi
             
-      - name: Extract Article URL
+      - name: Verify Article URL
         if: env.SKIP_GENERATION == 'false'
         run: |
-          echo "🔍 Extracting article URL from SSH output..."
-          ARTICLE_URL=$(echo '${{ steps.generate_article.outputs.stdout }}' | grep "ARTICLE_URL=" | cut -d'=' -f2-)
-          echo "🌐 Extracted URL: $ARTICLE_URL"
-          echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_ENV
+          echo "🔍 Checking if article URL was captured..."
+          echo "🌐 Article URL: ${{ env.ARTICLE_URL }}"
+          if [ -z "${{ env.ARTICLE_URL }}" ]; then
+            echo "❌ Article URL is still empty!"
+            exit 1
+          else
+            echo "✅ Article URL captured successfully"
+          fi
             
       - name: Post to Social Media
         if: env.SKIP_GENERATION == 'false'
@@ -293,7 +307,7 @@ jobs:
           echo "📊 WORKFLOW SUMMARY"
           echo "==================="
           echo "📅 Completion time: $(date)"
-          echo "🔧 Workflow version: 3.0.0"
+          echo "🔧 Workflow version: 3.2.0"
           
           if [ "${{ env.SKIP_GENERATION }}" = "true" ]; then
             echo "⚠️ RESULT: No new articles generated - all were duplicates"
