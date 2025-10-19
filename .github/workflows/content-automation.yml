@@ -154,6 +154,7 @@ jobs:
 
       - name: Generate Article on Ubuntu Server
         if: env.SKIP_GENERATION == 'false'
+        id: generate_article
         uses: appleboy/ssh-action@v0.1.5
         with:
           host: 13.239.163.33
@@ -170,10 +171,10 @@ jobs:
             echo "$RESULT"
             
             if echo "$RESULT" | grep -q "SUCCESS:"; then
-              ARTICLE_URL=$(echo "$RESULT" | grep "SUCCESS:" | cut -d':' -f2)
+              ARTICLE_URL=$(echo "$RESULT" | grep "SUCCESS:" | sed 's/.*SUCCESS: *//')
               echo "🎉 Article generated successfully!"
               echo "🌐 Live URL: $ARTICLE_URL"
-              echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_ENV
+              echo "::set-output name=article_url::$ARTICLE_URL"
               exit 0
             else
               echo "❌ Article generation failed"
@@ -192,7 +193,7 @@ jobs:
               "event_type": "post_article",
               "client_payload": {
                 "title": "${{ env.ARTICLE_TITLE }}",
-                "url": "${{ env.ARTICLE_URL }}",
+                "url": "${{ steps.generate_article.outputs.article_url }}",
                 "category": "Legal Procedures"
               }
             }'

@@ -37,7 +37,7 @@ jobs:
           mkdir -p social-media
           echo '{
             "new_articles_count": 1,
-            "articles": [{
+            "new_articles": [{
               "title": "${{ github.event.client_payload.title }}",
               "url": "${{ github.event.client_payload.url }}",
               "category": "${{ github.event.client_payload.category }}"
