@@ -203,11 +203,20 @@ jobs:
               echo "🎉 Article generated successfully!"
               echo "🌐 Live URL: $ARTICLE_URL"
               echo "📏 URL length: $(echo $ARTICLE_URL | wc -c) characters"
-              echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_OUTPUT
               
-              # Print the generated HTML filename for debugging
-              echo "📄 Generated HTML filename: ${{ env.ARTICLE_FILENAME }}"
-              echo "📊 HTML file size: $(wc -c < /var/www/dadassist/posts/articles/${{ env.ARTICLE_FILENAME }}) bytes"
+              # Extract actual filename from the URL for file operations
+              ACTUAL_FILENAME=$(echo "$ARTICLE_URL" | sed 's|.*/||')
+              echo "📄 Generated HTML filename: $ACTUAL_FILENAME"
+              
+              # Check file size using actual filename
+              if [ -f "/var/www/dadassist/posts/articles/$ACTUAL_FILENAME" ]; then
+                echo "📊 HTML file size: $(wc -c < /var/www/dadassist/posts/articles/$ACTUAL_FILENAME) bytes"
+              else
+                echo "⚠️ HTML file not found at expected location"
+              fi
+              
+              # Output URL for next step (use echo instead of redirect)
+              echo "ARTICLE_URL=$ARTICLE_URL"
               
               echo "✅ Article generation completed successfully"
               exit 0
@@ -216,6 +225,14 @@ jobs:
               echo "🔍 Full result output above for debugging"
               exit 1
             fi
+            
+      - name: Extract Article URL
+        if: env.SKIP_GENERATION == 'false'
+        run: |
+          echo "🔍 Extracting article URL from SSH output..."
+          ARTICLE_URL=$(echo '${{ steps.generate_article.outputs.stdout }}' | grep "ARTICLE_URL=" | cut -d'=' -f2-)
+          echo "🌐 Extracted URL: $ARTICLE_URL"
+          echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_ENV
             
       - name: Post to Social Media
         if: env.SKIP_GENERATION == 'false'
@@ -230,12 +247,12 @@ jobs:
         run: |
           echo "📱 Starting social media posting..."
           echo "📅 Timestamp: $(date)"
-          echo "🌐 Article URL: ${{ steps.generate_article.outputs.ARTICLE_URL }}"
+          echo "🌐 Article URL: ${{ env.ARTICLE_URL }}"
           echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
           echo "📂 Article Filename: ${{ env.ARTICLE_FILENAME }}"
           
           # Validate URL
-          if [ -z "${{ steps.generate_article.outputs.ARTICLE_URL }}" ]; then
+          if [ -z "${{ env.ARTICLE_URL }}" ]; then
             echo "❌ ERROR: Article URL is empty!"
             exit 1
           fi
@@ -250,7 +267,7 @@ jobs:
               "filename": "${{ env.ARTICLE_FILENAME }}",
               "title": "${{ env.ARTICLE_TITLE }}",
               "description": "Expert legal advice for Australian fathers",
-              "url": "${{ steps.generate_article.outputs.ARTICLE_URL }}",
+              "url": "${{ env.ARTICLE_URL }}",
               "discovered_date": "'$(date -u +"%Y-%m-%dT%H:%M:%S.%fZ")'"
             }]
           }' > social-media/new_articles_found.json
@@ -282,7 +299,7 @@ jobs:
             echo "🔄 Next run will try different content sources"
           else
             echo "✅ RESULT: Article generated and posted to social media"
-            echo "🌐 Article URL: ${{ steps.generate_article.outputs.ARTICLE_URL }}"
+            echo "🌐 Article URL: ${{ env.ARTICLE_URL }}"
             echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
             echo "📂 Article Filename: ${{ env.ARTICLE_FILENAME }}"
             echo "📱 Social media posting: Completed"
