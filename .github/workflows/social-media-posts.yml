@@ -33,6 +33,9 @@ jobs:
           echo "🌐 URL: ${{ github.event.client_payload.url }}"
           echo "📂 Category: ${{ github.event.client_payload.category }}"
           
+          # Extract filename from URL
+          FILENAME=$(echo "${{ github.event.client_payload.url }}" | sed 's|.*/||')
+          
           # Create social media post data
           mkdir -p social-media
           echo '{
@@ -40,7 +43,8 @@ jobs:
             "new_articles": [{
               "title": "${{ github.event.client_payload.title }}",
               "url": "${{ github.event.client_payload.url }}",
-              "category": "${{ github.event.client_payload.category }}"
+              "category": "${{ github.event.client_payload.category }}",
+              "filename": "'$FILENAME'"
             }]
           }' > social-media/new_articles_found.json
           
