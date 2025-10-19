@@ -1,0 +1,292 @@
+# Complete DadAssist Automation Workflow
+# Version: 3.0.0
+# Last Updated: 2024-10-19
+# Features: Content scraping, article generation, social media posting in one workflow
+
+name: Complete DadAssist Automation
+
+permissions:
+  contents: write
+  actions: write
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Every Monday at 9 AM UTC
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  complete-automation:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          
+      - name: Run Apify scraper
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+        run: |
+          echo "🕷️ Starting Apify scraper..."
+          echo "📅 Timestamp: $(date)"
+          python scripts/apify_scraper.py
+          echo "✅ Apify scraper completed"
+          
+      - name: Download and extract content
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+        run: |
+          echo "📥 Starting content download..."
+          echo "📅 Timestamp: $(date)"
+          python scripts/content_downloader.py
+          echo "✅ Content download completed"
+          echo "📊 Checking downloaded files..."
+          ls -la downloads/ || echo "No downloads directory found"
+          
+      - name: Create run summary
+        run: |
+          echo "📋 Creating run summary..."
+          echo "📅 Timestamp: $(date)"
+          python -c "
+          import json
+          import os
+          from datetime import datetime
+          
+          print('🔍 Loading run info...')
+          # Load run info
+          with open('downloads/latest_run.json', 'r') as f:
+              run_info = json.load(f)
+          
+          print('🔍 Loading config...')
+          # Load config for summary
+          with open('config/apify_config.json', 'r') as f:
+              config = json.load(f)
+          
+          print('📊 Creating summary...')
+          # Create summary for email
+          summary = {
+              'automation_version': config.get('version', '1.0.0'),
+              'config_last_updated': config.get('last_updated', 'unknown'),
+              'run_date': datetime.now().isoformat(),
+              'success': run_info.get('success', False),
+              'articles_found': run_info.get('url_count', 0),
+              'quality_articles': run_info.get('quality_articles', 0),
+              'search_rotation': config.get('search_rotation', {}),
+              'current_search': config.get('search_rotation', {}).get('current_search', 0),
+              'results_directory': run_info.get('results_dir', ''),
+              'categories': run_info.get('categories', {}),
+              'extraction_method': run_info.get('extraction_method', 'unknown'),
+              'smtp_provider': config.get('email_settings', {}).get('smtp_provider', 'amazon_ses')
+          }
+          
+          with open('run_summary.json', 'w') as f:
+              json.dump(summary, f, indent=2)
+          
+          print(f'✅ Summary created: {summary[\"articles_found\"]} articles found (v{summary[\"automation_version\"]})')
+          "
+          echo "✅ Run summary completed"
+          
+      - name: Upload content artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: extracted-articles-${{ github.run_number }}
+          path: |
+            downloads/
+            run_summary.json
+            config/apify_config.json
+          retention-days: 30
+          
+      - name: Send notification
+        env:
+          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          SES_USERNAME: ${{ secrets.SES_USERNAME }}
+        run: |
+          echo "📧 Sending notification email..."
+          echo "📅 Timestamp: $(date)"
+          echo "📧 Notification email: $NOTIFICATION_EMAIL"
+          python scripts/notifier.py
+          echo "✅ Notification sent"
+          
+      - name: Process Articles with Duplicate Checking
+        run: |
+          echo "🔍 Processing scraped articles with duplicate checking..."
+          
+          # Load all articles from content downloader
+          if [ ! -f downloads/*/q_developer_input.json ]; then
+            echo "❌ No articles found to process"
+            exit 1
+          fi
+          
+          # Get total article count
+          TOTAL_ARTICLES=$(jq '.articles | length' downloads/*/q_developer_input.json)
+          echo "📋 Found $TOTAL_ARTICLES articles to check"
+          
+          # Loop through articles until we find a non-duplicate
+          ARTICLE_GENERATED=false
+          
+          for i in $(seq 0 $((TOTAL_ARTICLES-1))); do
+            echo "🔍 Checking article $((i+1))/$TOTAL_ARTICLES..."
+            
+            # Extract article data
+            CONTENT=$(jq -r ".articles[$i].content" downloads/*/q_developer_input.json)
+            TITLE=$(jq -r ".articles[$i].title" downloads/*/q_developer_input.json)
+            
+            # Generate filename for duplicate check
+            CLEAN_TITLE=$(echo "$TITLE" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
+            FILENAME="${CLEAN_TITLE}.html"
+            
+            echo "   Title: $TITLE"
+            echo "   Filename: $FILENAME"
+            
+            # Check if article already exists
+            if curl -s --head "https://dadassist.com.au/posts/articles/$FILENAME" | grep -q "200 OK"; then
+              echo "   ⚠️ Duplicate found - trying next article"
+              continue
+            else
+              echo "   ✅ Unique article found - proceeding with generation"
+              
+              # Set environment variables for article generation
+              echo "ARTICLE_CONTENT<<EOF" >> $GITHUB_ENV
+              echo "$CONTENT" >> $GITHUB_ENV
+              echo "EOF" >> $GITHUB_ENV
+              
+              echo "ARTICLE_TITLE=$TITLE" >> $GITHUB_ENV
+              echo "ARTICLE_FILENAME=$FILENAME" >> $GITHUB_ENV
+              echo "SKIP_GENERATION=false" >> $GITHUB_ENV
+              
+              ARTICLE_GENERATED=true
+              break
+            fi
+          done
+          
+          if [ "$ARTICLE_GENERATED" = false ]; then
+            echo "⚠️ All articles are duplicates - no new content to generate"
+            echo "SKIP_GENERATION=true" >> $GITHUB_ENV
+          fi
+
+      - name: Generate Article on Ubuntu Server
+        if: env.SKIP_GENERATION == 'false'
+        id: generate_article
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: 13.239.163.33
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "🤖 Starting article generation from scraped content..."
+            echo "📅 Timestamp: $(date)"
+            echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
+            echo "📂 Category: Legal Procedures"
+            echo "🔧 Content length: $(echo '${{ env.ARTICLE_CONTENT }}' | wc -c) characters"
+            
+            RESULT=$(python3 /home/ubuntu/generate_article.py \
+              --content "${{ env.ARTICLE_CONTENT }}" \
+              --title "${{ env.ARTICLE_TITLE }}" \
+              --category "Legal Procedures")
+            
+            echo "📋 Generation result:"
+            echo "$RESULT"
+            
+            if echo "$RESULT" | grep -q "SUCCESS:"; then
+              ARTICLE_URL=$(echo "$RESULT" | grep "SUCCESS:" | sed 's/.*SUCCESS: *//')
+              echo "🎉 Article generated successfully!"
+              echo "🌐 Live URL: $ARTICLE_URL"
+              echo "📏 URL length: $(echo $ARTICLE_URL | wc -c) characters"
+              echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_OUTPUT
+              
+              # Print the generated HTML filename for debugging
+              echo "📄 Generated HTML filename: ${{ env.ARTICLE_FILENAME }}"
+              echo "📊 HTML file size: $(wc -c < /var/www/dadassist/posts/articles/${{ env.ARTICLE_FILENAME }}) bytes"
+              
+              echo "✅ Article generation completed successfully"
+              exit 0
+            else
+              echo "❌ Article generation failed"
+              echo "🔍 Full result output above for debugging"
+              exit 1
+            fi
+            
+      - name: Post to Social Media
+        if: env.SKIP_GENERATION == 'false'
+        env:
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_SECRET: ${{ secrets.TWITTER_ACCESS_SECRET }}
+          FACEBOOK_ACCESS_TOKEN: ${{ secrets.FACEBOOK_ACCESS_TOKEN }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          INSTAGRAM_ACCOUNT_ID: ${{ secrets.INSTAGRAM_ACCOUNT_ID }}
+        run: |
+          echo "📱 Starting social media posting..."
+          echo "📅 Timestamp: $(date)"
+          echo "🌐 Article URL: ${{ steps.generate_article.outputs.ARTICLE_URL }}"
+          echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
+          echo "📂 Article Filename: ${{ env.ARTICLE_FILENAME }}"
+          
+          # Validate URL
+          if [ -z "${{ steps.generate_article.outputs.ARTICLE_URL }}" ]; then
+            echo "❌ ERROR: Article URL is empty!"
+            exit 1
+          fi
+          
+          echo "🔧 Creating social media post data..."
+          # Create social media post data
+          mkdir -p social-media
+          echo '{
+            "detection_date": "'$(date -u +"%Y-%m-%dT%H:%M:%S.%fZ")'",
+            "new_articles_count": 1,
+            "new_articles": [{
+              "filename": "${{ env.ARTICLE_FILENAME }}",
+              "title": "${{ env.ARTICLE_TITLE }}",
+              "description": "Expert legal advice for Australian fathers",
+              "url": "${{ steps.generate_article.outputs.ARTICLE_URL }}",
+              "discovered_date": "'$(date -u +"%Y-%m-%dT%H:%M:%S.%fZ")'"
+            }]
+          }' > social-media/new_articles_found.json
+          
+          echo "✅ Social media data file created:"
+          cat social-media/new_articles_found.json
+          
+          echo "🚀 Executing social media poster..."
+          # Post to social media
+          python scripts/social_media_poster.py --live
+          echo "✅ Social media posting completed"
+          
+      - name: Skip Duplicate Article
+        if: env.SKIP_GENERATION == 'true'
+        run: |
+          echo "⏭️ Skipping article generation - duplicate detected"
+          echo "🔄 Search rotation will advance to next query for fresh content"
+          
+      - name: Summary
+        if: always()
+        run: |
+          echo "📊 WORKFLOW SUMMARY"
+          echo "==================="
+          echo "📅 Completion time: $(date)"
+          echo "🔧 Workflow version: 3.0.0"
+          
+          if [ "${{ env.SKIP_GENERATION }}" = "true" ]; then
+            echo "⚠️ RESULT: No new articles generated - all were duplicates"
+            echo "🔄 Next run will try different content sources"
+          else
+            echo "✅ RESULT: Article generated and posted to social media"
+            echo "🌐 Article URL: ${{ steps.generate_article.outputs.ARTICLE_URL }}"
+            echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
+            echo "📂 Article Filename: ${{ env.ARTICLE_FILENAME }}"
+            echo "📱 Social media posting: Completed"
+          fi
+          
+          echo "==================="
+          echo "🎯 End-to-end automation completed"

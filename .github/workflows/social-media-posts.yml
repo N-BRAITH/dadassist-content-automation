@@ -1,7 +1,8 @@
 # DadAssist Social Media Automation Workflow
-# Version: 2.0.0
+# Version: 2.1.0
 # Last Updated: 2024-10-19
-# Features: X/Twitter, Facebook, TikTok posting for new articles
+# Features: X/Twitter, Facebook, Instagram posting for new articles
+# Updated: Added Instagram credentials support
 
 name: Weekly Social Media Posts
 
@@ -65,6 +66,7 @@ jobs:
           TWITTER_ACCESS_SECRET: ${{ secrets.TWITTER_ACCESS_SECRET }}
           FACEBOOK_ACCESS_TOKEN: ${{ secrets.FACEBOOK_ACCESS_TOKEN }}
           FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          INSTAGRAM_ACCOUNT_ID: ${{ secrets.INSTAGRAM_ACCOUNT_ID }}
         run: |
           python scripts/social_media_poster.py --live
           
