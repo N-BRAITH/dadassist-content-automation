@@ -1,7 +1,8 @@
 # Complete DadAssist Automation Workflow
-# Version: 3.0.0
+# Version: 3.1.0
 # Last Updated: 2024-10-19
 # Features: Content scraping, article generation, social media posting in one workflow
+# Updated: Fixed URL extraction and social media posting integration
 
 name: Complete DadAssist Automation
 
