@@ -259,9 +259,8 @@ jobs:
       - name: Set Article URL
         if: env.SKIP_GENERATION == 'false'
         run: |
-          echo "🔍 Extracting URL from SSH output..."
-          RAW_OUTPUT='${{ steps.retrieve_url.outputs.stdout }}'
-          ARTICLE_URL=$(echo "$RAW_OUTPUT" | grep "ARTICLE_URL=" | cut -d'=' -f2- | tr -d '\n\r' | xargs)
+          echo "🔍 Constructing URL from filename..."
+          ARTICLE_URL="https://dadassist.com.au/posts/articles/${{ env.ARTICLE_FILENAME }}"
           echo "🌐 Final URL: $ARTICLE_URL"
           echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_ENV
             
