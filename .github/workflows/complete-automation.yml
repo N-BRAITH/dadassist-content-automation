@@ -291,14 +291,14 @@ jobs:
           # Create social media post data
           mkdir -p social-media
           echo '{
-            "detection_date": "'$(date -u +"%Y-%m-%dT%H:%M:%S.%fZ")'",
+            "detection_date": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'",
             "new_articles_count": 1,
             "new_articles": [{
               "filename": "${{ env.ARTICLE_FILENAME }}",
               "title": "${{ env.ARTICLE_TITLE }}",
               "description": "Expert legal advice for Australian fathers",
               "url": "${{ env.ARTICLE_URL }}",
-              "discovered_date": "'$(date -u +"%Y-%m-%dT%H:%M:%S.%fZ")'"
+              "discovered_date": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
             }]
           }' > social-media/new_articles_found.json
           
