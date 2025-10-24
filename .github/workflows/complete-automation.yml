@@ -114,19 +114,6 @@ jobs:
             config/apify_config.json
           retention-days: 30
           
-      - name: Send notification
-        env:
-          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
-          SES_USERNAME: ${{ secrets.SES_USERNAME }}
-        run: |
-          echo "📧 Sending notification email..."
-          echo "📅 Timestamp: $(date)"
-          echo "📧 Notification email: $NOTIFICATION_EMAIL"
-          python scripts/notifier.py
-          echo "✅ Notification sent"
-          
       - name: Process Articles with Duplicate Checking
         run: |
           echo "🔍 Processing scraped articles with duplicate checking..."
@@ -273,6 +260,7 @@ jobs:
           TWITTER_ACCESS_SECRET: ${{ secrets.TWITTER_ACCESS_SECRET }}
           FACEBOOK_ACCESS_TOKEN: ${{ secrets.FACEBOOK_ACCESS_TOKEN }}
           FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
           INSTAGRAM_ACCOUNT_ID: ${{ secrets.INSTAGRAM_ACCOUNT_ID }}
         run: |
           echo "📱 Starting social media posting..."
@@ -310,7 +298,7 @@ jobs:
           python scripts/social_media_poster.py --live
           echo "✅ Social media posting completed"
           
-      - name: Skip Duplicate Article
+      - name: Display Skip Status Message
         if: env.SKIP_GENERATION == 'true'
         run: |
           echo "⏭️ Skipping article generation - duplicate detected"
@@ -337,3 +325,27 @@ jobs:
           
           echo "==================="
           echo "🎯 End-to-end automation completed"
+          
+      - name: Send Comprehensive Notification Email
+        if: always()
+        env:
+          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          SES_USERNAME: ${{ secrets.SES_USERNAME }}
+        run: |
+          echo "📧 Sending comprehensive workflow notification..."
+          echo "📅 Timestamp: $(date)"
+          echo "📧 Notification email: $NOTIFICATION_EMAIL"
+          
+          # Create comprehensive summary for email
+          if [ "${{ env.SKIP_GENERATION }}" = "true" ]; then
+            echo "📋 Workflow Result: All articles were duplicates - no new content generated"
+          else
+            echo "📋 Workflow Result: Article generated and posted to social media"
+            echo "🌐 Article URL: ${{ env.ARTICLE_URL }}"
+            echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
+          fi
+          
+          python scripts/notifier.py
+          echo "✅ Comprehensive notification sent"
