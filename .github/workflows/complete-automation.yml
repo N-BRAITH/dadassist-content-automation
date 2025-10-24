@@ -260,7 +260,8 @@ jobs:
         if: env.SKIP_GENERATION == 'false'
         run: |
           echo "🔍 Extracting URL from SSH output..."
-          ARTICLE_URL=$(echo '${{ steps.retrieve_url.outputs.stdout }}' | grep "ARTICLE_URL=" | cut -d'=' -f2-)
+          RAW_OUTPUT='${{ steps.retrieve_url.outputs.stdout }}'
+          ARTICLE_URL=$(echo "$RAW_OUTPUT" | grep "ARTICLE_URL=" | cut -d'=' -f2- | tr -d '\n\r' | xargs)
           echo "🌐 Final URL: $ARTICLE_URL"
           echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_ENV
             
