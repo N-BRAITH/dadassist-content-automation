@@ -26,7 +26,7 @@ jobs:
       - name: Display Workflow Version
         run: |
           echo "🚀 Complete DadAssist Automation Workflow"
-          echo "📋 Version: 3.5.0"
+          echo "📋 Version: 3.4.0"
           echo "📅 Last Updated: 2024-10-25"
           echo "🔧 Features: Fixed JSON syntax error and notification system"
           echo "==========================================="
@@ -40,11 +40,11 @@ jobs:
         run: |
           pip install -r requirements.txt
           
-      - name: Run Apify scraper with retry logic
+      - name: Content Scraping with Retry Logic
         env:
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
         run: |
-          echo "🕷️ Starting Apify scraper with retry logic..."
+          echo "🕷️ Starting content scraping with retry logic..."
           echo "📅 Timestamp: $(date)"
           
           MAX_ATTEMPTS=5
@@ -54,16 +54,68 @@ jobs:
             echo "🔍 Scraping attempt $ATTEMPT/$MAX_ATTEMPTS"
             
             # Run scraper
+            echo "🕷️ Running Apify scraper..."
             python scripts/apify_scraper.py
             
-            # Run content download and duplicate check
+            # Download and extract content
+            echo "📥 Starting content download..."
             python scripts/content_downloader.py
-            python scripts/run_summary.py
+            echo "✅ Content download completed"
             
-            # Check if we found unique content
-            if python scripts/duplicate_checker.py; then
+            # Check for duplicates (copied from original duplicate checking step)
+            echo "🔍 Processing scraped articles with duplicate checking..."
+            
+            # Load all articles from content downloader
+            if [ ! -f downloads/*/q_developer_input.json ]; then
+              echo "❌ No articles found to process"
+              ATTEMPT=$((ATTEMPT + 1))
+              continue
+            fi
+            
+            # Get total article count
+            TOTAL_ARTICLES=$(jq '.articles | length' downloads/*/q_developer_input.json)
+            echo "📋 Found $TOTAL_ARTICLES articles to check"
+            
+            # Loop through articles until we find a non-duplicate
+            ARTICLE_GENERATED=false
+            
+            for i in $(seq 0 $((TOTAL_ARTICLES-1))); do
+              echo "🔍 Checking article $((i+1))/$TOTAL_ARTICLES..."
+              
+              # Extract article data
+              TITLE=$(jq -r ".articles[$i].title" downloads/*/q_developer_input.json)
+              
+              # Generate filename for duplicate check (match server logic)
+              CLEAN_TITLE=$(echo "$TITLE" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
+              CLEAN_TITLE=$(echo "$CLEAN_TITLE" | sed 's/\([0-9]\)-\([0-9]\)/\1\2/g')
+              FILENAME="${CLEAN_TITLE}.html"
+              
+              echo "   Title: $TITLE"
+              echo "   Filename: $FILENAME"
+              
+              # Check if article already exists
+              if curl -s --head "https://dadassist.com.au/posts/articles/$FILENAME" | grep -q "200 OK"; then
+                echo "   ⚠️ Duplicate found - trying next article"
+                continue
+              else
+                echo "   ✅ Unique article found - proceeding with generation"
+                
+                # Set environment variables for article generation
+                CONTENT=$(jq -r ".articles[$i].content" downloads/*/q_developer_input.json)
+                echo "ARTICLE_CONTENT<<EOF" >> $GITHUB_ENV
+                echo "$CONTENT" >> $GITHUB_ENV
+                echo "EOF" >> $GITHUB_ENV
+                echo "ARTICLE_TITLE=$TITLE" >> $GITHUB_ENV
+                echo "ARTICLE_FILENAME=$FILENAME" >> $GITHUB_ENV
+                echo "SKIP_GENERATION=false" >> $GITHUB_ENV
+                
+                ARTICLE_GENERATED=true
+                break
+              fi
+            done
+            
+            if [ "$ARTICLE_GENERATED" = true ]; then
               echo "✅ Found unique content on attempt $ATTEMPT!"
-              echo "SKIP_GENERATION=false" >> $GITHUB_ENV
               break
             else
               echo "⚠️ Attempt $ATTEMPT: All articles were duplicates"
@@ -82,7 +134,7 @@ jobs:
             ATTEMPT=$((ATTEMPT + 1))
           done
           
-          echo "✅ Scraping process completed"
+          echo "✅ Content scraping process completed"
           
       - name: Download and extract content
         env:
@@ -278,23 +330,6 @@ jobs:
           echo "🌐 Final URL: $ARTICLE_URL"
           echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_ENV
             
-      - name: Generate Instagram Image
-        if: env.SKIP_GENERATION != 'true'
-        run: |
-          echo "🎨 Generating custom Instagram image..."
-          echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
-          
-          # Copy image generation script to server
-          scp -i ~/.ssh/LightsailDefaultKey-ap-southeast-2.pem -o StrictHostKeyChecking=no \
-            scripts/generate_instagram_image.py ubuntu@13.239.163.33:/tmp/
-          
-          # Generate image and capture URL
-          INSTAGRAM_IMAGE_URL=$(ssh -i ~/.ssh/LightsailDefaultKey-ap-southeast-2.pem -o StrictHostKeyChecking=no \
-            ubuntu@13.239.163.33 "cd /tmp && python3 generate_instagram_image.py '${{ env.ARTICLE_TITLE }}' | tail -1")
-          
-          echo "INSTAGRAM_IMAGE_URL=$INSTAGRAM_IMAGE_URL" >> $GITHUB_ENV
-          echo "🌐 Generated image URL: $INSTAGRAM_IMAGE_URL"
-            
       - name: Post to Social Media
         if: env.SKIP_GENERATION == 'false'
         env:
@@ -368,7 +403,7 @@ jobs:
           echo "📊 WORKFLOW SUMMARY"
           echo "==================="
           echo "📅 Completion time: $(date)"
-          echo "🔧 Workflow version: 3.5.0"
+          echo "🔧 Workflow version: 3.4.0"
           
           if [ "${{ env.SKIP_GENERATION }}" = "true" ]; then
             echo "⚠️ RESULT: No new articles generated - all were duplicates"
