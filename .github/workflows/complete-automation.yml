@@ -292,9 +292,21 @@ jobs:
           cat social-media/new_articles_found.json
           
           echo "🚀 Executing social media poster..."
-          # Post to social media
-          python scripts/social_media_poster.py --live
-          echo "✅ Social media posting completed"
+          # Post to social media and capture results
+          python scripts/social_media_poster.py --live > social_media_output.log 2>&1
+          
+          # Extract posting results for email notification
+          if [ -f social-media/results/posting_results_*.json ]; then
+            LATEST_RESULTS=$(ls -t social-media/results/posting_results_*.json | head -1)
+            echo "SOCIAL_MEDIA_RESULTS_FILE=$LATEST_RESULTS" >> $GITHUB_ENV
+            echo "✅ Social media posting completed - results saved"
+          else
+            echo "⚠️ No social media results file found"
+          fi
+          
+          # Show output for debugging
+          echo "📋 Social media posting output:"
+          cat social_media_output.log
           
       - name: Display Skip Status Message
         if: env.SKIP_GENERATION == 'true'
@@ -336,12 +348,14 @@ jobs:
           ARTICLE_URL: ${{ env.ARTICLE_URL }}
           ARTICLE_TITLE: ${{ env.ARTICLE_TITLE }}
           ARTICLE_FILENAME: ${{ env.ARTICLE_FILENAME }}
+          SOCIAL_MEDIA_RESULTS_FILE: ${{ env.SOCIAL_MEDIA_RESULTS_FILE }}
         run: |
           echo "📧 Sending comprehensive workflow notification..."
           echo "📅 Timestamp: $(date)"
           echo "📧 Notification email: $NOTIFICATION_EMAIL"
           echo "🔧 Workflow status: $WORKFLOW_STATUS"
           echo "⏭️ Skip generation: $SKIP_GENERATION"
+          echo "📱 Social media results file: $SOCIAL_MEDIA_RESULTS_FILE"
           
           # Create comprehensive summary for email
           if [ "$SKIP_GENERATION" = "true" ]; then
