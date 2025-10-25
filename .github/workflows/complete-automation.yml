@@ -1,8 +1,8 @@
 # Complete DadAssist Automation Workflow
-# Version: 3.3.0
-# Last Updated: 2024-10-19
+# Version: 3.4.0
+# Last Updated: 2024-10-25
 # Features: Content scraping, article generation, social media posting in one workflow
-# Updated: Fixed URL capture using file-based method
+# Updated: Fixed JSON syntax error and notification system
 
 name: Complete DadAssist Automation
 
@@ -26,9 +26,9 @@ jobs:
       - name: Display Workflow Version
         run: |
           echo "🚀 Complete DadAssist Automation Workflow"
-          echo "📋 Version: 3.3.0"
-          echo "📅 Last Updated: 2024-10-19"
-          echo "🔧 Features: Fixed URL capture using file-based method"
+          echo "📋 Version: 3.4.0"
+          echo "📅 Last Updated: 2024-10-25"
+          echo "🔧 Features: Fixed JSON syntax error and notification system"
           echo "==========================================="
         
       - name: Set up Python
@@ -182,15 +182,20 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "🤖 Starting article generation from scraped content..."
-            echo "📅 Timestamp: $(date)"
-            echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
-            echo "📂 Category: Legal Procedures"
-            echo "🔧 Content length: $(echo '${{ env.ARTICLE_CONTENT }}' | wc -c) characters"
+            echo "🤖 Starting article generation..."
+            
+            # Write content to files (no quotes in variables)
+            cat > /tmp/article_content.txt << 'CONTENT_EOF'
+            ${{ env.ARTICLE_CONTENT }}
+            CONTENT_EOF
+            
+            cat > /tmp/article_title.txt << 'TITLE_EOF'
+            ${{ env.ARTICLE_TITLE }}
+            TITLE_EOF
             
             RESULT=$(python3 /home/ubuntu/generate_article.py \
-              --content "${{ env.ARTICLE_CONTENT }}" \
-              --title "${{ env.ARTICLE_TITLE }}" \
+              --content "$(cat /tmp/article_content.txt)" \
+              --title "$(cat /tmp/article_title.txt)" \
               --category "Legal Procedures")
             
             echo "📋 Generation result:"
@@ -200,27 +205,14 @@ jobs:
               ARTICLE_URL=$(echo "$RESULT" | grep "SUCCESS:" | sed 's/.*SUCCESS: *//')
               echo "🎉 Article generated successfully!"
               echo "🌐 Live URL: $ARTICLE_URL"
-              echo "📏 URL length: $(echo $ARTICLE_URL | wc -c) characters"
               
-              # Extract actual filename from the URL for file operations
-              ACTUAL_FILENAME=$(echo "$ARTICLE_URL" | sed 's|.*/||')
-              echo "📄 Generated HTML filename: $ACTUAL_FILENAME"
-              
-              # Check file size using actual filename
-              if [ -f "/var/www/dadassist/posts/articles/$ACTUAL_FILENAME" ]; then
-                echo "📊 HTML file size: $(wc -c < /var/www/dadassist/posts/articles/$ACTUAL_FILENAME) bytes"
-              else
-                echo "⚠️ HTML file not found at expected location"
-              fi
-              
-              # Write URL to a temporary file for retrieval
+              # Write URL to temp file for retrieval step
               echo "$ARTICLE_URL" > /tmp/generated_article_url.txt
               
               echo "✅ Article generation completed successfully"
               exit 0
             else
               echo "❌ Article generation failed"
-              echo "🔍 Full result output above for debugging"
               exit 1
             fi
             
@@ -278,25 +270,39 @@ jobs:
           echo "🔧 Creating social media post data..."
           # Create social media post data
           mkdir -p social-media
-          echo '{
-            "detection_date": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'",
-            "new_articles_count": 1,
-            "new_articles": [{
-              "filename": "${{ env.ARTICLE_FILENAME }}",
-              "title": "${{ env.ARTICLE_TITLE }}",
-              "description": "Expert legal advice for Australian fathers",
-              "url": "${{ env.ARTICLE_URL }}",
-              "discovered_date": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
-            }]
-          }' > social-media/new_articles_found.json
+          
+          # Create JSON with printf to avoid YAML conflicts
+          printf '{\n  "detection_date": "%s",\n  "new_articles_count": 1,\n  "new_articles": [{\n    "filename": "%s",\n    "title": "%s",\n    "description": "Expert legal advice for Australian fathers",\n    "url": "%s",\n    "discovered_date": "%s"\n  }]\n}' \
+            "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+            "${{ env.ARTICLE_FILENAME }}" \
+            "${{ env.ARTICLE_TITLE }}" \
+            "${{ env.ARTICLE_URL }}" \
+            "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+            > social-media/new_articles_found.json
           
           echo "✅ Social media data file created:"
           cat social-media/new_articles_found.json
           
           echo "🚀 Executing social media poster..."
-          # Post to social media
-          python scripts/social_media_poster.py --live
-          echo "✅ Social media posting completed"
+          # Post to social media and capture results
+          python scripts/social_media_poster.py --live > social_media_output.log 2>&1
+          
+          # Extract posting results for email notification
+          echo "🔍 Looking for social media results files..."
+          ls -la social-media/results/ || echo "No results directory found"
+          
+          if ls social-media/results/posting_results_*.json 1> /dev/null 2>&1; then
+            LATEST_RESULTS=$(ls -t social-media/results/posting_results_*.json | head -1)
+            echo "SOCIAL_MEDIA_RESULTS_FILE=$LATEST_RESULTS" >> $GITHUB_ENV
+            echo "✅ Social media posting completed - results saved: $LATEST_RESULTS"
+          else
+            echo "⚠️ No social media results file found"
+            echo "SOCIAL_MEDIA_RESULTS_FILE=" >> $GITHUB_ENV
+          fi
+          
+          # Show output for debugging
+          echo "📋 Social media posting output:"
+          cat social_media_output.log
           
       - name: Display Skip Status Message
         if: env.SKIP_GENERATION == 'true'
@@ -310,7 +316,7 @@ jobs:
           echo "📊 WORKFLOW SUMMARY"
           echo "==================="
           echo "📅 Completion time: $(date)"
-          echo "🔧 Workflow version: 3.3.0"
+          echo "🔧 Workflow version: 3.4.0"
           
           if [ "${{ env.SKIP_GENERATION }}" = "true" ]; then
             echo "⚠️ RESULT: No new articles generated - all were duplicates"
@@ -338,12 +344,14 @@ jobs:
           ARTICLE_URL: ${{ env.ARTICLE_URL }}
           ARTICLE_TITLE: ${{ env.ARTICLE_TITLE }}
           ARTICLE_FILENAME: ${{ env.ARTICLE_FILENAME }}
+          SOCIAL_MEDIA_RESULTS_FILE: ${{ env.SOCIAL_MEDIA_RESULTS_FILE }}
         run: |
           echo "📧 Sending comprehensive workflow notification..."
           echo "📅 Timestamp: $(date)"
           echo "📧 Notification email: $NOTIFICATION_EMAIL"
           echo "🔧 Workflow status: $WORKFLOW_STATUS"
           echo "⏭️ Skip generation: $SKIP_GENERATION"
+          echo "📱 Social media results file: $SOCIAL_MEDIA_RESULTS_FILE"
           
           # Create comprehensive summary for email
           if [ "$SKIP_GENERATION" = "true" ]; then
@@ -361,3 +369,15 @@ jobs:
           
           python scripts/notifier.py
           echo "✅ Comprehensive notification sent"
+          
+      - name: Upload Debug Files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-files-${{ github.run_number }}
+          path: |
+            debug_email_content.html
+            social_media_output.log
+            social-media/results/*.json
+          retention-days: 7
+          if-no-files-found: warn

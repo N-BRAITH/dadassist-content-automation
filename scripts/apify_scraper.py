@@ -27,16 +27,42 @@ def run_google_search_scraper(client, config):
     
     print(f"📋 Using search query #{current_index + 1}: {current_query}")
     
+    # Apply randomization if enabled
+    scraping_settings = config["scraping_settings"]
+    randomization = scraping_settings.get("randomization", {})
+    
+    if randomization.get("enabled", False):
+        import random
+        
+        # Randomize results per page
+        results_per_page_options = randomization.get("results_per_page_options", [15])
+        results_per_page = random.choice(results_per_page_options)
+        
+        # Randomize starting position (skip results)
+        skip_range = randomization.get("skip_results_range", [0, 0])
+        skip_results = random.randint(skip_range[0], skip_range[1])
+        
+        print(f"🎲 Randomization enabled:")
+        print(f"   📄 Results per page: {results_per_page}")
+        print(f"   ⏭️ Skipping first {skip_results} results")
+    else:
+        results_per_page = scraping_settings["results_per_page"]
+        skip_results = 0
+    
     # Configure search input
     search_input = {
         "queries": current_query,
-        "maxPagesPerQuery": config["scraping_settings"]["max_pages_per_query"],
-        "resultsPerPage": config["scraping_settings"]["results_per_page"],
-        "countryCode": config["scraping_settings"]["country_code"],
-        "languageCode": config["scraping_settings"]["language_code"],
+        "maxPagesPerQuery": scraping_settings["max_pages_per_query"],
+        "resultsPerPage": results_per_page,
+        "countryCode": scraping_settings["country_code"],
+        "languageCode": scraping_settings["language_code"],
         "includeUnfilteredResults": False,
         "mobileResults": False
     }
+    
+    # Add skip parameter if randomization is enabled
+    if skip_results > 0:
+        search_input["startUrls"] = [{"url": f"https://www.google.com/search?q={current_query}&start={skip_results}"}]
     
     # Run the Google Search scraper
     run = client.actor("apify/google-search-scraper").call(run_input=search_input)

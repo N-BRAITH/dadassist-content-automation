@@ -71,7 +71,7 @@ def load_run_summary():
     except FileNotFoundError:
         print("❌ No run summary found, creating basic summary")
         summary = {
-            'automation_version': '3.3.0',
+            'automation_version': '3.4.0',
             'run_date': datetime.now().isoformat(),
             'success': False,
             'articles_found': 0,
@@ -83,12 +83,27 @@ def load_run_summary():
     workflow_status = os.getenv('WORKFLOW_STATUS', 'unknown')
     article_url = os.getenv('ARTICLE_URL', '')
     article_title = os.getenv('ARTICLE_TITLE', '')
+    social_media_results_file = os.getenv('SOCIAL_MEDIA_RESULTS_FILE', '')
+    
+    # Load social media results if available
+    social_media_results = None
+    if social_media_results_file and os.path.exists(social_media_results_file):
+        try:
+            print(f"📱 Loading social media results from: {social_media_results_file}")
+            with open(social_media_results_file, 'r') as f:
+                social_media_results = json.load(f)
+            print(f"✅ Loaded {len(social_media_results.get('results', []))} social media results")
+        except Exception as e:
+            print(f"⚠️ Could not load social media results: {e}")
+    else:
+        print(f"⚠️ Social media results file not found: {social_media_results_file}")
     
     # Update summary based on workflow results
     summary['skip_generation'] = skip_generation
     summary['workflow_status'] = workflow_status
     summary['article_url'] = article_url
     summary['article_title'] = article_title
+    summary['social_media_results'] = social_media_results
     
     return summary
 
@@ -163,6 +178,81 @@ def create_email_content(summary):
     html_content += f"""
             </div>"""
     
+    # Add social media posting results if available
+    social_media_results = summary.get('social_media_results')
+    if social_media_results and len(social_media_results) > 0:
+        html_content += f"""
+            <h2>📱 Social Media Posting Results</h2>
+            <div class="info-box">"""
+        
+        for result in social_media_results:
+            if 'posting_results' in result:
+                posting_results = result['posting_results']
+                article_info = result.get('article', {})
+                
+                html_content += f"""
+                <p><strong>Article:</strong> {article_info.get('title', 'Unknown')}</p>
+                <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                    <tr style="background-color: #f8f9fa;">
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Platform</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Status</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Post URL</th>
+                    </tr>"""
+                
+                # Twitter results
+                twitter_result = posting_results.get('twitter', {})
+                if twitter_result:
+                    status = "✅ Success" if twitter_result.get('success') else "❌ Failed"
+                    error_msg = twitter_result.get('error', '')
+                    post_url = twitter_result.get('url', 'N/A')
+                    
+                    html_content += f"""
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">🐦 Twitter</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{status}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">
+                            {f'<a href="{post_url}">{post_url}</a>' if post_url != 'N/A' else error_msg}
+                        </td>
+                    </tr>"""
+                
+                # Facebook results
+                facebook_result = posting_results.get('facebook', {})
+                if facebook_result:
+                    status = "✅ Success" if facebook_result.get('success') else "❌ Failed"
+                    error_msg = facebook_result.get('error', '')
+                    post_url = facebook_result.get('url', 'N/A')
+                    
+                    html_content += f"""
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">📘 Facebook</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{status}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">
+                            {f'<a href="{post_url}">{post_url}</a>' if post_url != 'N/A' else error_msg}
+                        </td>
+                    </tr>"""
+                
+                # Instagram results
+                instagram_result = posting_results.get('instagram', {})
+                if instagram_result:
+                    status = "✅ Success" if instagram_result.get('success') else "❌ Failed"
+                    error_msg = instagram_result.get('error', '')
+                    post_url = instagram_result.get('url', 'N/A')
+                    
+                    html_content += f"""
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">📷 Instagram</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{status}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">
+                            {f'<a href="{post_url}">{post_url}</a>' if post_url != 'N/A' else error_msg}
+                        </td>
+                    </tr>"""
+                
+                html_content += """
+                </table>"""
+        
+        html_content += """
+            </div>"""
+    
     # Add specific instructions based on outcome
     if skip_generation:
         html_content += f"""
@@ -210,7 +300,7 @@ def create_email_content(summary):
                     <span class="step-number">5</span>
                     <strong>Process:</strong> Use Q Developer to convert JSON to DadAssist HTML
                 </div>
-            </div>"""
+            </div>
 
             <h2>⚙️ How to Change Search Criteria</h2>
             <div class="info-box">
@@ -312,6 +402,27 @@ def send_email_notification(summary):
     
     # Create HTML content
     html_content = create_email_content(summary)
+    
+    # Save email content for debugging
+    import os
+    current_dir = os.getcwd()
+    print(f"📁 Current working directory: {current_dir}")
+    
+    debug_file_path = 'debug_email_content.html'
+    with open(debug_file_path, 'w') as f:
+        f.write(html_content)
+    
+    # Verify file was created
+    if os.path.exists(debug_file_path):
+        file_size = os.path.getsize(debug_file_path)
+        print(f"📧 Email content saved to {debug_file_path} ({file_size} bytes)")
+    else:
+        print(f"❌ Failed to create debug file at {debug_file_path}")
+    
+    # List files in current directory
+    files = os.listdir('.')
+    print(f"📂 Files in current directory: {[f for f in files if f.endswith('.html') or f.endswith('.log')]}")
+    
     html_part = MIMEText(html_content, 'html')
     msg.attach(html_part)
     
