@@ -378,5 +378,6 @@ jobs:
           path: |
             debug_email_content.html
             social_media_output.log
-            social-media/results/
+            social-media/results/*.json
           retention-days: 7
+          if-no-files-found: warn
