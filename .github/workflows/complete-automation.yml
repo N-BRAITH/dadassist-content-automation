@@ -40,14 +40,60 @@ jobs:
         run: |
           pip install -r requirements.txt
           
-      - name: Run Apify scraper
+      - name: Run Apify scraper with retry logic
         env:
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
         run: |
-          echo "🕷️ Starting Apify scraper..."
+          echo "🕷️ Starting Apify scraper with retry logic..."
           echo "📅 Timestamp: $(date)"
-          python scripts/apify_scraper.py
-          echo "✅ Apify scraper completed"
+          
+          MAX_ATTEMPTS=5
+          ATTEMPT=1
+          
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+            echo "🔍 Scraping attempt $ATTEMPT/$MAX_ATTEMPTS"
+            
+            # Run scraper
+            python scripts/apify_scraper.py
+            
+            # Run content download and duplicate check
+            python scripts/content_downloader.py
+            python scripts/run_summary.py
+            
+            # Check if we found unique content
+            if python scripts/duplicate_checker.py; then
+              echo "✅ Found unique content on attempt $ATTEMPT!"
+              echo "SKIP_GENERATION=false" >> $GITHUB_ENV
+              break
+            else
+              echo "⚠️ Attempt $ATTEMPT: All articles were duplicates"
+              echo "SKIP_GENERATION=true" >> $GITHUB_ENV
+              
+              if [ $ATTEMPT -lt $MAX_ATTEMPTS ]; then
+                echo "🔄 Rotating to next search query and retrying..."
+                
+                # Force rotate search query by updating config
+                python -c "
+import json
+with open('config/apify_config.json', 'r') as f:
+    config = json.load(f)
+current = config['search_rotation']['current_search']
+total = len(config['search_rotation']['searches'])
+next_search = (current + 1) % total
+config['search_rotation']['current_search'] = next_search
+with open('config/apify_config.json', 'w') as f:
+    json.dump(config, f, indent=2)
+print(f'🔄 Rotated search: {current + 1} → {next_search + 1}')
+"
+              else
+                echo "❌ All $MAX_ATTEMPTS attempts failed - no unique content found"
+              fi
+            fi
+            
+            ATTEMPT=$((ATTEMPT + 1))
+          done
+          
+          echo "✅ Scraping process completed"
           
       - name: Download and extract content
         env:
