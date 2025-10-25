@@ -333,18 +333,30 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
           SES_USERNAME: ${{ secrets.SES_USERNAME }}
+          WORKFLOW_STATUS: ${{ job.status }}
+          SKIP_GENERATION: ${{ env.SKIP_GENERATION }}
+          ARTICLE_URL: ${{ env.ARTICLE_URL }}
+          ARTICLE_TITLE: ${{ env.ARTICLE_TITLE }}
+          ARTICLE_FILENAME: ${{ env.ARTICLE_FILENAME }}
         run: |
           echo "📧 Sending comprehensive workflow notification..."
           echo "📅 Timestamp: $(date)"
           echo "📧 Notification email: $NOTIFICATION_EMAIL"
+          echo "🔧 Workflow status: $WORKFLOW_STATUS"
+          echo "⏭️ Skip generation: $SKIP_GENERATION"
           
           # Create comprehensive summary for email
-          if [ "${{ env.SKIP_GENERATION }}" = "true" ]; then
+          if [ "$SKIP_GENERATION" = "true" ]; then
             echo "📋 Workflow Result: All articles were duplicates - no new content generated"
-          else
+            echo "🔄 Next run will try different search queries for fresh content"
+          elif [ "$WORKFLOW_STATUS" = "success" ] && [ -n "$ARTICLE_URL" ]; then
             echo "📋 Workflow Result: Article generated and posted to social media"
-            echo "🌐 Article URL: ${{ env.ARTICLE_URL }}"
-            echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
+            echo "🌐 Article URL: $ARTICLE_URL"
+            echo "📝 Article Title: $ARTICLE_TITLE"
+            echo "📂 Article Filename: $ARTICLE_FILENAME"
+          else
+            echo "📋 Workflow Result: Workflow completed with issues"
+            echo "⚠️ Check workflow logs for details"
           fi
           
           python scripts/notifier.py

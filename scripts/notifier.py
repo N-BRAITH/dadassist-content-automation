@@ -67,16 +67,53 @@ def load_run_summary():
     """Load the run summary created by GitHub Actions"""
     try:
         with open('run_summary.json', 'r') as f:
-            return json.load(f)
+            summary = json.load(f)
     except FileNotFoundError:
-        print("❌ No run summary found")
-        return None
+        print("❌ No run summary found, creating basic summary")
+        summary = {
+            'automation_version': '3.3.0',
+            'run_date': datetime.now().isoformat(),
+            'success': False,
+            'articles_found': 0,
+            'quality_articles': 0
+        }
+    
+    # Check environment variables for workflow status
+    skip_generation = os.getenv('SKIP_GENERATION', 'false').lower() == 'true'
+    workflow_status = os.getenv('WORKFLOW_STATUS', 'unknown')
+    article_url = os.getenv('ARTICLE_URL', '')
+    article_title = os.getenv('ARTICLE_TITLE', '')
+    
+    # Update summary based on workflow results
+    summary['skip_generation'] = skip_generation
+    summary['workflow_status'] = workflow_status
+    summary['article_url'] = article_url
+    summary['article_title'] = article_title
+    
+    return summary
 
 def create_email_content(summary):
     """Create comprehensive email content with instructions"""
     
-    # Determine status
-    status = "✅ SUCCESS" if summary.get('success') else "❌ FAILED"
+    # Determine workflow outcome
+    skip_generation = summary.get('skip_generation', False)
+    workflow_status = summary.get('workflow_status', 'unknown')
+    article_url = summary.get('article_url', '')
+    article_title = summary.get('article_title', '')
+    
+    if skip_generation:
+        status = "⚠️ ALL DUPLICATES"
+        status_class = "status-failed"
+        outcome_message = "All scraped articles were duplicates - no new content generated"
+    elif workflow_status == 'success' and article_url:
+        status = "✅ SUCCESS"
+        status_class = "status-success"
+        outcome_message = f"New article generated and posted: {article_title}"
+    else:
+        status = "❌ FAILED" if not summary.get('success') else "⚠️ PARTIAL"
+        status_class = "status-failed"
+        outcome_message = "Workflow completed with issues - check logs for details"
+    
     articles_found = summary.get('articles_found', 0)
     quality_articles = summary.get('quality_articles', 0)
     
@@ -92,6 +129,8 @@ def create_email_content(summary):
             .status-success {{ color: #28a745; font-weight: bold; }}
             .status-failed {{ color: #dc3545; font-weight: bold; }}
             .info-box {{ background-color: #f8f9fa; border-left: 4px solid #2c5aa0; padding: 15px; margin: 15px 0; }}
+            .warning-box {{ background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0; }}
+            .success-box {{ background-color: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 15px 0; }}
             .code {{ background-color: #f1f1f1; padding: 2px 5px; font-family: monospace; }}
             .step {{ margin: 10px 0; }}
             .step-number {{ background-color: #2c5aa0; color: white; border-radius: 50%; padding: 5px 10px; margin-right: 10px; }}
@@ -107,50 +146,42 @@ def create_email_content(summary):
         
         <div class="content">
             <h2>📊 Run Summary</h2>
-            <div class="info-box">
-                <p><strong>Status:</strong> <span class="{'status-success' if summary.get('success') else 'status-failed'}">{status}</span></p>
+            <div class="{'success-box' if status.startswith('✅') else 'warning-box' if status.startswith('⚠️') else 'info-box'}">
+                <p><strong>Status:</strong> <span class="{status_class}">{status}</span></p>
+                <p><strong>Outcome:</strong> {outcome_message}</p>
                 <p><strong>Date:</strong> {datetime.fromisoformat(summary.get('run_date', '')).strftime('%A, %B %d, %Y at %I:%M %p')}</p>
                 <p><strong>Automation Version:</strong> v{summary.get('automation_version', '1.0.0')}</p>
-                <p><strong>Config Updated:</strong> {summary.get('config_last_updated', 'Unknown')}</p>
                 <p><strong>Articles Found:</strong> {articles_found} articles discovered</p>
-                <p><strong>Quality Articles:</strong> {quality_articles} articles extracted successfully</p>
-                <p><strong>Extraction Method:</strong> {summary.get('extraction_method', 'Unknown')}</p>
-                <p><strong>Email Provider:</strong> {summary.get('smtp_provider', 'amazon_ses').replace('_', ' ').title()}</p>
-            </div>
-
-            <h2>🔍 Search Configuration Used</h2>
-            <div class="info-box">
-                <p><strong>Search Terms:</strong></p>
-                <p class="code">{summary.get('search_terms', 'Not available')}</p>
-                
-                <p><strong>Target Sites Searched:</strong></p>
-                <ul>
-    """
+                <p><strong>Quality Articles:</strong> {quality_articles} articles extracted successfully</p>"""
     
-    # Add target sites
-    for site in summary.get('target_sites', []):
-        html_content += f"<li>{site}</li>"
+    # Add article-specific information if generated
+    if article_url and article_title:
+        html_content += f"""
+                <p><strong>Generated Article:</strong> <a href="{article_url}">{article_title}</a></p>
+                <p><strong>Live URL:</strong> <a href="{article_url}">{article_url}</a></p>"""
     
     html_content += f"""
-                </ul>
-            </div>
-
-            <h2>📂 Content Categories Found</h2>
-            <div class="info-box">
-    """
+            </div>"""
     
-    # Add categories if available
-    categories = summary.get('categories', {})
-    if categories:
-        for category, count in categories.items():
-            category_name = category.replace('_', ' ').title()
-            html_content += f"<p><strong>{category_name}:</strong> {count} articles</p>"
-    else:
-        html_content += "<p>No categorized content available</p>"
+    # Add specific instructions based on outcome
+    if skip_generation:
+        html_content += f"""
+            <h2>🔄 Next Steps (All Articles Were Duplicates)</h2>
+            <div class="warning-box">
+                <p><strong>What happened:</strong> All scraped articles already exist on DadAssist.com.au</p>
+                <p><strong>Next action:</strong> The search rotation will automatically advance to try different queries next week</p>
+                <p><strong>Manual option:</strong> You can modify search terms in config/apify_config.json for more variety</p>
+            </div>"""
+    elif article_url:
+        html_content += f"""
+            <h2>✅ Article Successfully Generated</h2>
+            <div class="success-box">
+                <p><strong>New Article:</strong> {article_title}</p>
+                <p><strong>Live URL:</strong> <a href="{article_url}">{article_url}</a></p>
+                <p><strong>Social Media:</strong> Automatically posted to Twitter, Facebook, and Instagram</p>
+            </div>"""
     
     html_content += f"""
-            </div>
-
             <h2>📥 How to Download This Week's Articles</h2>
             <div class="info-box">
                 <div class="step">
@@ -160,7 +191,7 @@ def create_email_content(summary):
                 </div>
                 <div class="step">
                     <span class="step-number">2</span>
-                    <strong>Click:</strong> The latest "Weekly Legal Content Scraping" run
+                    <strong>Click:</strong> The latest "Complete DadAssist Automation" run
                 </div>
                 <div class="step">
                     <span class="step-number">3</span>
@@ -174,7 +205,7 @@ def create_email_content(summary):
                     <span class="step-number">5</span>
                     <strong>Process:</strong> Use Q Developer to convert JSON to DadAssist HTML
                 </div>
-            </div>
+            </div>"""
 
             <h2>⚙️ How to Change Search Criteria</h2>
             <div class="info-box">
@@ -258,7 +289,19 @@ def send_email_notification(summary):
     
     # Create message
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = f"🤖 DadAssist Automation: {summary.get('quality_articles', 0)} Articles Ready for Review"
+    
+    # Dynamic subject based on outcome
+    skip_generation = summary.get('skip_generation', False)
+    article_url = summary.get('article_url', '')
+    
+    if skip_generation:
+        subject = "⚠️ DadAssist Automation: All Articles Were Duplicates"
+    elif article_url:
+        subject = f"✅ DadAssist Automation: New Article Generated - {summary.get('article_title', 'Article')}"
+    else:
+        subject = f"🤖 DadAssist Automation: {summary.get('quality_articles', 0)} Articles Ready for Review"
+    
+    msg['Subject'] = subject
     msg['From'] = sender_email
     msg['To'] = recipient_email
     
@@ -288,11 +331,8 @@ def main():
     """Main notification function"""
     print("📧 Starting email notification system...")
     
-    # Load run summary
+    # Load run summary (will create basic one if missing)
     summary = load_run_summary()
-    if not summary:
-        print("❌ No run summary available for notification")
-        return False
     
     # Send email notification
     success = send_email_notification(summary)
