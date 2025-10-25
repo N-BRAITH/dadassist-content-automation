@@ -205,7 +205,7 @@ def create_email_content(summary):
                     <span class="step-number">5</span>
                     <strong>Process:</strong> Use Q Developer to convert JSON to DadAssist HTML
                 </div>
-            </div>"""
+            </div>
 
             <h2>⚙️ How to Change Search Criteria</h2>
             <div class="info-box">
@@ -228,6 +228,49 @@ def create_email_content(summary):
                         <li><strong>Quality Filters:</strong> Modify <span class="code">"min_word_count"</span></li>
                     </ul>
                 </div>
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <strong>Commit Changes:</strong> Click "Commit changes" button
+                </div>
+                <div class="step">
+                    <span class="step-number">5</span>
+                    <strong>Next Run:</strong> Monday's automation will use your new settings
+                </div>
+            </div>
+
+            <h2>💡 Example Search Configurations</h2>
+            <div class="info-box">
+                <p><strong>Focus on Divorce/Property:</strong></p>
+                <p class="code">"property settlement divorce Australia OR asset division fathers OR spousal maintenance guide"</p>
+                
+                <p><strong>Mental Health Focus:</strong></p>
+                <p class="code">"fathers mental health separation OR depression divorce men Australia OR wellbeing fathers"</p>
+                
+                <p><strong>Child Support Focus:</strong></p>
+                <p class="code">"child support assessment Australia OR CSA fathers OR child support calculator guide"</p>
+                
+                <p><strong>Family Violence Focus:</strong></p>
+                <p class="code">"family violence intervention orders OR domestic violence fathers OR FVIO applications Australia"</p>
+            </div>
+
+            <h2>📞 Support Information</h2>
+            <div class="info-box">
+                <p><strong>Repository:</strong> <a href="https://github.com/N-BRAITH/dadassist-content-automation">dadassist-content-automation</a></p>
+                <p><strong>Schedule:</strong> Every Monday at 9:00 AM UTC</p>
+                <p><strong>Retention:</strong> Artifacts kept for 30 days</p>
+                <p><strong>Next Run:</strong> {(datetime.now().replace(hour=9, minute=0, second=0, microsecond=0) + timedelta(days=(7-datetime.now().weekday()))).strftime('%A, %B %d at 9:00 AM UTC') if datetime.now().weekday() != 0 else 'Next Monday at 9:00 AM UTC'}</p>
+            </div>
+
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px;">
+                <p>This is an automated message from DadAssist Content Automation System.</p>
+                <p>Generated on {datetime.now().strftime('%Y-%m-%d at %H:%M:%S UTC')}</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return html_content
                 <div class="step">
                     <span class="step-number">4</span>
                     <strong>Commit Changes:</strong> Click "Commit changes" button
