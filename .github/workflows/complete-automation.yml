@@ -341,10 +341,9 @@ jobs:
             echo "🎨 Generating custom Instagram image..."
             echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
             
-            # Generate predictable filename
+            # Generate simple filename without timestamp
             SAFE_TITLE=$(echo "${{ env.ARTICLE_TITLE }}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
-            TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-            FILENAME="${SAFE_TITLE}_${TIMESTAMP}.jpg"
+            FILENAME="${SAFE_TITLE}.jpg"
             
             echo "📁 Using filename: $FILENAME"
             
@@ -359,8 +358,7 @@ jobs:
           echo "🔍 Constructing Instagram image URL..."
           # Generate the same filename pattern as above
           SAFE_TITLE=$(echo "${{ env.ARTICLE_TITLE }}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
-          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-          FILENAME="${SAFE_TITLE}_${TIMESTAMP}.jpg"
+          FILENAME="${SAFE_TITLE}.jpg"
           INSTAGRAM_IMAGE_URL="https://dadassist.com.au/images/instagram/$FILENAME"
           echo "INSTAGRAM_IMAGE_URL=$INSTAGRAM_IMAGE_URL" >> $GITHUB_ENV
           echo "🌐 Set Instagram image URL: $INSTAGRAM_IMAGE_URL"
