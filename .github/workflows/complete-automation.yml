@@ -181,17 +181,18 @@ jobs:
           host: 13.239.163.33
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script_stop: true
+          envs: ARTICLE_CONTENT,ARTICLE_TITLE
           script: |
             echo "🤖 Starting article generation from scraped content..."
             echo "📅 Timestamp: $(date)"
-            echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
+            echo "📝 Article Title: $ARTICLE_TITLE"
             echo "📂 Category: Legal Procedures"
-            echo "🔧 Content length: $(echo '${{ env.ARTICLE_CONTENT }}' | wc -c) characters"
             
-            # Create temporary files to avoid quote issues
-            echo '${{ env.ARTICLE_CONTENT }}' > /tmp/article_content.txt
-            echo '${{ env.ARTICLE_TITLE }}' > /tmp/article_title.txt
+            # Write content to files to avoid quote issues
+            echo "$ARTICLE_CONTENT" > /tmp/article_content.txt
+            echo "$ARTICLE_TITLE" > /tmp/article_title.txt
+            
+            echo "🔧 Content length: $(wc -c < /tmp/article_content.txt) characters"
             
             RESULT=$(python3 /home/ubuntu/generate_article.py \
               --content "$(cat /tmp/article_content.txt)" \
@@ -205,18 +206,6 @@ jobs:
               ARTICLE_URL=$(echo "$RESULT" | grep "SUCCESS:" | sed 's/.*SUCCESS: *//')
               echo "🎉 Article generated successfully!"
               echo "🌐 Live URL: $ARTICLE_URL"
-              echo "📏 URL length: $(echo $ARTICLE_URL | wc -c) characters"
-              
-              # Extract actual filename from the URL for file operations
-              ACTUAL_FILENAME=$(echo "$ARTICLE_URL" | sed 's|.*/||')
-              echo "📄 Generated HTML filename: $ACTUAL_FILENAME"
-              
-              # Check file size using actual filename
-              if [ -f "/var/www/dadassist/posts/articles/$ACTUAL_FILENAME" ]; then
-                echo "📊 HTML file size: $(wc -c < /var/www/dadassist/posts/articles/$ACTUAL_FILENAME) bytes"
-              else
-                echo "⚠️ HTML file not found at expected location"
-              fi
               
               # Write URL to a temporary file for retrieval
               echo "$ARTICLE_URL" > /tmp/generated_article_url.txt
