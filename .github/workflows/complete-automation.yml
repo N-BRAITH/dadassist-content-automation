@@ -181,6 +181,7 @@ jobs:
           host: 13.239.163.33
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
           script: |
             echo "🤖 Starting article generation from scraped content..."
             echo "📅 Timestamp: $(date)"
@@ -188,9 +189,13 @@ jobs:
             echo "📂 Category: Legal Procedures"
             echo "🔧 Content length: $(echo '${{ env.ARTICLE_CONTENT }}' | wc -c) characters"
             
+            # Create temporary files to avoid quote issues
+            echo '${{ env.ARTICLE_CONTENT }}' > /tmp/article_content.txt
+            echo '${{ env.ARTICLE_TITLE }}' > /tmp/article_title.txt
+            
             RESULT=$(python3 /home/ubuntu/generate_article.py \
-              --content "${{ env.ARTICLE_CONTENT }}" \
-              --title "${{ env.ARTICLE_TITLE }}" \
+              --content "$(cat /tmp/article_content.txt)" \
+              --title "$(cat /tmp/article_title.txt)" \
               --category "Legal Procedures")
             
             echo "📋 Generation result:"
