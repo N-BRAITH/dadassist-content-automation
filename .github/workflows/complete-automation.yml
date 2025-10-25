@@ -351,6 +351,7 @@ jobs:
             echo "💾 Saved Instagram URL to /tmp/generated_instagram_url.txt"
             
       - name: Set Instagram Image URL
+        id: set-instagram-image-url
         if: env.SKIP_GENERATION != 'true'
         uses: appleboy/ssh-action@v0.1.5
         with:
@@ -372,7 +373,8 @@ jobs:
         if: env.SKIP_GENERATION != 'true'
         run: |
           # This step will get the URL from the SSH output above
-          echo "INSTAGRAM_IMAGE_URL=https://dadassist.com.au/images/instagram/parents-with-mental-illness-and-child-custody_20251025_094146.jpg" >> $GITHUB_ENV
+          INSTAGRAM_IMAGE_URL=$(echo '${{ steps.set-instagram-image-url.outputs.stdout }}' | grep -o 'INSTAGRAM_IMAGE_URL=.*' | cut -d'=' -f2)
+          echo "INSTAGRAM_IMAGE_URL=$INSTAGRAM_IMAGE_URL" >> $GITHUB_ENV
           echo "🌐 Set Instagram image URL for social media posting"
             
       - name: Post to Social Media
