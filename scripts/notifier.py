@@ -89,10 +89,14 @@ def load_run_summary():
     social_media_results = None
     if social_media_results_file and os.path.exists(social_media_results_file):
         try:
+            print(f"📱 Loading social media results from: {social_media_results_file}")
             with open(social_media_results_file, 'r') as f:
                 social_media_results = json.load(f)
+            print(f"✅ Loaded {len(social_media_results.get('results', []))} social media results")
         except Exception as e:
             print(f"⚠️ Could not load social media results: {e}")
+    else:
+        print(f"⚠️ Social media results file not found: {social_media_results_file}")
     
     # Update summary based on workflow results
     summary['skip_generation'] = skip_generation
