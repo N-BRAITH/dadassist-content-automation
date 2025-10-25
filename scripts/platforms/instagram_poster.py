@@ -7,6 +7,8 @@ Posts content to Instagram using Facebook Graph API with GitHub Secrets
 import os
 import json
 import requests
+import boto3
+import base64
 from datetime import datetime
 
 class InstagramPoster:
@@ -56,7 +58,7 @@ class InstagramPoster:
         """Create Instagram image post"""
         content = post_data['content']
         
-        # Default professional image if none provided (reliable stock photo)
+        # Use provided image URL or default professional image
         if not image_url:
             image_url = "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1080&h=1080&fit=crop&crop=center"
         

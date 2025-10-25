@@ -72,7 +72,11 @@ def post_to_all_platforms(article, dry_run=True):
     # Post to Instagram
     print(f"\n📷 Posting to Instagram...")
     if instagram.authenticate():
-        result = instagram.create_image_post(all_posts['posts']['instagram'])
+        # Use generated image URL if available
+        instagram_image_url = os.getenv('INSTAGRAM_IMAGE_URL')
+        if instagram_image_url:
+            print(f"🎨 Using generated image: {instagram_image_url}")
+        result = instagram.create_image_post(all_posts['posts']['instagram'], instagram_image_url)
         results.append(result)
     else:
         results.append({'success': False, 'platform': 'instagram', 'error': 'Authentication failed'})
