@@ -276,19 +276,25 @@ jobs:
           fi
           
           echo "🔧 Creating social media post data..."
-          # Create social media post data
+          # Create social media post data with proper escaping
           mkdir -p social-media
-          echo '{
-            "detection_date": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'",
-            "new_articles_count": 1,
-            "new_articles": [{
-              "filename": "${{ env.ARTICLE_FILENAME }}",
-              "title": "${{ env.ARTICLE_TITLE }}",
-              "description": "Expert legal advice for Australian fathers",
-              "url": "${{ env.ARTICLE_URL }}",
-              "discovered_date": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
-            }]
-          }' > social-media/new_articles_found.json
+          
+          # Escape special characters in title
+          ESCAPED_TITLE=$(echo "${{ env.ARTICLE_TITLE }}" | sed 's/"/\\"/g' | sed "s/'/\\'/g")
+          
+          cat > social-media/new_articles_found.json << EOF
+{
+  "detection_date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+  "new_articles_count": 1,
+  "new_articles": [{
+    "filename": "${{ env.ARTICLE_FILENAME }}",
+    "title": "${ESCAPED_TITLE}",
+    "description": "Expert legal advice for Australian fathers",
+    "url": "${{ env.ARTICLE_URL }}",
+    "discovered_date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+  }]
+}
+EOF
           
           echo "✅ Social media data file created:"
           cat social-media/new_articles_found.json
