@@ -341,17 +341,29 @@ jobs:
             echo "🎨 Generating custom Instagram image..."
             echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
             
-            # Generate image and get URL
-            INSTAGRAM_IMAGE_URL=$(python3 /tmp/generate_instagram_image.py "${{ env.ARTICLE_TITLE }}" | tail -1)
+            # Generate predictable filename
+            SAFE_TITLE=$(echo "${{ env.ARTICLE_TITLE }}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
+            TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+            FILENAME="${SAFE_TITLE}_${TIMESTAMP}.jpg"
             
-            echo "🌐 Generated image URL: $INSTAGRAM_IMAGE_URL"
+            echo "📁 Using filename: $FILENAME"
             
-            # Save URL to file for retrieval
-            echo "$INSTAGRAM_IMAGE_URL" > /tmp/generated_instagram_url.txt
-            echo "💾 Saved Instagram URL to /tmp/generated_instagram_url.txt"
+            # Generate image with specific filename
+            python3 /tmp/generate_instagram_image.py "${{ env.ARTICLE_TITLE }}" "$FILENAME"
             
-            # Also set as environment variable for GitHub Actions
-            echo "INSTAGRAM_IMAGE_URL=$INSTAGRAM_IMAGE_URL" >> $GITHUB_ENV
+            echo "✅ Instagram image generated with filename: $FILENAME"
+            
+      - name: Set Instagram Image URL
+        if: env.SKIP_GENERATION != 'true'
+        run: |
+          echo "🔍 Constructing Instagram image URL..."
+          # Generate the same filename pattern as above
+          SAFE_TITLE=$(echo "${{ env.ARTICLE_TITLE }}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          FILENAME="${SAFE_TITLE}_${TIMESTAMP}.jpg"
+          INSTAGRAM_IMAGE_URL="https://dadassist.com.au/images/instagram/$FILENAME"
+          echo "INSTAGRAM_IMAGE_URL=$INSTAGRAM_IMAGE_URL" >> $GITHUB_ENV
+          echo "🌐 Set Instagram image URL: $INSTAGRAM_IMAGE_URL"
             
       - name: Post to Social Media
         if: env.SKIP_GENERATION == 'false'
