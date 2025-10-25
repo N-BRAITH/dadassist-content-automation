@@ -57,6 +57,10 @@ jobs:
             echo "🕷️ Running Apify scraper..."
             python scripts/apify_scraper.py
             
+            # Capture current search query for notification
+            CURRENT_QUERY=$(python -c "import json; config=json.load(open('config/apify_config.json')); searches=config['search_rotation']['searches']; current=config['search_rotation']['current_search']; print(searches[current])")
+            echo "CURRENT_SEARCH_QUERY=$CURRENT_QUERY" >> $GITHUB_ENV
+            
             # Download and extract content
             echo "📥 Starting content download..."
             python scripts/content_downloader.py
@@ -487,7 +491,7 @@ jobs:
             echo "⚠️ Check workflow logs for details"
           fi
           
-          python scripts/notifier.py
+          python scripts/social_results_notifier.py
           echo "✅ Comprehensive notification sent"
           
       - name: Upload Debug Files
