@@ -372,10 +372,10 @@ jobs:
       - name: Set Instagram URL Environment
         if: env.SKIP_GENERATION != 'true'
         run: |
-          # This step will get the URL from the SSH output above
-          INSTAGRAM_IMAGE_URL=$(echo '${{ steps.set-instagram-image-url.outputs.stdout }}' | grep -o 'INSTAGRAM_IMAGE_URL=.*' | cut -d'=' -f2)
+          # Extract just the URL from the SSH output (remove "✅ Final result: " prefix)
+          INSTAGRAM_IMAGE_URL=$(echo '${{ steps.set-instagram-image-url.outputs.stdout }}' | grep -o 'https://dadassist.com.au/images/instagram/[^[:space:]]*')
           echo "INSTAGRAM_IMAGE_URL=$INSTAGRAM_IMAGE_URL" >> $GITHUB_ENV
-          echo "🌐 Set Instagram image URL for social media posting"
+          echo "🌐 Set Instagram image URL: $INSTAGRAM_IMAGE_URL"
             
       - name: Post to Social Media
         if: env.SKIP_GENERATION == 'false'
