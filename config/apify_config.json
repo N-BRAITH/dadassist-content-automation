@@ -2,7 +2,7 @@
   "version": "3.5.0",
   "last_updated": "2024-10-25",
   "search_rotation": {
-    "current_search": 25,
+    "current_search": 27,
     "searches": [
       "Australian family law fathers rights parenting arrangements",
       "child support calculation Australia fathers guide",
@@ -44,15 +44,31 @@
     "language_code": "en",
     "randomization": {
       "enabled": true,
-      "start_page_range": [1, 8],
-      "results_per_page_options": [10, 15, 20, 25],
-      "skip_results_range": [0, 50]
+      "start_page_range": [
+        1,
+        8
+      ],
+      "results_per_page_options": [
+        10,
+        15,
+        20,
+        25
+      ],
+      "skip_results_range": [
+        0,
+        50
+      ]
     }
   },
   "content_filters": {
     "min_word_count": 300,
     "max_word_count": 5000,
-    "exclude_keywords": ["advertisement", "sponsored", "cookie policy", "privacy policy"]
+    "exclude_keywords": [
+      "advertisement",
+      "sponsored",
+      "cookie policy",
+      "privacy policy"
+    ]
   },
   "email_settings": {
     "smtp_provider": "amazon_ses",
