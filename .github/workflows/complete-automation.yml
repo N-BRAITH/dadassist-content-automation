@@ -336,7 +336,7 @@ jobs:
         with:
           host: 13.239.163.33
           username: ubuntu
-          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             echo "🎨 Generating custom Instagram image..."
             echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
