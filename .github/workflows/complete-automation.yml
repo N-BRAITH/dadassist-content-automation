@@ -369,3 +369,14 @@ jobs:
           
           python scripts/notifier.py
           echo "✅ Comprehensive notification sent"
+          
+      - name: Upload Debug Files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-files-${{ github.run_number }}
+          path: |
+            debug_email_content.html
+            social_media_output.log
+            social-media/results/
+          retention-days: 7
