@@ -332,20 +332,20 @@ jobs:
             
       - name: Generate Instagram Image
         if: env.SKIP_GENERATION != 'true'
-        run: |
-          echo "🎨 Generating custom Instagram image..."
-          echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
-          
-          # Copy image generation script to server
-          scp -i ~/.ssh/LightsailDefaultKey-ap-southeast-2.pem -o StrictHostKeyChecking=no \
-            scripts/generate_instagram_image.py ubuntu@13.239.163.33:/tmp/
-          
-          # Generate image and capture URL
-          INSTAGRAM_IMAGE_URL=$(ssh -i ~/.ssh/LightsailDefaultKey-ap-southeast-2.pem -o StrictHostKeyChecking=no \
-            ubuntu@13.239.163.33 "cd /tmp && python3 generate_instagram_image.py '${{ env.ARTICLE_TITLE }}' | tail -1")
-          
-          echo "INSTAGRAM_IMAGE_URL=$INSTAGRAM_IMAGE_URL" >> $GITHUB_ENV
-          echo "🌐 Generated image URL: $INSTAGRAM_IMAGE_URL"
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: 13.239.163.33
+          username: ubuntu
+          key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          script: |
+            echo "🎨 Generating custom Instagram image..."
+            echo "📝 Article Title: ${{ env.ARTICLE_TITLE }}"
+            
+            # Generate image and get URL
+            INSTAGRAM_IMAGE_URL=$(python3 /tmp/generate_instagram_image.py "${{ env.ARTICLE_TITLE }}" | tail -1)
+            
+            echo "🌐 Generated image URL: $INSTAGRAM_IMAGE_URL"
+            echo "INSTAGRAM_IMAGE_URL=$INSTAGRAM_IMAGE_URL" >> $GITHUB_ENV
             
       - name: Post to Social Media
         if: env.SKIP_GENERATION == 'false'
