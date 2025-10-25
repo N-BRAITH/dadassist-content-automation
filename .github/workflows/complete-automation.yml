@@ -1,8 +1,8 @@
 # Complete DadAssist Automation Workflow
-# Version: 3.3.0
-# Last Updated: 2024-10-19
+# Version: 3.4.0
+# Last Updated: 2024-10-25
 # Features: Content scraping, article generation, social media posting in one workflow
-# Updated: Fixed URL capture using file-based method
+# Updated: Fixed JSON syntax error and notification system
 
 name: Complete DadAssist Automation
 
@@ -26,9 +26,9 @@ jobs:
       - name: Display Workflow Version
         run: |
           echo "🚀 Complete DadAssist Automation Workflow"
-          echo "📋 Version: 3.3.0"
-          echo "📅 Last Updated: 2024-10-19"
-          echo "🔧 Features: Fixed URL capture using file-based method"
+          echo "📋 Version: 3.4.0"
+          echo "📅 Last Updated: 2024-10-25"
+          echo "🔧 Features: Fixed JSON syntax error and notification system"
           echo "==========================================="
         
       - name: Set up Python
@@ -316,7 +316,7 @@ EOF
           echo "📊 WORKFLOW SUMMARY"
           echo "==================="
           echo "📅 Completion time: $(date)"
-          echo "🔧 Workflow version: 3.3.0"
+          echo "🔧 Workflow version: 3.4.0"
           
           if [ "${{ env.SKIP_GENERATION }}" = "true" ]; then
             echo "⚠️ RESULT: No new articles generated - all were duplicates"
