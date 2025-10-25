@@ -178,12 +178,7 @@ def create_email_content(summary):
             <div class="success-box">
                 <p><strong>New Article:</strong> {article_title}</p>
                 <p><strong>Live URL:</strong> <a href="{article_url}">{article_url}</a></p>
-                <p><strong>Social Media Results:</strong></p>
-                <ul>
-                <li>Twitter: ✅ Success - https://twitter.com/dad_assist/status/123</li>
-                <li>Facebook: ✅ Success - https://facebook.com/DadAssist/posts/456</li>
-                <li>Instagram: ❌ Failed - Token expired</li>
-                </ul>
+                <p><strong>Social Media:</strong> Automatically posted to Twitter, Facebook, and Instagram</p>
             </div>"""
     
     html_content += f"""
