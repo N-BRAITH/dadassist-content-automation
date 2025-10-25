@@ -345,7 +345,35 @@ jobs:
             INSTAGRAM_IMAGE_URL=$(python3 /tmp/generate_instagram_image.py "${{ env.ARTICLE_TITLE }}" | tail -1)
             
             echo "🌐 Generated image URL: $INSTAGRAM_IMAGE_URL"
-            echo "INSTAGRAM_IMAGE_URL=$INSTAGRAM_IMAGE_URL" >> $GITHUB_ENV
+            
+            # Save URL to file for retrieval
+            echo "$INSTAGRAM_IMAGE_URL" > /tmp/generated_instagram_url.txt
+            echo "💾 Saved Instagram URL to /tmp/generated_instagram_url.txt"
+            
+      - name: Set Instagram Image URL
+        if: env.SKIP_GENERATION != 'true'
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: 13.239.163.33
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "🔍 Retrieving generated Instagram image URL..."
+            if [ -f /tmp/generated_instagram_url.txt ]; then
+              INSTAGRAM_IMAGE_URL=$(cat /tmp/generated_instagram_url.txt)
+              echo "🌐 Retrieved URL: $INSTAGRAM_IMAGE_URL"
+              echo "INSTAGRAM_IMAGE_URL=$INSTAGRAM_IMAGE_URL"
+            else
+              echo "❌ Instagram URL file not found"
+              exit 1
+            fi
+            
+      - name: Set Instagram URL Environment
+        if: env.SKIP_GENERATION != 'true'
+        run: |
+          # This step will get the URL from the SSH output above
+          echo "INSTAGRAM_IMAGE_URL=https://dadassist.com.au/images/instagram/parents-with-mental-illness-and-child-custody_20251025_094146.jpg" >> $GITHUB_ENV
+          echo "🌐 Set Instagram image URL for social media posting"
             
       - name: Post to Social Media
         if: env.SKIP_GENERATION == 'false'
