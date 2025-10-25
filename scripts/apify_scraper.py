@@ -137,7 +137,7 @@ def filter_search_results(client, dataset_id, config):
     
     # Limit to max articles per run
     max_articles = config["scraping_settings"]["max_articles_per_run"]
-    filtered_urls = filtered_urls[:max_articles]
+    # Skip the [:max_articles] - keep all filtered results for random selection
     
     print(f"✅ Filtered to {len(filtered_urls)} relevant articles")
     
@@ -177,13 +177,10 @@ def save_results_simple(filtered_urls, config):
     # Randomize selection from available URLs
     max_articles = config["scraping_settings"]["max_articles_per_run"]
     
-    if len(fresh_urls) > max_articles:
-        # Randomly select articles instead of taking first ones
-        selected_urls = random.sample(fresh_urls, max_articles)
-        print(f"🎲 Randomly selected {max_articles} articles from {len(fresh_urls)} available")
-    else:
-        selected_urls = fresh_urls
-        print(f"📋 Using all {len(selected_urls)} available articles")
+    # Always randomly select from available URLs (whether fresh or all)
+    available_urls = fresh_urls if fresh_urls else filtered_urls
+    selected_urls = random.sample(available_urls, min(max_articles, len(available_urls)))
+    print(f"🎲 Randomly selected {len(selected_urls)} articles from {len(available_urls)} available")
     
     # Create results directory
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
