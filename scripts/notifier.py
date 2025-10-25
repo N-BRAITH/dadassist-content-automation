@@ -404,7 +404,6 @@ def send_email_notification(summary):
     html_content = create_email_content(summary)
     
     # Save email content for debugging
-    import os
     current_dir = os.getcwd()
     print(f"📁 Current working directory: {current_dir}")
     
