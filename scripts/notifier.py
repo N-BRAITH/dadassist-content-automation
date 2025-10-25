@@ -397,6 +397,12 @@ def send_email_notification(summary):
     
     # Create HTML content
     html_content = create_email_content(summary)
+    
+    # Save email content for debugging
+    with open('debug_email_content.html', 'w') as f:
+        f.write(html_content)
+    print("📧 Email content saved to debug_email_content.html for review")
+    
     html_part = MIMEText(html_content, 'html')
     msg.attach(html_part)
     
