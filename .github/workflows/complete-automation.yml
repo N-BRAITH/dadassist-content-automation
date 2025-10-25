@@ -288,12 +288,16 @@ jobs:
           python scripts/social_media_poster.py --live > social_media_output.log 2>&1
           
           # Extract posting results for email notification
-          if [ -f social-media/results/posting_results_*.json ]; then
+          echo "🔍 Looking for social media results files..."
+          ls -la social-media/results/ || echo "No results directory found"
+          
+          if ls social-media/results/posting_results_*.json 1> /dev/null 2>&1; then
             LATEST_RESULTS=$(ls -t social-media/results/posting_results_*.json | head -1)
             echo "SOCIAL_MEDIA_RESULTS_FILE=$LATEST_RESULTS" >> $GITHUB_ENV
-            echo "✅ Social media posting completed - results saved"
+            echo "✅ Social media posting completed - results saved: $LATEST_RESULTS"
           else
             echo "⚠️ No social media results file found"
+            echo "SOCIAL_MEDIA_RESULTS_FILE=" >> $GITHUB_ENV
           fi
           
           # Show output for debugging
