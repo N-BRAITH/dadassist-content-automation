@@ -242,16 +242,67 @@ def update_search_rotation(config):
     return next_index
 
 def main():
-    """Main scraping function"""
+    """Main scraping function with retry logic for unique articles"""
     print("🚀 Starting DadAssist content scraping...")
     
-    # Initialize Apify client
-    apify_token = os.getenv('APIFY_TOKEN')
-    if not apify_token:
-        print("❌ APIFY_TOKEN not found in environment variables")
-        return False
+    max_attempts = 5  # Try up to 5 different search queries
     
-    client = ApifyClient(apify_token)
+    for attempt in range(1, max_attempts + 1):
+        print(f"\n🔍 Scraping attempt {attempt}/{max_attempts}")
+        
+        # Initialize Apify client
+        apify_token = os.getenv('APIFY_TOKEN')
+        if not apify_token:
+            print("❌ APIFY_TOKEN not found in environment variables")
+            return False
+        
+        client = ApifyClient(apify_token)
+        
+        try:
+            # Load configuration
+            config = load_config()
+            
+            # Get current search query
+            current_search_index = config["search_rotation"]["current_search"]
+            search_queries = config["search_rotation"]["searches"]
+            current_query = search_queries[current_search_index]
+            
+            print(f"📝 Using search query {current_search_index + 1}: {current_query}")
+            
+            # Run scraping
+            success = run_scraping(client, config, current_query)
+            
+            if success:
+                # Check if we found unique content by looking for SKIP_GENERATION
+                skip_generation = os.getenv('SKIP_GENERATION', 'false')
+                
+                if skip_generation.lower() == 'true':
+                    print(f"⚠️ Attempt {attempt}: All articles were duplicates")
+                    print("🔄 Rotating to next search query and retrying...")
+                    
+                    # Rotate to next search query
+                    rotate_search_query()
+                    
+                    # Continue to next attempt
+                    continue
+                else:
+                    print(f"✅ Attempt {attempt}: Found unique content!")
+                    return True
+            else:
+                print(f"❌ Attempt {attempt}: Scraping failed")
+                
+        except Exception as e:
+            print(f"❌ Attempt {attempt} failed: {e}")
+        
+        # If not the last attempt, rotate search query
+        if attempt < max_attempts:
+            rotate_search_query()
+    
+    print(f"❌ All {max_attempts} attempts failed to find unique content")
+    return False
+
+def run_scraping(client, config, search_query):
+    """Run the actual scraping process"""
     
     # Load configuration
     try:
