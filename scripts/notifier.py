@@ -399,9 +399,24 @@ def send_email_notification(summary):
     html_content = create_email_content(summary)
     
     # Save email content for debugging
-    with open('debug_email_content.html', 'w') as f:
+    import os
+    current_dir = os.getcwd()
+    print(f"📁 Current working directory: {current_dir}")
+    
+    debug_file_path = 'debug_email_content.html'
+    with open(debug_file_path, 'w') as f:
         f.write(html_content)
-    print("📧 Email content saved to debug_email_content.html for review")
+    
+    # Verify file was created
+    if os.path.exists(debug_file_path):
+        file_size = os.path.getsize(debug_file_path)
+        print(f"📧 Email content saved to {debug_file_path} ({file_size} bytes)")
+    else:
+        print(f"❌ Failed to create debug file at {debug_file_path}")
+    
+    # List files in current directory
+    files = os.listdir('.')
+    print(f"📂 Files in current directory: {[f for f in files if f.endswith('.html') or f.endswith('.log')]}")
     
     html_part = MIMEText(html_content, 'html')
     msg.attach(html_part)
