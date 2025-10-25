@@ -176,47 +176,28 @@ jobs:
       - name: Generate Article on Ubuntu Server
         if: env.SKIP_GENERATION == 'false'
         id: generate_article
-        uses: appleboy/ssh-action@v0.1.5
-        with:
-          host: 13.239.163.33
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: ARTICLE_CONTENT,ARTICLE_TITLE
-          script: |
-            echo "🤖 Starting article generation from scraped content..."
-            echo "📅 Timestamp: $(date)"
-            echo "📝 Article Title: $ARTICLE_TITLE"
-            echo "📂 Category: Legal Procedures"
-            
-            # Write content to files to avoid quote issues
-            echo "$ARTICLE_CONTENT" > /tmp/article_content.txt
-            echo "$ARTICLE_TITLE" > /tmp/article_title.txt
-            
-            echo "🔧 Content length: $(wc -c < /tmp/article_content.txt) characters"
-            
-            RESULT=$(python3 /home/ubuntu/generate_article.py \
-              --content "$(cat /tmp/article_content.txt)" \
-              --title "$(cat /tmp/article_title.txt)" \
-              --category "Legal Procedures")
-            
-            echo "📋 Generation result:"
+        run: |
+          echo "🤖 Starting article generation..."
+          
+          # Create files locally
+          echo "${{ env.ARTICLE_CONTENT }}" > article_content.txt
+          echo "${{ env.ARTICLE_TITLE }}" > article_title.txt
+          
+          # Copy files to server
+          scp -i /Users/user/Desktop/LightsailDefaultKey-ap-southeast-2\ \(2\).pem -o StrictHostKeyChecking=no article_content.txt ubuntu@13.239.163.33:/tmp/
+          scp -i /Users/user/Desktop/LightsailDefaultKey-ap-southeast-2\ \(2\).pem -o StrictHostKeyChecking=no article_title.txt ubuntu@13.239.163.33:/tmp/
+          
+          # Run generation on server
+          ssh -i /Users/user/Desktop/LightsailDefaultKey-ap-southeast-2\ \(2\).pem -o StrictHostKeyChecking=no ubuntu@13.239.163.33 '
+            RESULT=$(python3 /home/ubuntu/generate_article.py --content "$(cat /tmp/article_content.txt)" --title "$(cat /tmp/article_title.txt)" --category "Legal Procedures")
             echo "$RESULT"
-            
             if echo "$RESULT" | grep -q "SUCCESS:"; then
-              ARTICLE_URL=$(echo "$RESULT" | grep "SUCCESS:" | sed 's/.*SUCCESS: *//')
-              echo "🎉 Article generated successfully!"
-              echo "🌐 Live URL: $ARTICLE_URL"
-              
-              # Write URL to a temporary file for retrieval
-              echo "$ARTICLE_URL" > /tmp/generated_article_url.txt
-              
-              echo "✅ Article generation completed successfully"
-              exit 0
+              echo "$RESULT" | grep "SUCCESS:" | sed "s/.*SUCCESS: *//" > /tmp/generated_article_url.txt
+              echo "SUCCESS"
             else
-              echo "❌ Article generation failed"
-              echo "🔍 Full result output above for debugging"
-              exit 1
+              echo "FAILED"
             fi
+          '
             
       - name: Retrieve Article URL
         if: env.SKIP_GENERATION == 'false'
