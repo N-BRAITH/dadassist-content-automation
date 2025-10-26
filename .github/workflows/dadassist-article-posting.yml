@@ -1,8 +1,8 @@
 name: DadAssist Weekly Article Social Media Posting
 
 on:
-  schedule:
-    - cron: '0 10 * * 1'  # Weekly on Mondays at 10 AM UTC (9 PM AEDT)
+  # schedule:
+  #   - cron: '0 10 * * 1'  # Weekly on Mondays at 10 AM UTC - DISABLED (using complete-automation.yml instead)
   workflow_dispatch:  # Allow manual triggering
   repository_dispatch:
     types: [new_articles_ready]  # Triggered by detection workflow
