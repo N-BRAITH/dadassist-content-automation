@@ -5,8 +5,8 @@ permissions:
   actions: write
 
 on:
-  schedule:
-    - cron: '0 9 * * 1'  # Every Monday at 9 AM UTC
+  # schedule:
+  #   - cron: '0 9 * * 1'  # Every Monday at 9 AM UTC - DISABLED (using complete-automation.yml instead)
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
