@@ -117,13 +117,7 @@ jobs:
               echo "   Source URL: $SOURCE_URL"
               
               # Check if source URL already in metadata
-              ALREADY_GENERATED=$(python -c "
-import json
-with open('config/article_metadata.json', 'r') as f:
-    metadata = json.load(f)
-source_urls = [a['source_url'] for a in metadata['articles']]
-print('true' if '$SOURCE_URL' in source_urls else 'false')
-")
+              ALREADY_GENERATED=$(python -c "import json; metadata=json.load(open('config/article_metadata.json')); source_urls=[a['source_url'] for a in metadata['articles']]; print('true' if '$SOURCE_URL' in source_urls else 'false')")
               
               if [ "$ALREADY_GENERATED" = "true" ]; then
                 echo "   ⚠️ Duplicate source URL - already generated"
