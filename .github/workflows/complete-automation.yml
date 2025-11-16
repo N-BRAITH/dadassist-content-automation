@@ -85,10 +85,6 @@ jobs:
             python scripts/content_downloader.py
             echo "✅ Content download completed"
             
-            echo "📥 Downloading content from $NEW_URL_COUNT new URLs..."
-            python scripts/content_downloader.py
-            echo "✅ Content download completed"
-            
             # STEP 4: Check for duplicates (by source URL in metadata)
             echo "🔍 Checking downloaded articles for duplicates..."
             
@@ -182,17 +178,6 @@ jobs:
           git push || echo "⚠️ Nothing to commit or push failed"
           
           echo "✅ Content scraping process completed"
-          
-      - name: Download and extract content
-        env:
-          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
-        run: |
-          echo "📥 Starting content download..."
-          echo "📅 Timestamp: $(date)"
-          python scripts/content_downloader.py
-          echo "✅ Content download completed"
-          echo "📊 Checking downloaded files..."
-          ls -la downloads/ || echo "No downloads directory found"
           
       - name: Create run summary
         run: |
