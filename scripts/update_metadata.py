@@ -7,7 +7,7 @@ import json
 import sys
 from datetime import datetime
 
-def update_metadata(filename, title, source_url, article_url):
+def update_metadata(filename, title, source_url, article_url, category='Legal Procedures'):
     """Add new article to metadata"""
     
     # Load metadata
@@ -23,7 +23,7 @@ def update_metadata(filename, title, source_url, article_url):
         'source_url': source_url,
         'generated_date': datetime.now().isoformat(),
         'live_url': article_url,
-        'category': 'Legal Procedures'
+        'category': category
     })
     
     # Increment counter
@@ -38,13 +38,14 @@ def update_metadata(filename, title, source_url, article_url):
     return article_id
 
 if __name__ == '__main__':
-    if len(sys.argv) != 5:
-        print("Usage: update_metadata.py <filename> <title> <source_url> <article_url>")
+    if len(sys.argv) < 5:
+        print("Usage: update_metadata.py <filename> <title> <source_url> <article_url> [category]")
         sys.exit(1)
     
     filename = sys.argv[1]
     title = sys.argv[2]
     source_url = sys.argv[3]
     article_url = sys.argv[4]
+    category = sys.argv[5] if len(sys.argv) > 5 else 'Legal Procedures'
     
-    update_metadata(filename, title, source_url, article_url)
+    update_metadata(filename, title, source_url, article_url, category)

@@ -384,15 +384,30 @@ jobs:
         run: |
           echo "💾 Updating article metadata..."
           
-          # Get source URL from downloaded content
+          # Get source URL and category from downloaded content
           SOURCE_URL=$(python -c "import json; data=json.load(open('downloads/latest_run.json')); print(data.get('source_url', 'unknown'))")
+          
+          # Get category from the article that was generated
+          CATEGORY=$(python -c "import json, glob; files=glob.glob('downloads/*/q_developer_input.json'); data=json.load(open(files[0])) if files else {}; articles=[a for a in data.get('articles', []) if a.get('url') == '$SOURCE_URL']; print(articles[0].get('category', 'general_legal') if articles else 'general_legal')")
+          
+          # Map category codes to display names
+          case $CATEGORY in
+            child_support) CATEGORY_NAME="Child Support" ;;
+            family_violence) CATEGORY_NAME="Family Violence" ;;
+            parenting_custody) CATEGORY_NAME="Parenting & Custody" ;;
+            mental_health) CATEGORY_NAME="Mental Health" ;;
+            *) CATEGORY_NAME="Legal Procedures" ;;
+          esac
+          
+          echo "📂 Category: $CATEGORY_NAME"
           
           # Update metadata file using script
           python scripts/update_metadata.py \
             "${{ env.ARTICLE_FILENAME }}" \
             "${{ env.ARTICLE_TITLE }}" \
             "$SOURCE_URL" \
-            "${{ env.ARTICLE_URL }}"
+            "${{ env.ARTICLE_URL }}" \
+            "$CATEGORY_NAME"
           
           echo "✅ Metadata updated"
           
