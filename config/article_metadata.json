@@ -4,10 +4,13 @@
       "article_id": 99,
       "filename": "dadassist-article-099.html",
       "source_url": "https://www.handbook.vla.vic.gov.au/guideline-8-family-violence-intervention-order-cases",
-      "generated_date": "2025-11-16T10:35:00+11:00"
+      "title": "Guideline 8 – family violence intervention order cases",
+      "generated_date": "2025-11-16T10:35:00+11:00",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-099.html",
+      "category": "Family Violence"
     }
   ],
   "next_article_id": 100,
-  "last_updated": "2025-11-16T21:56:00+11:00",
+  "last_updated": "2025-11-16T22:07:00+11:00",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
