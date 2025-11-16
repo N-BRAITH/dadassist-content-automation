@@ -342,17 +342,18 @@ def run_scraping(client, config, search_query):
             return False
         
         # Step 3: Save filtered URLs (simplified for testing)
-        results_dir, url_count = save_results_simple(filtered_urls, config)
+        results_dir, new_url_count = save_results_simple(filtered_urls, config)
         
         print(f"✅ Scraping completed successfully!")
-        print(f"📊 Results: {url_count} URLs saved to {results_dir}")
+        print(f"📊 Results: {new_url_count} URLs saved to {results_dir}")
         
         # Save run info for other scripts
         run_info = {
             "success": True,
             "timestamp": datetime.now().isoformat(),
             "results_dir": results_dir,
-            "url_count": url_count
+            "url_count": new_url_count,
+            "new_url_count": new_url_count
         }
         
         with open("downloads/latest_run.json", 'w') as f:
