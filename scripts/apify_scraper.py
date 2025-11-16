@@ -197,6 +197,9 @@ def save_results_simple(filtered_urls, config):
     selected_urls = random.sample(filtered_urls, min(max_articles, len(filtered_urls)))
     print(f"🎲 Randomly selected {len(selected_urls)} articles from {len(filtered_urls)} available")
     
+    # COUNT NEW URLs BEFORE adding to exclusion list
+    new_url_count = len(selected_urls)
+    
     # ADD SELECTED URLs TO EXCLUSION LIST IMMEDIATELY
     urls_to_add = [item['url'] for item in selected_urls]
     added_count = add_to_scraped_urls(urls_to_add)
@@ -228,7 +231,7 @@ def save_results_simple(filtered_urls, config):
     # Save latest run info for workflow
     latest_run = {
         'success': True,
-        'new_url_count': len(selected_urls),
+        'new_url_count': new_url_count,
         'timestamp': timestamp,
         'results_dir': results_dir
     }
@@ -236,7 +239,7 @@ def save_results_simple(filtered_urls, config):
         json.dump(latest_run, f, indent=2)
     
     print(f"✅ Saved {len(selected_urls)} URLs to {results_dir}")
-    return results_dir, len(selected_urls)
+    return results_dir, new_url_count
 
 def update_search_rotation(config):
     """Update the search rotation to use next query"""
