@@ -16,6 +16,46 @@ def load_config():
     with open('config/apify_config.json', 'r') as f:
         return json.load(f)
 
+def load_scraped_urls():
+    """Load previously scraped URLs from exclusion list"""
+    try:
+        with open('config/scraped_urls.json', 'r') as f:
+            data = json.load(f)
+            return set(data.get('scraped_urls', []))
+    except FileNotFoundError:
+        print("⚠️  No scraped_urls.json found - creating new file")
+        initial_data = {
+            "scraped_urls": [],
+            "last_updated": datetime.now().isoformat(),
+            "total_scraped": 0
+        }
+        os.makedirs('config', exist_ok=True)
+        with open('config/scraped_urls.json', 'w') as f:
+            json.dump(initial_data, f, indent=2)
+        return set()
+
+def add_to_scraped_urls(urls):
+    """Add URLs to exclusion list"""
+    try:
+        with open('config/scraped_urls.json', 'r') as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        data = {"scraped_urls": [], "total_scraped": 0}
+    
+    added_count = 0
+    for url in urls:
+        if url not in data['scraped_urls']:
+            data['scraped_urls'].append(url)
+            added_count += 1
+    
+    data['last_updated'] = datetime.now().isoformat()
+    data['total_scraped'] = len(data['scraped_urls'])
+    
+    with open('config/scraped_urls.json', 'w') as f:
+        json.dump(data, f, indent=2)
+    
+    return added_count
+
 def run_google_search_scraper(client, config):
     """Run Google Search Results Scraper with cycling search queries"""
     print("🔍 Starting Google search for legal content...")
@@ -74,6 +114,10 @@ def filter_search_results(client, dataset_id, config):
     """Filter search results to get relevant legal articles"""
     print("🔍 Filtering search results...")
     
+    # LOAD EXCLUSION LIST FIRST
+    scraped_urls = load_scraped_urls()
+    print(f"📋 Loaded {len(scraped_urls)} previously scraped URLs")
+    
     # Get search results - need to get the full dataset, not just iterate
     dataset_items = list(client.dataset(dataset_id).iterate_items())
     
@@ -87,100 +131,76 @@ def filter_search_results(client, dataset_id, config):
     print(f"📊 Found {len(all_organic_results)} total search results")
     
     filtered_urls = []
+    skipped_already_scraped = 0
+    skipped_not_relevant = 0
     
-    # Expanded list of trusted Australian legal sites
-    trusted_domains = [
-        "legalaid.vic.gov.au",
-        "familycourt.gov.au", 
-        "ag.gov.au",
-        "lawhandbook.sa.gov.au",
-        "lawaccess.nsw.gov.au",
-        "familyrelationships.gov.au",
-        "childrenscourt.justice.nsw.gov.au",
-        "justice.gov.au",
-        "courts.justice.nsw.gov.au",
-        "supremecourt.justice.nsw.gov.au",
-        "legalaid.nsw.gov.au",
-        "legalaid.qld.gov.au",
-        "legalaid.wa.gov.au",
-        "legalaid.sa.gov.au",
-        "legalaid.tas.gov.au",
-        "legalaid.act.gov.au",
-        "legalaid.nt.gov.au"
-    ]
+    # Legal keywords for relevance check
+    legal_keywords = ['family', 'child', 'custody', 'support', 'law', 'court', 'legal', 
+                     'parenting', 'divorce', 'separation', 'intervention', 'order', 'father']
     
     for item in all_organic_results:
         url = item.get('url', '')
         title = item.get('title', '')
         description = item.get('description', '')
         
-        # Filter by trusted domains OR any Australian legal content
-        domain_match = any(domain in url for domain in trusted_domains)
-        australian_legal = ('.gov.au' in url or '.edu.au' in url or 
-                          'australia' in url.lower() or 'australian' in title.lower())
+        # CHECK 1: Already scraped?
+        if url in scraped_urls:
+            skipped_already_scraped += 1
+            continue
         
-        # Check if it's likely a legal article
-        legal_keywords = ['family', 'child', 'custody', 'support', 'law', 'court', 'legal', 
-                         'parenting', 'divorce', 'separation', 'intervention', 'order']
-        
+        # CHECK 2: Relevant legal content?
         title_relevant = len(title) > 10 and any(keyword in title.lower() for keyword in legal_keywords)
         desc_relevant = any(keyword in description.lower() for keyword in legal_keywords)
         
-        if (domain_match or australian_legal) and (title_relevant or desc_relevant):
-            filtered_urls.append({
-                'url': url,
-                'title': title,
-                'description': description,
-                'position': item.get('position', 0),
-                'date': item.get('date', '')
-            })
+        if not (title_relevant or desc_relevant):
+            skipped_not_relevant += 1
+            continue
+        
+        # PASSED ALL CHECKS
+        filtered_urls.append({
+            'url': url,
+            'title': title,
+            'description': description,
+            'position': item.get('position', 0),
+            'date': item.get('date', '')
+        })
     
-    # Limit to max articles per run
-    max_articles = config["scraping_settings"]["max_articles_per_run"]
-    # Skip the [:max_articles] - keep all filtered results for random selection
-    
-    print(f"✅ Filtered to {len(filtered_urls)} relevant articles")
+    print(f"✅ Filtered to {len(filtered_urls)} new relevant articles")
+    print(f"   ⏭️  Skipped {skipped_already_scraped} already scraped")
+    print(f"   ⏭️  Skipped {skipped_not_relevant} not relevant")
     
     # Print found URLs for debugging
-    for i, url_info in enumerate(filtered_urls, 1):
+    for i, url_info in enumerate(filtered_urls[:10], 1):  # Show first 10
         print(f"  {i}. {url_info['title'][:60]}...")
         print(f"     {url_info['url']}")
     
     return filtered_urls
 
 def save_results_simple(filtered_urls, config):
-    """Save filtered URLs with randomization and duplicate URL prevention"""
-    print("💾 Saving filtered results with randomization...")
+    """Save filtered URLs with randomization and add to exclusion list"""
+    print("💾 Saving filtered results...")
     
     if not filtered_urls:
-        print("⚠️  No URLs to save")
+        print("⚠️  No new URLs to save")
+        # Save empty run info
+        with open('downloads/latest_run.json', 'w') as f:
+            json.dump({
+                'success': False,
+                'new_url_count': 0,
+                'timestamp': datetime.now().isoformat(),
+                'message': 'No new URLs found - all already scraped'
+            }, f, indent=2)
         return None, 0
-    
-    # Load previously used URLs to avoid repeats
-    used_urls_file = 'downloads/used_urls.json'
-    used_urls = set()
-    
-    try:
-        if os.path.exists(used_urls_file):
-            with open(used_urls_file, 'r') as f:
-                used_urls = set(json.load(f))
-    except:
-        used_urls = set()
-    
-    # Filter out previously used URLs
-    fresh_urls = [url for url in filtered_urls if url['url'] not in used_urls]
-    
-    if not fresh_urls:
-        print("⚠️  All URLs have been used recently - using original list")
-        fresh_urls = filtered_urls
     
     # Randomize selection from available URLs
     max_articles = config["scraping_settings"]["max_articles_per_run"]
+    selected_urls = random.sample(filtered_urls, min(max_articles, len(filtered_urls)))
+    print(f"🎲 Randomly selected {len(selected_urls)} articles from {len(filtered_urls)} available")
     
-    # Always randomly select from available URLs (whether fresh or all)
-    available_urls = fresh_urls if fresh_urls else filtered_urls
-    selected_urls = random.sample(available_urls, min(max_articles, len(available_urls)))
-    print(f"🎲 Randomly selected {len(selected_urls)} articles from {len(available_urls)} available")
+    # ADD SELECTED URLs TO EXCLUSION LIST IMMEDIATELY
+    urls_to_add = [item['url'] for item in selected_urls]
+    added_count = add_to_scraped_urls(urls_to_add)
+    print(f"💾 Added {added_count} URLs to exclusion list")
     
     # Create results directory
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -205,20 +225,18 @@ def save_results_simple(filtered_urls, config):
     with open(summary_file, 'w', encoding='utf-8') as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
     
-    # Update used URLs list
-    new_used_urls = list(used_urls) + [url['url'] for url in selected_urls]
-    # Keep only last 100 URLs to prevent file from growing too large
-    if len(new_used_urls) > 100:
-        new_used_urls = new_used_urls[-100:]
-    
-    with open(used_urls_file, 'w') as f:
-        json.dump(new_used_urls, f, indent=2)
+    # Save latest run info for workflow
+    latest_run = {
+        'success': True,
+        'new_url_count': len(selected_urls),
+        'timestamp': timestamp,
+        'results_dir': results_dir
+    }
+    with open('downloads/latest_run.json', 'w') as f:
+        json.dump(latest_run, f, indent=2)
     
     print(f"✅ Saved {len(selected_urls)} URLs to {results_dir}")
-    print(f"🔄 Updated used URLs list ({len(new_used_urls)} total tracked)")
-    
-    print(f"✅ Saved {len(filtered_urls)} URLs to {results_dir}")
-    return results_dir, len(filtered_urls)
+    return results_dir, len(selected_urls)
 
 def update_search_rotation(config):
     """Update the search rotation to use next query"""

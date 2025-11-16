@@ -1,0 +1,12 @@
+{
+  "scraped_urls": [
+    "https://www.ag.gov.au/families-and-marriage/publications/family-law-parenting-arrangements-children-after-separation-fact-sheet",
+    "https://www.familyrelationships.gov.au/parenting/children-family-law",
+    "https://www.legalaid.nsw.gov.au/my-problem-is-about/my-family-or-relationship/parenting",
+    "https://www.legalaid.qld.gov.au/Find-legal-information/Relationships-and-children/Children-and-parenting/What-to-consider-when-making-parenting-arrangements",
+    "https://www.legalaid.vic.gov.au/children-and-family-violence-intervention-orders"
+  ],
+  "last_updated": "2025-11-16T20:48:45.460304",
+  "total_scraped": 5,
+  "description": "Tracks URLs that have been scraped to prevent duplicates"
+}

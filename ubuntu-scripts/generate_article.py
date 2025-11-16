@@ -274,6 +274,17 @@ Generate comprehensive, father-focused content with proper HTML formatting.'''
     def update_index(self, title, filename, category, description):
         """Update the articles index with new article"""
         try:
+            import html
+            
+            # Validate inputs
+            if not title or not filename:
+                print(f'❌ Invalid title or filename: title={title}, filename={filename}')
+                return False
+            
+            # Escape HTML characters in title and description
+            title_escaped = html.escape(title)
+            description_escaped = html.escape(description)
+            
             category_mapping = {
                 'Child Support': 'childsupport',
                 'Parenting & Custody': 'parenting', 
@@ -290,8 +301,16 @@ Generate comprehensive, father-focused content with proper HTML formatting.'''
             with open(index_path, 'r') as f:
                 index_content = f.read()
             
-            # Create new article entry
-            new_entry = f'<li class="resource-item"><a href="articles/{filename}">{title}</a><div class="resource-description">{description}</div></li>'
+            # Check if article already exists in index
+            if f'href="articles/{filename}"' in index_content:
+                print(f'⚠️ Article already in index: {filename}')
+                return True
+            
+            # Create new article entry with escaped content
+            new_entry = f'<li class="resource-item"><a href="articles/{filename}">{title_escaped}</a><div class="resource-description">{description_escaped}</div></li>\n                        '
+            
+            print(f'📝 Adding to index: {title_escaped[:50]}...')
+            print(f'📄 Filename: {filename}')
             
             # Find the category section and add entry
             pattern = f'data-category="{category_attr}"'
@@ -320,21 +339,29 @@ Generate comprehensive, father-focused content with proper HTML formatting.'''
             print(f'❌ Error updating index: {e}')
             return False
 
-    def generate_complete_article(self, scraped_content, title, category):
+    def generate_complete_article(self, scraped_content, title, category, filename=None):
         """Generate complete article with Bedrock processing"""
         print(f'🤖 Generating article: {title}')
         print(f'📂 Category: {category}')
+        if filename:
+            print(f'📄 Using provided filename: {filename}')
         
         # Process content with Bedrock/Claude
         article_content = self.generate_article_content(scraped_content, title, category)
         if not article_content:
             return None, None
         
-        # Generate filename from title
-        filename = re.sub(r'[^a-zA-Z0-9\s]', '', title.lower())
-        filename = re.sub(r'\s+', '-', filename).strip('-')
-        if not filename.endswith('.html'):
-            filename += '.html'
+        # Use provided filename or generate from title
+        if filename:
+            if not filename.endswith('.html'):
+                filename += '.html'
+        else:
+            # Generate filename from title (STANDARDIZED - matches workflow)
+            filename = re.sub(r'[^a-zA-Z0-9\s]', '', title.lower())  # Remove non-alphanumeric except spaces
+            filename = re.sub(r'\s+', '-', filename)  # Replace spaces with hyphens
+            filename = filename.strip('-')  # Remove leading/trailing hyphens
+            if not filename.endswith('.html'):
+                filename += '.html'
         
         # Create HTML with exact reference formatting
         html_content = self.create_article_html(title, article_content, category)
@@ -350,8 +377,20 @@ Generate comprehensive, father-focused content with proper HTML formatting.'''
             print(f'❌ Error deploying article: {e}')
             return None, None
         
-        # Update index
-        description = f'Expert legal advice for Australian fathers on {title.lower()}'
+        # Update index with contextual description
+        # Generate description based on category
+        category_descriptions = {
+            'Child Support': 'child support obligations and calculations',
+            'Parenting & Custody': 'parenting arrangements and custody matters',
+            'Legal Procedures': 'family court procedures and legal processes',
+            'Property Settlement': 'property division and financial settlements',
+            'Family Violence': 'family violence orders and protection',
+            'Conflict Resolution': 'mediation and dispute resolution'
+        }
+        
+        context = category_descriptions.get(category, 'family law matters')
+        description = f'Comprehensive guide to {context} for Australian fathers'
+        
         index_updated = self.update_index(title, filename, category, description)
         
         if index_updated:
@@ -367,11 +406,17 @@ def main():
     parser.add_argument('--content', required=True, help='Scraped legal content')
     parser.add_argument('--title', required=True, help='Article title')
     parser.add_argument('--category', required=True, help='Article category')
+    parser.add_argument('--filename', required=False, help='Filename to use (optional)')
     
     args = parser.parse_args()
     
     generator = ArticleGenerator()
-    result = generator.generate_complete_article(args.content, args.title, args.category)
+    
+    # Pass filename to generator if provided
+    if args.filename:
+        result = generator.generate_complete_article(args.content, args.title, args.category, args.filename)
+    else:
+        result = generator.generate_complete_article(args.content, args.title, args.category)
     
     if result and result[0]:
         print(f"SUCCESS: {result[0]}")

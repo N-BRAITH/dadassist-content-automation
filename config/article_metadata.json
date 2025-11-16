@@ -1,0 +1,6 @@
+{
+  "articles": [],
+  "next_article_id": 99,
+  "last_updated": "2024-11-16T20:47:00+11:00",
+  "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
+}

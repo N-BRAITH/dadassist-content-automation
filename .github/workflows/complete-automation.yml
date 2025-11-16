@@ -40,34 +40,57 @@ jobs:
         run: |
           pip install -r requirements.txt
           
-      - name: Content Scraping with Retry Logic
+      - name: Content Scraping with Smart Retry Logic
         env:
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
         run: |
-          echo "🕷️ Starting content scraping with retry logic..."
+          echo "🕷️ Starting content scraping with smart retry logic..."
           echo "📅 Timestamp: $(date)"
           
           MAX_ATTEMPTS=5
           ATTEMPT=1
+          UNIQUE_FOUND=false
           
-          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
-            echo "🔍 Scraping attempt $ATTEMPT/$MAX_ATTEMPTS"
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ] && [ "$UNIQUE_FOUND" = false ]; do
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "🔄 ATTEMPT $ATTEMPT/$MAX_ATTEMPTS"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             
-            # Run scraper
-            echo "🕷️ Running Apify scraper..."
+            # STEP 1: Run scraper (with URL exclusion list)
+            echo "🕷️ Running Apify scraper with URL exclusion filtering..."
             python scripts/apify_scraper.py
             
             # Capture current search query for notification
             CURRENT_QUERY=$(python -c "import json; config=json.load(open('config/apify_config.json')); searches=config['search_rotation']['searches']; current=config['search_rotation']['current_search']; print(searches[current])")
             echo "CURRENT_SEARCH_QUERY=$CURRENT_QUERY" >> $GITHUB_ENV
             
-            # Download and extract content
-            echo "📥 Starting content download..."
+            # STEP 2: Check if any new URLs were found
+            NEW_URL_COUNT=$(python -c "import json; data=json.load(open('downloads/latest_run.json')); print(data.get('new_url_count', 0))")
+            echo "📊 New URLs found: $NEW_URL_COUNT"
+            
+            if [ "$NEW_URL_COUNT" -eq 0 ]; then
+              echo "⚠️ No new URLs found (all already in exclusion list)"
+              echo "🔄 Rotating to next search query and retrying..."
+              
+              # Rotate search query
+              python -c "import json; config=json.load(open('config/apify_config.json')); current=config['search_rotation']['current_search']; total=len(config['search_rotation']['searches']); next_search=(current+1)%total; config['search_rotation']['current_search']=next_search; json.dump(config,open('config/apify_config.json','w'),indent=2); print(f'🔄 Rotated search: {current+1} → {next_search+1}')"
+              
+              ATTEMPT=$((ATTEMPT + 1))
+              continue
+            fi
+            
+            # STEP 3: Download content from new URLs
+            echo "📥 Downloading content from $NEW_URL_COUNT new URLs..."
             python scripts/content_downloader.py
             echo "✅ Content download completed"
             
-            # Check for duplicates (copied from original duplicate checking step)
-            echo "🔍 Processing scraped articles with duplicate checking..."
+            echo "📥 Downloading content from $NEW_URL_COUNT new URLs..."
+            python scripts/content_downloader.py
+            echo "✅ Content download completed"
+            
+            # STEP 4: Check for duplicates (by source URL in metadata)
+            echo "🔍 Checking downloaded articles for duplicates..."
             
             # Load all articles from content downloader
             if [ ! -f downloads/*/q_developer_input.json ]; then
@@ -88,55 +111,81 @@ jobs:
               
               # Extract article data
               TITLE=$(jq -r ".articles[$i].title" downloads/*/q_developer_input.json)
-              
-              # Generate filename for duplicate check (match server logic)
-              CLEAN_TITLE=$(echo "$TITLE" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-\|-$//g')
-              CLEAN_TITLE=$(echo "$CLEAN_TITLE" | sed 's/\([0-9]\)-\([0-9]\)/\1\2/g')
-              FILENAME="${CLEAN_TITLE}.html"
+              SOURCE_URL=$(jq -r ".articles[$i].url" downloads/*/q_developer_input.json)
               
               echo "   Title: $TITLE"
-              echo "   Filename: $FILENAME"
+              echo "   Source URL: $SOURCE_URL"
               
-              # Check if article already exists
-              if curl -s --head "https://dadassist.com.au/posts/articles/$FILENAME" | grep -q "200 OK"; then
-                echo "   ⚠️ Duplicate found - trying next article"
+              # Check if source URL already in metadata
+              ALREADY_GENERATED=$(python -c "
+import json
+with open('config/article_metadata.json', 'r') as f:
+    metadata = json.load(f)
+source_urls = [a['source_url'] for a in metadata['articles']]
+print('true' if '$SOURCE_URL' in source_urls else 'false')
+")
+              
+              if [ "$ALREADY_GENERATED" = "true" ]; then
+                echo "   ⚠️ Duplicate source URL - already generated"
                 continue
               else
-                echo "   ✅ Unique article found - proceeding with generation"
+                echo "   ✅ Unique source URL - proceeding with generation"
                 
                 # Set environment variables for article generation
                 CONTENT=$(jq -r ".articles[$i].content" downloads/*/q_developer_input.json)
                 echo "ARTICLE_CONTENT<<EOF" >> $GITHUB_ENV
                 echo "$CONTENT" >> $GITHUB_ENV
                 echo "EOF" >> $GITHUB_ENV
+                
                 echo "ARTICLE_TITLE=$TITLE" >> $GITHUB_ENV
-                echo "ARTICLE_FILENAME=$FILENAME" >> $GITHUB_ENV
+                echo "ARTICLE_SOURCE_URL=$SOURCE_URL" >> $GITHUB_ENV
                 echo "SKIP_GENERATION=false" >> $GITHUB_ENV
                 
+                # Save source URL for metadata update
+                echo "{\"source_url\": \"$SOURCE_URL\"}" > downloads/latest_run.json
+                
                 ARTICLE_GENERATED=true
+                UNIQUE_FOUND=true
                 break
               fi
             done
             
             if [ "$ARTICLE_GENERATED" = true ]; then
-              echo "✅ Found unique content on attempt $ATTEMPT!"
+              echo "✅ Found unique content on attempt $ATTEMPT - exiting early!"
               break
             else
               echo "⚠️ Attempt $ATTEMPT: All articles were duplicates"
-              echo "SKIP_GENERATION=true" >> $GITHUB_ENV
               
               if [ $ATTEMPT -lt $MAX_ATTEMPTS ]; then
                 echo "🔄 Rotating to next search query and retrying..."
                 
-                # Force rotate search query by updating config
+                # Rotate search query
                 python -c "import json; config=json.load(open('config/apify_config.json')); current=config['search_rotation']['current_search']; total=len(config['search_rotation']['searches']); next_search=(current+1)%total; config['search_rotation']['current_search']=next_search; json.dump(config,open('config/apify_config.json','w'),indent=2); print(f'🔄 Rotated search: {current+1} → {next_search+1}')"
               else
-                echo "❌ All $MAX_ATTEMPTS attempts failed - no unique content found"
+                echo "❌ All $MAX_ATTEMPTS attempts exhausted - no unique content found"
+                echo "SKIP_GENERATION=true" >> $GITHUB_ENV
               fi
             fi
             
             ATTEMPT=$((ATTEMPT + 1))
           done
+          
+          # Final status
+          if [ "$UNIQUE_FOUND" = false ]; then
+            echo "SKIP_GENERATION=true" >> $GITHUB_ENV
+          fi
+          
+      - name: Commit URL Exclusion List
+        if: always()
+        run: |
+          echo "💾 Committing updated files..."
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add config/scraped_urls.json
+          git add config/apify_config.json
+          git add config/article_metadata.json
+          git diff --staged --quiet || git commit -m "Update scraped URLs, search rotation, and article metadata"
+          git push || echo "⚠️ Nothing to commit or push failed"
           
           echo "✅ Content scraping process completed"
           
@@ -267,15 +316,33 @@ jobs:
       - name: Generate Article on Ubuntu Server
         if: env.SKIP_GENERATION == 'false'
         id: generate_article
+        run: |
+          echo "🤖 Preparing article generation..."
+          
+          # Get next article ID from metadata
+          ARTICLE_ID=$(python -c "import json; m=json.load(open('config/article_metadata.json')); print(m['next_article_id'])")
+          FILENAME=$(printf 'dadassist-article-%03d.html' $ARTICLE_ID)
+          
+          echo "📝 Article ID: $ARTICLE_ID"
+          echo "📄 Filename: $FILENAME"
+          echo "ARTICLE_FILENAME=$FILENAME" >> $GITHUB_ENV
+          
+          # We already know the URL!
+          ARTICLE_URL="https://dadassist.com.au/posts/articles/$FILENAME"
+          echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_ENV
+          echo "🌐 Will be published at: $ARTICLE_URL"
+          
+      - name: SSH Generate Article
+        if: env.SKIP_GENERATION == 'false'
         uses: appleboy/ssh-action@v0.1.5
         with:
           host: 13.239.163.33
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "🤖 Starting article generation..."
+            echo "🤖 Starting article generation on server..."
             
-            # Write content to files (no quotes in variables)
+            # Write content to files
             cat > /tmp/article_content.txt << 'CONTENT_EOF'
             ${{ env.ARTICLE_CONTENT }}
             CONTENT_EOF
@@ -284,16 +351,23 @@ jobs:
             ${{ env.ARTICLE_TITLE }}
             TITLE_EOF
             
+            # Generate article with provided filename
             RESULT=$(python3 /home/ubuntu/generate_article.py \
               --content "$(cat /tmp/article_content.txt)" \
               --title "$(cat /tmp/article_title.txt)" \
-              --category "Legal Procedures")
+              --category "Legal Procedures" \
+              --filename "${{ env.ARTICLE_FILENAME }}")
             
             echo "📋 Generation result:"
             echo "$RESULT"
             
             if echo "$RESULT" | grep -q "SUCCESS:"; then
-              ARTICLE_URL=$(echo "$RESULT" | grep "SUCCESS:" | sed 's/.*SUCCESS: *//')
+              echo "🎉 Article generated successfully!"
+              exit 0
+            else
+              echo "❌ Article generation failed"
+              exit 1
+            fi
               echo "🎉 Article generated successfully!"
               echo "🌐 Live URL: $ARTICLE_URL"
               
@@ -326,13 +400,47 @@ jobs:
               exit 1
             fi
             
-      - name: Set Article URL
+      - name: Update Article Metadata
         if: env.SKIP_GENERATION == 'false'
         run: |
-          echo "🔍 Constructing URL from filename..."
-          ARTICLE_URL="https://dadassist.com.au/posts/articles/${{ env.ARTICLE_FILENAME }}"
-          echo "🌐 Final URL: $ARTICLE_URL"
-          echo "ARTICLE_URL=$ARTICLE_URL" >> $GITHUB_ENV
+          echo "💾 Updating article metadata..."
+          
+          # Get source URL from downloaded content
+          SOURCE_URL=$(python -c "import json; data=json.load(open('downloads/latest_run.json')); print(data.get('source_url', 'unknown'))")
+          
+          # Update metadata file
+          python -c "
+import json
+from datetime import datetime
+
+# Load metadata
+with open('config/article_metadata.json', 'r') as f:
+    metadata = json.load(f)
+
+# Add new article
+article_id = metadata['next_article_id']
+metadata['articles'].append({
+    'article_id': article_id,
+    'filename': '${{ env.ARTICLE_FILENAME }}',
+    'title': '''${{ env.ARTICLE_TITLE }}''',
+    'source_url': '$SOURCE_URL',
+    'generated_date': datetime.now().isoformat(),
+    'live_url': '${{ env.ARTICLE_URL }}',
+    'category': 'Legal Procedures'
+})
+
+# Increment counter
+metadata['next_article_id'] = article_id + 1
+metadata['last_updated'] = datetime.now().isoformat()
+
+# Save
+with open('config/article_metadata.json', 'w') as f:
+    json.dump(metadata, f, indent=2)
+
+print(f'✅ Added article {article_id} to metadata')
+"
+          
+          echo "✅ Metadata updated"
             
       - name: Generate Instagram Image
         if: env.SKIP_GENERATION != 'true'

@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """
 DadAssist Content Automation - Content Downloader
-Downloads scraped content and organizes locally
+Downloads scraped content with robust fallback strategies
 """
 
 import os
 import json
-import requests
 from datetime import datetime
-from bs4 import BeautifulSoup
+from robust_downloader import RobustDownloader
 
 def load_latest_run():
     """Load the latest scraping run information"""
@@ -19,78 +18,41 @@ def load_latest_run():
         print("❌ No latest run found. Run apify_scraper.py first.")
         return None
 
-def extract_content_simple(url, title, description):
-    """Simple content extraction using requests and BeautifulSoup"""
-    try:
-        print(f"  📄 Extracting: {title[:50]}...")
+def download_articles_robust(urls):
+    """Download articles using robust 4-method fallback"""
+    downloader = RobustDownloader()
+    
+    successful_downloads = []
+    failed_downloads = []
+    
+    print(f"📥 Downloading content from {len(urls)} URLs with robust fallback...")
+    
+    for i, url_info in enumerate(urls, 1):
+        url = url_info.get('url')
+        title = url_info.get('title', 'No title')
         
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
+        print(f"\n{i}/{len(urls)} Downloading: {title[:50]}...")
+        print(f"  URL: {url}")
         
-        response = requests.get(url, headers=headers, timeout=60)
-        response.raise_for_status()
+        # Try all 4 methods
+        article = downloader.download_article(url, title)
         
-        soup = BeautifulSoup(response.content, 'html.parser')
-        
-        # Remove unwanted elements
-        for element in soup(['script', 'style', 'nav', 'header', 'footer', 'aside']):
-            element.decompose()
-        
-        # Try different content selectors
-        content = ""
-        selectors = [
-            'article',
-            '.content',
-            '.main-content',
-            '#content',
-            '.page-content',
-            'main',
-            '.post-content'
-        ]
-        
-        for selector in selectors:
-            element = soup.select_one(selector)
-            if element:
-                content = element.get_text(strip=True, separator=' ')
-                if len(content) > 500:
-                    break
-        
-        # Fallback to body
-        if not content or len(content) < 500:
-            body = soup.find('body')
-            if body:
-                content = body.get_text(strip=True, separator=' ')
-        
-        # Clean up content
-        content = ' '.join(content.split())  # Normalize whitespace
-        
-        # Extract title if not provided
-        if not title or title == "No title found":
-            title_elem = soup.find('h1') or soup.find('title')
-            if title_elem:
-                title = title_elem.get_text(strip=True)
-        
-        return {
-            'url': url,
-            'title': title,
-            'content': content,
-            'description': description,
-            'wordCount': len(content.split()),
-            'contentLength': len(content),
-            'extractedAt': datetime.now().isoformat(),
-            'extractionMethod': 'requests_beautifulsoup'
-        }
-        
-    except Exception as e:
-        print(f"    ❌ Error extracting {url}: {e}")
-        return {
-            'url': url,
-            'title': title,
-            'description': description,
-            'error': str(e),
-            'extractedAt': datetime.now().isoformat()
-        }
+        if article and article.get('wordCount', 0) > 300:
+            print(f"  ✅ Success! ({article['wordCount']} words)")
+            successful_downloads.append(article)
+        else:
+            print(f"  ❌ Failed or insufficient content")
+            failed_downloads.append({
+                'url': url,
+                'title': title,
+                'reason': 'All download methods failed or content too short'
+            })
+    
+    print(f"\n📊 Download Results:")
+    print(f"  ✅ Successful: {len(successful_downloads)}")
+    print(f"  ❌ Failed: {len(failed_downloads)}")
+    
+    return successful_downloads, failed_downloads
 
 def categorize_content(article):
     """Categorize article based on title and content"""
