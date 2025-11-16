@@ -4,9 +4,19 @@
     "https://www.familyrelationships.gov.au/parenting/children-family-law",
     "https://www.legalaid.nsw.gov.au/my-problem-is-about/my-family-or-relationship/parenting",
     "https://www.legalaid.qld.gov.au/Find-legal-information/Relationships-and-children/Children-and-parenting/What-to-consider-when-making-parenting-arrangements",
-    "https://www.legalaid.vic.gov.au/children-and-family-violence-intervention-orders"
+    "https://www.legalaid.vic.gov.au/children-and-family-violence-intervention-orders",
+    "https://www.wdv.org.au/wp-content/uploads/2018/10/Voices-Against-Violence-Paper-Three-A-Review-of-the-Legislative-Protections-Available-to-Women-with-Disabilities-who-have-Experienced-Violence-in-Victoria.pdf",
+    "https://www.eclc.org.au/wp-content/uploads/ECLC-Family_violence_WEB.pdf",
+    "https://www.youtube.com/watch?v=Vdr2ShBe5_g",
+    "https://www.publications.qld.gov.au/dataset/16330158-3152-436f-8d58-baeff2dd87ad/resource/83bcaf49-bcd3-44cd-9c5a-f3fc768c9805/download/appendix-6-jurisdictional-analysis-justice-response-dfv-australia.docx",
+    "https://www.handbook.vla.vic.gov.au/guideline-8-family-violence-intervention-order-cases",
+    "https://www.mklawfirm.com.au/family-violence-lawyers-melbourne/contravention-family-violence-intervention-order/",
+    "https://archive.fvrim.vic.gov.au/report-family-violence-reform-implementation-monitor-1-november-2020/what-has-changed-royal",
+    "https://tlfc.com.au/intervention-orders-how-do-i-apply-for-or-respond-to-an-intervention-order/",
+    "http://classic.austlii.edu.au/au/legis/vic/num_reg/mcvpar2018n42o2018686/s7.html",
+    "https://www.mcv.vic.gov.au/family-matters/family-violence-intervention-orders-fvio"
   ],
-  "last_updated": "2025-11-16T10:31:00.000000",
-  "total_scraped": 5,
+  "last_updated": "2025-11-16T10:33:41.335511",
+  "total_scraped": 15,
   "description": "Tracks URLs that have been scraped to prevent duplicates"
 }
