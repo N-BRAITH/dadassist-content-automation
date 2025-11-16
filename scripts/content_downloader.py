@@ -81,27 +81,25 @@ def process_articles(filtered_urls):
     """Process all articles and extract content"""
     print(f"📄 Extracting content from {len(filtered_urls)} articles...")
     
+    downloader = RobustDownloader()
     extracted_articles = []
     
     for url_data in filtered_urls:
-        article = extract_content_simple(
+        article = downloader.download_article(
             url_data['url'], 
-            url_data.get('title', ''), 
-            url_data.get('description', '')
+            url_data.get('title', '')
         )
         
-        if not article.get('error'):
-            # Quality check
+        if article and not article.get('error'):
             word_count = article.get('wordCount', 0)
-            content_length = article.get('contentLength', 0)
             
-            if word_count >= 100 and content_length >= 500:
+            if word_count >= 100:
                 article['category'] = categorize_content(article)
                 article['originalPosition'] = url_data.get('position', 0)
                 extracted_articles.append(article)
                 print(f"    ✅ Success: {word_count} words")
             else:
-                print(f"    ⚠️  Low quality: {word_count} words, {content_length} chars")
+                print(f"    ⚠️  Low quality: {word_count} words")
         
     return extracted_articles
 
