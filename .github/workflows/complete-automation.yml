@@ -402,37 +402,12 @@ jobs:
           # Get source URL from downloaded content
           SOURCE_URL=$(python -c "import json; data=json.load(open('downloads/latest_run.json')); print(data.get('source_url', 'unknown'))")
           
-          # Update metadata file
-          python -c "
-import json
-from datetime import datetime
-
-# Load metadata
-with open('config/article_metadata.json', 'r') as f:
-    metadata = json.load(f)
-
-# Add new article
-article_id = metadata['next_article_id']
-metadata['articles'].append({
-    'article_id': article_id,
-    'filename': '${{ env.ARTICLE_FILENAME }}',
-    'title': '''${{ env.ARTICLE_TITLE }}''',
-    'source_url': '$SOURCE_URL',
-    'generated_date': datetime.now().isoformat(),
-    'live_url': '${{ env.ARTICLE_URL }}',
-    'category': 'Legal Procedures'
-})
-
-# Increment counter
-metadata['next_article_id'] = article_id + 1
-metadata['last_updated'] = datetime.now().isoformat()
-
-# Save
-with open('config/article_metadata.json', 'w') as f:
-    json.dump(metadata, f, indent=2)
-
-print(f'✅ Added article {article_id} to metadata')
-"
+          # Update metadata file using script
+          python scripts/update_metadata.py \
+            "${{ env.ARTICLE_FILENAME }}" \
+            "${{ env.ARTICLE_TITLE }}" \
+            "$SOURCE_URL" \
+            "${{ env.ARTICLE_URL }}"
           
           echo "✅ Metadata updated"
             
