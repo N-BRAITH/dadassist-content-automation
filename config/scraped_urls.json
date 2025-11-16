@@ -4,9 +4,19 @@
     "https://www.familyrelationships.gov.au/parenting/children-family-law",
     "https://www.legalaid.nsw.gov.au/my-problem-is-about/my-family-or-relationship/parenting",
     "https://www.legalaid.qld.gov.au/Find-legal-information/Relationships-and-children/Children-and-parenting/What-to-consider-when-making-parenting-arrangements",
-    "https://www.legalaid.vic.gov.au/children-and-family-violence-intervention-orders"
+    "https://www.legalaid.vic.gov.au/children-and-family-violence-intervention-orders",
+    "https://www.tonkinlaw.com/fathers-rights-australia/",
+    "https://www.unifiedlawyers.com.au/blog/australian-parenting-orders-guide/",
+    "https://testartfamilylawyers.com.au/parenting-orders/",
+    "https://www.landers.com.au/legal-insights-news/do-i-have-legal-rights-if-im-not-the-childs-parent",
+    "https://www.gotocourt.com.au/temporary-suspension-of-parenting-orders/",
+    "https://www.familycourt.wa.gov.au/P/parenting_orders.aspx",
+    "https://familyviolencelaw.gov.au/family-law/arrangements-for-children/how-to-make-arrangments-for-children-without-going-to-court/",
+    "https://jbsolicitors.com.au/separated-fathers-rights-in-australia/",
+    "https://www.reddit.com/r/AusLegal/comments/1efkewj/about_to_start_court_for_parenting_orders_advice/",
+    "https://www.clewett.com.au/fathers-rights-divorce/"
   ],
-  "last_updated": "2025-11-16T10:43:00.000000",
-  "total_scraped": 5,
+  "last_updated": "2025-11-16T10:46:27.399746",
+  "total_scraped": 15,
   "description": "Tracks URLs that have been scraped to prevent duplicates"
 }
