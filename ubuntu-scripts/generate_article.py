@@ -385,7 +385,8 @@ Generate comprehensive, father-focused content with proper HTML formatting.'''
             'Legal Procedures': 'family court procedures and legal processes',
             'Property Settlement': 'property division and financial settlements',
             'Family Violence': 'family violence orders and protection',
-            'Conflict Resolution': 'mediation and dispute resolution'
+            'Conflict Resolution': 'mediation and dispute resolution',
+            'Mental Health': 'mental health and wellbeing support'
         }
         
         context = category_descriptions.get(category, 'family law matters')
