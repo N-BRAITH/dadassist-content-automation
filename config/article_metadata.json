@@ -17,9 +17,18 @@
       "generated_date": "2025-11-16T11:10:45.729472",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-100.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 101,
+      "filename": "dadassist-article-101.html",
+      "title": "Family court",
+      "source_url": "https://cspm.csyw.qld.gov.au/procedures/engage-with-other-jurisdictions/family-courts",
+      "generated_date": "2025-11-17T09:35:34.766731",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-101.html",
+      "category": "Family Violence"
     }
   ],
-  "next_article_id": 101,
-  "last_updated": "2025-11-16T11:10:45.729476",
+  "next_article_id": 102,
+  "last_updated": "2025-11-17T09:35:34.766738",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
