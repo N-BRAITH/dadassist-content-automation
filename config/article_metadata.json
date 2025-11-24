@@ -26,9 +26,18 @@
       "generated_date": "2025-11-17T09:35:34.766731",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-101.html",
       "category": "Family Violence"
+    },
+    {
+      "article_id": 102,
+      "filename": "dadassist-article-102.html",
+      "title": "Prenuptial Agreements in Victoria",
+      "source_url": "https://www.aitken.com.au/news/prenuptial-agreements-in-victoria",
+      "generated_date": "2025-11-24T09:35:09.218672",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-102.html",
+      "category": "Legal Procedures"
     }
   ],
-  "next_article_id": 102,
-  "last_updated": "2025-11-17T09:35:34.766738",
+  "next_article_id": 103,
+  "last_updated": "2025-11-24T09:35:09.218678",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
