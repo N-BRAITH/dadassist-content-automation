@@ -44,9 +44,18 @@
       "generated_date": "2025-12-01T09:37:58.580409",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-103.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 104,
+      "filename": "dadassist-article-104.html",
+      "title": "How Do You Get Parental Rights in Australia? Everything You Need to Know",
+      "source_url": "https://familylawyersmackay.com.au/how-do-you-get-parental-rights/",
+      "generated_date": "2025-12-08T09:39:14.110407",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-104.html",
+      "category": "Child Support"
     }
   ],
-  "next_article_id": 104,
-  "last_updated": "2025-12-01T09:37:58.580415",
+  "next_article_id": 105,
+  "last_updated": "2025-12-08T09:39:14.110413",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
