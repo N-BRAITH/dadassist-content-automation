@@ -1,0 +1,96 @@
+name: Weekly Video Generation
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Every Monday at 9am UTC
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  generate-and-upload:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4 google-api-python-client google-auth-httplib2 google-auth-oauthlib
+          
+      - name: Select next article
+        id: select
+        run: |
+          echo "::notice::🔍 Selecting next article to process"
+          python scripts/select_article.py
+          SELECTED_URL=$(cat selected_url.txt)
+          echo "::notice::📝 Selected: $SELECTED_URL"
+          echo "url=$SELECTED_URL" >> $GITHUB_OUTPUT
+          
+      - name: Generate video
+        id: generate
+        run: |
+          echo "::notice::🚀 Starting video generation"
+          START_TIME=$(date +%s)
+          
+          python scripts/call_api.py
+          
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          echo "::notice::✅ Video generated in ${DURATION} seconds"
+          
+          S3_URL=$(cat s3_url.txt)
+          TITLE=$(cat video_title.txt)
+          CATEGORY=$(cat video_category.txt)
+          
+          echo "s3_url=$S3_URL" >> $GITHUB_OUTPUT
+          echo "title=$TITLE" >> $GITHUB_OUTPUT
+          echo "category=$CATEGORY" >> $GITHUB_OUTPUT
+          
+      - name: Upload to YouTube
+        id: upload
+        env:
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: |
+          echo "::notice::📺 Uploading to YouTube"
+          python scripts/upload_youtube.py
+          
+          YOUTUBE_ID=$(cat youtube_id.txt)
+          YOUTUBE_URL="https://www.youtube.com/watch?v=$YOUTUBE_ID"
+          
+          echo "::notice::✅ Published: $YOUTUBE_URL"
+          echo "youtube_id=$YOUTUBE_ID" >> $GITHUB_OUTPUT
+          echo "youtube_url=$YOUTUBE_URL" >> $GITHUB_OUTPUT
+          
+      - name: Update processed URLs
+        run: |
+          echo "::notice::💾 Updating processed_urls.json"
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add processed_urls.json
+          git commit -m "Add video: ${{ steps.select.outputs.url }}"
+          git push
+          
+      - name: Summary
+        if: success()
+        run: |
+          echo "## ✅ Video Published Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Article**: ${{ steps.select.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Title**: ${{ steps.generate.outputs.title }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Category**: ${{ steps.generate.outputs.category }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **YouTube**: ${{ steps.upload.outputs.youtube_url }}" >> $GITHUB_STEP_SUMMARY
+          
+      - name: Failure notification
+        if: failure()
+        run: |
+          echo "::error::❌ Workflow failed - check logs above"
+          echo "## ❌ Video Generation Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the workflow logs for details." >> $GITHUB_STEP_SUMMARY
