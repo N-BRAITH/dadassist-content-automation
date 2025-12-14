@@ -7,26 +7,21 @@ on:
 
 jobs:
   generate-and-upload:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
           
       - name: Install dependencies
         run: |
-          pip install requests beautifulsoup4 google-api-python-client google-auth-httplib2 google-auth-oauthlib
+          pip3 install --user requests beautifulsoup4 google-api-python-client google-auth-httplib2 google-auth-oauthlib boto3
           
       - name: Select next article
         id: select
         run: |
           echo "::notice::🔍 Selecting next article to process"
-          python scripts/select_article.py
+          python3 scripts/select_article.py
           SELECTED_URL=$(cat selected_url.txt)
           echo "::notice::📝 Selected: $SELECTED_URL"
           echo "url=$SELECTED_URL" >> $GITHUB_OUTPUT
@@ -37,7 +32,7 @@ jobs:
           echo "::notice::🚀 Starting video generation"
           START_TIME=$(date +%s)
           
-          python scripts/call_api.py
+          python3 scripts/generate_video_aws.py
           
           END_TIME=$(date +%s)
           DURATION=$((END_TIME - START_TIME))
@@ -59,7 +54,7 @@ jobs:
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
         run: |
           echo "::notice::📺 Uploading to YouTube"
-          python scripts/upload_youtube.py
+          python3 scripts/upload_youtube.py
           
           YOUTUBE_ID=$(cat youtube_id.txt)
           YOUTUBE_URL="https://www.youtube.com/watch?v=$YOUTUBE_ID"
