@@ -7,10 +7,10 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-# Your credentials from the script output
-CLIENT_ID = "1022710674456-s3bed4vuceqrbekjbuuracm0fqsdvcrs.apps.googleusercontent.com"
-CLIENT_SECRET = "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"
-REFRESH_TOKEN = "1//0gfxJ7GPJP2NACgYIARAAGBASNwF-L9IrQARIhHI2I4YpTvI_qDp8PLk6EWVSvvQSdWsY8YC2f5Og8de9oy0VAxE-gW7X66IIxpY"
+# Load credentials from environment variables
+CLIENT_ID = os.environ.get('YOUTUBE_CLIENT_ID')
+CLIENT_SECRET = os.environ.get('YOUTUBE_CLIENT_SECRET')
+REFRESH_TOKEN = os.environ.get('YOUTUBE_REFRESH_TOKEN')
 
 def upload_test_video(video_path):
     """Upload a test video to YouTube."""
