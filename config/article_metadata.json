@@ -89,9 +89,18 @@
       "generated_date": "2025-12-14T11:32:56.596044",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-108.html",
       "category": "Legal Procedures"
+    },
+    {
+      "article_id": 109,
+      "filename": "dadassist-article-109.html",
+      "title": "Whirlpool",
+      "source_url": "https://www.legalaid.vic.gov.au/what-court-considers-when-making-parenting-order",
+      "generated_date": "2025-12-14T11:45:22.942540",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-109.html",
+      "category": "Parenting & Custody"
     }
   ],
-  "next_article_id": 109,
-  "last_updated": "2025-12-14T11:32:56.596049",
+  "next_article_id": 110,
+  "last_updated": "2025-12-14T11:45:22.942546",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
