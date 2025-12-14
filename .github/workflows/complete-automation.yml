@@ -437,7 +437,7 @@ jobs:
             echo "📁 Using filename: $FILENAME"
             
             # Generate image with specific filename
-            python3 /tmp/generate_instagram_image.py "${{ env.ARTICLE_TITLE }}" "$FILENAME"
+            python3 /home/ubuntu/generate_instagram_image.py "${{ env.ARTICLE_TITLE }}" "$FILENAME"
             
             echo "✅ Instagram image generated with filename: $FILENAME"
             
