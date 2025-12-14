@@ -84,6 +84,23 @@ jobs:
           echo "- **Title**: ${{ steps.generate.outputs.title }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Category**: ${{ steps.generate.outputs.category }}" >> $GITHUB_STEP_SUMMARY
           echo "- **YouTube**: ${{ steps.upload.outputs.youtube_url }}" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Send notification email
+        if: always()
+        env:
+          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          SES_USERNAME: ${{ secrets.SES_USERNAME }}
+          WORKFLOW_STATUS: ${{ job.status }}
+          ARTICLE_URL: ${{ steps.select.outputs.url }}
+          VIDEO_TITLE: ${{ steps.generate.outputs.title }}
+          VIDEO_CATEGORY: ${{ steps.generate.outputs.category }}
+          YOUTUBE_URL: ${{ steps.upload.outputs.youtube_url }}
+        run: |
+          echo "📧 Sending notification email..."
+          python3 scripts/video_notifier.py
+          echo "✅ Notification sent"
           
       - name: Failure notification
         if: failure()
