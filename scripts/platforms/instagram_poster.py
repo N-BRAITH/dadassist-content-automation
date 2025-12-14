@@ -105,11 +105,6 @@ class InstagramPoster:
             
             creation_id = media_response.json().get('id')
             
-            # Wait for Instagram to process the media
-            import time
-            print(f"⏳ Waiting for Instagram to process media...")
-            time.sleep(5)
-            
             # Step 2: Publish media
             publish_response = requests.post(
                 f'https://graph.facebook.com/{self.instagram_account_id}/media_publish',
