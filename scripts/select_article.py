@@ -2,6 +2,7 @@
 """Select next unprocessed article from DadAssist website."""
 
 import json
+import random
 import requests
 from bs4 import BeautifulSoup
 
@@ -38,19 +39,23 @@ def scrape_article_urls():
     return article_links
 
 def select_next_article():
-    """Select the first unprocessed article."""
+    """Select a random unprocessed article."""
     processed = load_processed_urls()
     print(f"✅ Already processed: {len(processed)} articles")
     
     all_articles = scrape_article_urls()
     
-    for url in all_articles:
-        if url not in processed:
-            print(f"🎯 Selected: {url}")
-            return url
+    # Get all unprocessed articles
+    unprocessed = [url for url in all_articles if url not in processed]
     
-    print("⚠️  All articles have been processed!")
-    return None
+    if not unprocessed:
+        print("⚠️  All articles have been processed!")
+        return None
+    
+    # Select randomly
+    selected = random.choice(unprocessed)
+    print(f"🎯 Selected randomly from {len(unprocessed)} unprocessed articles: {selected}")
+    return selected
 
 if __name__ == "__main__":
     selected = select_next_article()
