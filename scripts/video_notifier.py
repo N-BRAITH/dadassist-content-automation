@@ -15,6 +15,7 @@ def create_email_content():
     video_title = os.getenv('VIDEO_TITLE', 'N/A')
     category = os.getenv('VIDEO_CATEGORY', 'N/A')
     youtube_url = os.getenv('YOUTUBE_URL', 'N/A')
+    facebook_url = os.getenv('FACEBOOK_URL', 'N/A')
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
     if status == 'success':
@@ -52,6 +53,7 @@ def create_email_content():
                 <p><span class="label">Video Title:</span> {video_title}</p>
                 <p><span class="label">Category:</span> {category}</p>
                 <p><span class="label">YouTube:</span> <a href="{youtube_url}">{youtube_url}</a></p>
+                <p><span class="label">Facebook:</span> <a href="{facebook_url}">{facebook_url}</a></p>
             </div>
         </div>
     </body>

@@ -65,6 +65,22 @@ jobs:
           echo "::notice::✅ Published: $YOUTUBE_URL"
           echo "youtube_id=$YOUTUBE_ID" >> $GITHUB_OUTPUT
           echo "youtube_url=$YOUTUBE_URL" >> $GITHUB_OUTPUT
+      
+      - name: Post to Facebook
+        id: facebook
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_ACCESS_TOKEN: ${{ secrets.FACEBOOK_ACCESS_TOKEN }}
+        run: |
+          echo "::notice::📘 Posting to Facebook"
+          python3 scripts/post_facebook_video.py
+          
+          FB_VIDEO_ID=$(cat facebook_video_id.txt)
+          FB_VIDEO_URL=$(cat facebook_video_url.txt)
+          
+          echo "::notice::✅ Posted to Facebook: $FB_VIDEO_URL"
+          echo "facebook_id=$FB_VIDEO_ID" >> $GITHUB_OUTPUT
+          echo "facebook_url=$FB_VIDEO_URL" >> $GITHUB_OUTPUT
           
       - name: Update processed URLs
         run: |
@@ -84,6 +100,7 @@ jobs:
           echo "- **Title**: ${{ steps.generate.outputs.title }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Category**: ${{ steps.generate.outputs.category }}" >> $GITHUB_STEP_SUMMARY
           echo "- **YouTube**: ${{ steps.upload.outputs.youtube_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Facebook**: ${{ steps.facebook.outputs.facebook_url }}" >> $GITHUB_STEP_SUMMARY
       
       - name: Send notification email
         if: always()
@@ -97,6 +114,7 @@ jobs:
           VIDEO_TITLE: ${{ steps.generate.outputs.title }}
           VIDEO_CATEGORY: ${{ steps.generate.outputs.category }}
           YOUTUBE_URL: ${{ steps.upload.outputs.youtube_url }}
+          FACEBOOK_URL: ${{ steps.facebook.outputs.facebook_url }}
         run: |
           echo "📧 Sending notification email..."
           python3 scripts/video_notifier.py
