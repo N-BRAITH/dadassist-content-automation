@@ -121,7 +121,7 @@ class InstagramPoster:
             max_attempts = 30
             for attempt in range(max_attempts):
                 status_response = requests.get(
-                    f'https://graph.instagram.com/{creation_id}',
+                    f'https://graph.facebook.com/{creation_id}',
                     params={
                         'fields': 'status_code',
                         'access_token': self.instagram_access_token
