@@ -62,9 +62,18 @@
       "generated_date": "2025-12-14T06:04:20.745520",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-105.html",
       "category": "Mental Health"
+    },
+    {
+      "article_id": 106,
+      "filename": "dadassist-article-106.html",
+      "title": "Call us and speak to a Maternal Child Health Nurse for personal advice and guidance.",
+      "source_url": "https://www.pregnancybirthbaby.org.au/co-parenting",
+      "generated_date": "2025-12-14T06:31:26.161641",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-106.html",
+      "category": "Parenting & Custody"
     }
   ],
-  "next_article_id": 106,
-  "last_updated": "2025-12-14T06:04:20.745526",
+  "next_article_id": 107,
+  "last_updated": "2025-12-14T06:31:26.161648",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
