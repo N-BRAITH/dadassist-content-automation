@@ -103,9 +103,19 @@
     "https://flms.com.au/adopting-a-step-child/",
     "https://nt.gov.au/community/child-protection-and-care/adoption/adopting-a-stepchild?curr=167182&print=yes&SQ_PAINT_LAYOUT_NAME=multi",
     "https://www.connollysuthers.com.au/step-parent-adoption-or-parenting-orders/",
-    "https://shelegal.com.au/family-law/step-parent-adoption/"
+    "https://shelegal.com.au/family-law/step-parent-adoption/",
+    "https://aifs.gov.au/resources/news-and-events/family-law-reforms-put-childrens-best-interests-front-and-centre",
+    "https://www.lexisnexis.com/assets/en-au/pdf/Australian-Journal-of-Family-Law-Volume-34-Part-1.pdf",
+    "https://www.tandfonline.com/doi/abs/10.1080/09649060500085842",
+    "https://www.legalaid.vic.gov.au/what-court-considers-when-making-parenting-order",
+    "https://www.reddit.com/r/AusLegal/comments/1gm86qo/sole_parental_responsibility_mental_illness/",
+    "https://raisingchildren.net.au/grown-ups/family-diversity/blended-families-stepfamilies/step-parenting-law",
+    "https://humanrights.gov.au/sites/default/files/2020-02/40._name_withheld.pdf",
+    "https://www.researchgate.net/publication/375417909_Parental_Mental_Illness_in_the_Family_Courts_A_Scoping_Review",
+    "https://forums.whirlpool.net.au/archive/3yz6xmx9",
+    "https://www.kells.com.au/insights/family/what-age-can-a-child-decide-not-to-see-a-parent-in-australia"
   ],
-  "last_updated": "2025-12-14T11:32:18.350100",
-  "total_scraped": 104,
+  "last_updated": "2025-12-14T11:44:45.968719",
+  "total_scraped": 114,
   "description": "Tracks URLs that have been scraped to prevent duplicates"
 }
