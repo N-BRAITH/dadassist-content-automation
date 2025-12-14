@@ -80,9 +80,18 @@
       "generated_date": "2025-12-14T11:19:37.483987",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-107.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 108,
+      "filename": "dadassist-article-108.html",
+      "title": "Step Parent Adoption",
+      "source_url": "https://quinnfamilylaw.com.au/services/step-parent-adoption/",
+      "generated_date": "2025-12-14T11:32:56.596044",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-108.html",
+      "category": "Legal Procedures"
     }
   ],
-  "next_article_id": 108,
-  "last_updated": "2025-12-14T11:19:37.483992",
+  "next_article_id": 109,
+  "last_updated": "2025-12-14T11:32:56.596049",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
