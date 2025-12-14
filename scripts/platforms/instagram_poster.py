@@ -116,6 +116,42 @@ class InstagramPoster:
             
             print(f"✅ Media container created: {creation_id}")
             
+            # Wait for Instagram to finish processing
+            import time
+            max_attempts = 30
+            for attempt in range(max_attempts):
+                status_response = requests.get(
+                    f'https://graph.instagram.com/{creation_id}',
+                    params={
+                        'fields': 'status_code',
+                        'access_token': self.instagram_access_token
+                    }
+                )
+                
+                if status_response.status_code == 200:
+                    status_code = status_response.json().get('status_code')
+                    print(f"⏳ Media status: {status_code} (attempt {attempt + 1}/{max_attempts})")
+                    
+                    if status_code == 'FINISHED':
+                        print(f"✅ Media processing complete")
+                        break
+                    elif status_code == 'ERROR':
+                        print(f"❌ Media processing failed")
+                        return {
+                            'success': False,
+                            'platform': 'instagram',
+                            'error': 'Media processing failed'
+                        }
+                
+                time.sleep(2)
+            else:
+                print(f"❌ Media processing timeout")
+                return {
+                    'success': False,
+                    'platform': 'instagram',
+                    'error': 'Media processing timeout'
+                }
+            
             # Step 2: Publish media
             publish_response = requests.post(
                 f'https://graph.facebook.com/{self.instagram_account_id}/media_publish',
