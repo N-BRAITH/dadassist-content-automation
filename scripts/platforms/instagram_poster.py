@@ -105,6 +105,17 @@ class InstagramPoster:
             
             creation_id = media_response.json().get('id')
             
+            if not creation_id:
+                print(f"❌ No creation_id returned from Instagram")
+                print(f"   Full response: {media_response.json()}")
+                return {
+                    'success': False,
+                    'platform': 'instagram',
+                    'error': 'Media ID is not available'
+                }
+            
+            print(f"✅ Media container created: {creation_id}")
+            
             # Step 2: Publish media
             publish_response = requests.post(
                 f'https://graph.facebook.com/{self.instagram_account_id}/media_publish',
