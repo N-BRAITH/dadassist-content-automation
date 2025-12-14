@@ -71,9 +71,18 @@
       "generated_date": "2025-12-14T06:31:26.161641",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-106.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 107,
+      "filename": "dadassist-article-107.html",
+      "title": "Can I Relocate with My Child?",
+      "source_url": "https://www.thomsonfamilylawyers.com.au/can-i-relocate-with-my-child/",
+      "generated_date": "2025-12-14T11:19:37.483987",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-107.html",
+      "category": "Parenting & Custody"
     }
   ],
-  "next_article_id": 107,
-  "last_updated": "2025-12-14T06:31:26.161648",
+  "next_article_id": 108,
+  "last_updated": "2025-12-14T11:19:37.483992",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
