@@ -142,6 +142,9 @@ class InstagramPoster:
                             'platform': 'instagram',
                             'error': 'Media processing failed'
                         }
+                else:
+                    print(f"⚠️ Status check failed: {status_response.status_code}")
+                    print(f"   Response: {status_response.text}")
                 
                 time.sleep(2)
             else:
