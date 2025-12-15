@@ -98,9 +98,18 @@
       "generated_date": "2025-12-14T11:45:22.942540",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-109.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 110,
+      "filename": "dadassist-article-110.html",
+      "title": "Reddit challenges Australia's world-first law banning children under 16 from social media",
+      "source_url": "https://www.wsoctv.com/news/business/reddit-challenges/UKY5IG2FDY6UZIPFXQTADPITNQ/",
+      "generated_date": "2025-12-15T09:41:32.158446",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-110.html",
+      "category": "Parenting & Custody"
     }
   ],
-  "next_article_id": 110,
-  "last_updated": "2025-12-14T11:45:22.942546",
+  "next_article_id": 111,
+  "last_updated": "2025-12-15T09:41:32.158451",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
