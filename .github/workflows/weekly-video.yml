@@ -87,6 +87,7 @@ jobs:
           echo "::notice::💾 Updating processed_urls.json"
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
+          git pull --rebase
           git add processed_urls.json
           git commit -m "Add video: ${{ steps.select.outputs.url }}"
           git push
