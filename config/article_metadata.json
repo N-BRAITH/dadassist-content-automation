@@ -107,9 +107,18 @@
       "generated_date": "2025-12-15T09:41:32.158446",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-110.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 111,
+      "filename": "dadassist-article-111.html",
+      "title": "6 Steps to Parenting Orders in Australia Family Court",
+      "source_url": "https://www.custodyxchange.com/locations/australia/fcfcoa-steps.php",
+      "generated_date": "2025-12-22T09:37:59.393933",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-111.html",
+      "category": "Parenting & Custody"
     }
   ],
-  "next_article_id": 111,
-  "last_updated": "2025-12-15T09:41:32.158451",
+  "next_article_id": 112,
+  "last_updated": "2025-12-22T09:37:59.393938",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
