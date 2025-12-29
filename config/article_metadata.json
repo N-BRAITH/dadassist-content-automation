@@ -116,9 +116,18 @@
       "generated_date": "2025-12-22T09:37:59.393933",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-111.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 112,
+      "filename": "dadassist-article-112.html",
+      "title": "You Must Know Every Aspect of the Child Support Guide in Australia 2024",
+      "source_url": "https://familylaw.aylwardgame.com.au/child-support-guide/",
+      "generated_date": "2025-12-29T09:40:16.405761",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-112.html",
+      "category": "Child Support"
     }
   ],
-  "next_article_id": 112,
-  "last_updated": "2025-12-22T09:37:59.393938",
+  "next_article_id": 113,
+  "last_updated": "2025-12-29T09:40:16.405766",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
