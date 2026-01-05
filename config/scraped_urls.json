@@ -142,9 +142,18 @@
     "https://www.mondaq.com/australia/divorce/1669438/fathers-rights-child-support-what-fathers-need-to-know-now",
     "https://www.lawhandbook.sa.gov.au/ch07s01s05s01.php",
     "https://smrlaw.com.au/resource/how-much-child-support-should-i-receive/",
-    "https://www.justice.gc.ca/eng/rp-pr/jr/ricsm_v2-emifpae_v2/p6.html"
+    "https://www.justice.gc.ca/eng/rp-pr/jr/ricsm_v2-emifpae_v2/p6.html",
+    "https://www.ag.gov.au/families-and-marriage/publications/australian-government-response-house-representatives-standing-committee-social-policy-and-legal-affairs-report-inquiry-family-violence-orders",
+    "https://www.wa.gov.au/system/files/2021-06/LRC-Project-104-Final-Report.pdf",
+    "https://www.youtube.com/watch?v=1ric_vCu0dM",
+    "https://www.anrows.org.au/project/powerful-interventions-improving-the-use-and-enforcement-of-intervention-orders-as-a-tool-to-address-family-and-domestic-violence-in-south-australia/",
+    "https://www.mcv.vic.gov.au/intervention-orders",
+    "https://find.library.unisa.edu.au/discovery/fulldisplay/alma9916705117901831/61USOUTHAUS_INST:ROR",
+    "https://www.tandfonline.com/doi/full/10.1080/10345329.2019.1616896",
+    "https://www.criminal-lawyers.com.au/served-application-intervention-order",
+    "https://www.courts.sa.gov.au/going-to-court/representing-yourself/intervention-orders/"
   ],
-  "last_updated": "2025-12-29T09:39:22.514144",
-  "total_scraped": 143,
+  "last_updated": "2026-01-05T09:41:42.879605",
+  "total_scraped": 152,
   "description": "Tracks URLs that have been scraped to prevent duplicates"
 }
