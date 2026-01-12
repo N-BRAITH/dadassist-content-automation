@@ -134,9 +134,18 @@
       "generated_date": "2026-01-05T09:43:40.103811",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-113.html",
       "category": "Family Violence"
+    },
+    {
+      "article_id": 114,
+      "filename": "dadassist-article-114.html",
+      "title": "Understanding Australian Child Custody Laws",
+      "source_url": "https://etheringtons.com.au/child-custody-rights-for-fathers-in-nsw/",
+      "generated_date": "2026-01-12T09:48:25.826422",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-114.html",
+      "category": "Parenting & Custody"
     }
   ],
-  "next_article_id": 114,
-  "last_updated": "2026-01-05T09:43:40.103819",
+  "next_article_id": 115,
+  "last_updated": "2026-01-12T09:48:25.826429",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
