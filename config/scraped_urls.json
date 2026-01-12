@@ -151,9 +151,19 @@
     "https://find.library.unisa.edu.au/discovery/fulldisplay/alma9916705117901831/61USOUTHAUS_INST:ROR",
     "https://www.tandfonline.com/doi/full/10.1080/10345329.2019.1616896",
     "https://www.criminal-lawyers.com.au/served-application-intervention-order",
-    "https://www.courts.sa.gov.au/going-to-court/representing-yourself/intervention-orders/"
+    "https://www.courts.sa.gov.au/going-to-court/representing-yourself/intervention-orders/",
+    "https://www.ag.gov.au/families-and-marriage/publications/parenting-orders-what-you-need-know",
+    "https://www.facebook.com/groups/1735299033223570/posts/25672075065785965/",
+    "https://www.reddit.com/r/AusLegal/comments/1lu5nas/child_custody_for_a_father_what_are_my_chances/",
+    "https://etheringtons.com.au/child-custody-rights-for-fathers-in-nsw/",
+    "https://www.prominentlawyers.com.au/child-custody-rights-fathers-australia/",
+    "https://www.fcfcoa.gov.au/fl/hdi/apply-parenting-orders",
+    "https://justicefamilylawyers.com.au/family-lawyers/child-custody-lawyers/fathers-rights-after-separation/",
+    "https://www.somervillelegal.com.au/parenting-plans-and-parenting-orders/",
+    "https://claritylawyers.com.au/fathers-rights-after-separation/",
+    "https://www.fcfcoa.gov.au/fl/pubs/applying-orders"
   ],
-  "last_updated": "2026-01-05T09:41:42.879605",
-  "total_scraped": 152,
+  "last_updated": "2026-01-12T09:41:55.579605",
+  "total_scraped": 162,
   "description": "Tracks URLs that have been scraped to prevent duplicates"
 }
