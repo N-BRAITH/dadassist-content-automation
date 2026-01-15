@@ -334,7 +334,7 @@ jobs:
             RESULT=$(python3 /home/ubuntu/generate_article.py \
               --content "$(cat /tmp/article_content.txt)" \
               --title "$(cat /tmp/article_title.txt)" \
-              --category "Legal Procedures" \
+              --category "$CATEGORY_NAME" \
               --filename "${{ env.ARTICLE_FILENAME }}")
             
             echo "📋 Generation result:"
