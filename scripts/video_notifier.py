@@ -22,10 +22,37 @@ def create_email_content():
         status_icon = '✅'
         status_text = 'SUCCESS'
         status_color = '#28a745'
+        failure_details = ''
     else:
         status_icon = '❌'
         status_text = 'FAILED'
         status_color = '#dc3545'
+        
+        # Determine what failed
+        failures = []
+        if video_title == 'N/A':
+            failures.append('Video generation failed')
+        elif youtube_url == 'N/A':
+            failures.append('YouTube upload failed (check token expiry)')
+        elif facebook_url == 'N/A':
+            failures.append('Facebook upload failed (check token expiry)')
+        else:
+            failures.append('Git push failed (videos uploaded successfully)')
+        
+        failure_details = f"""
+            <div class="info-box" style="background-color: #fff3cd; border-left: 4px solid #ffc107;">
+                <p><span class="label">⚠️ What Failed:</span></p>
+                <ul>
+                    {''.join([f'<li>{f}</li>' for f in failures])}
+                </ul>
+                <p><span class="label">💡 Quick Fixes:</span></p>
+                <ul>
+                    <li>Check <a href="https://github.com/N-BRAITH/dadassist-content-automation/actions">GitHub Actions logs</a></li>
+                    <li>Verify YouTube/Facebook tokens haven't expired</li>
+                    <li>If videos uploaded but workflow failed, it's likely just a git conflict (videos are live!)</li>
+                </ul>
+            </div>
+        """
     
     html = f"""
     <!DOCTYPE html>
@@ -54,6 +81,18 @@ def create_email_content():
                 <p><span class="label">Category:</span> {category}</p>
                 <p><span class="label">YouTube:</span> <a href="{youtube_url}">{youtube_url}</a></p>
                 <p><span class="label">Facebook:</span> <a href="{facebook_url}">{facebook_url}</a></p>
+            </div>
+            
+            {failure_details}
+            
+            <div class="info-box">
+                <p><span class="label">📊 Quick Links:</span></p>
+                <ul>
+                    <li><a href="https://github.com/N-BRAITH/dadassist-content-automation/actions/workflows/weekly-video.yml">View Workflow Runs</a></li>
+                    <li><a href="https://studio.youtube.com">YouTube Studio</a></li>
+                    <li><a href="https://www.facebook.com/737106112829383">Facebook Page</a></li>
+                    <li><a href="https://console.cloud.google.com">Google Cloud Console</a></li>
+                </ul>
             </div>
         </div>
     </body>
