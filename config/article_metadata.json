@@ -143,9 +143,18 @@
       "generated_date": "2026-01-12T09:48:25.826422",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-114.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 115,
+      "filename": "dadassist-article-115.html",
+      "title": "Essential Rights of Fathers in Child Custody Cases in Australia",
+      "source_url": "https://johnsonslawgroup.com.au/essential-rights-of-fathers-in-child-custody-cases-in-australia/",
+      "generated_date": "2026-01-19T09:46:55.520006",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-115.html",
+      "category": "Parenting & Custody"
     }
   ],
-  "next_article_id": 115,
-  "last_updated": "2026-01-12T09:48:25.826429",
+  "next_article_id": 116,
+  "last_updated": "2026-01-19T09:46:55.520013",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
