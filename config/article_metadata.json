@@ -152,9 +152,18 @@
       "generated_date": "2026-01-19T09:46:55.520006",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-115.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 116,
+      "filename": "dadassist-article-116.html",
+      "title": "Protecting Your Rights: A Father\u2019s Guide to Child Custody in Queensland",
+      "source_url": "https://thelegalhouse.com.au/a-fathers-guide-to-child-custody-in-queensland/",
+      "generated_date": "2026-01-26T09:46:19.240176",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-116.html",
+      "category": "Parenting & Custody"
     }
   ],
-  "next_article_id": 116,
-  "last_updated": "2026-01-19T09:46:55.520013",
+  "next_article_id": 117,
+  "last_updated": "2026-01-26T09:46:19.240183",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
