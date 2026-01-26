@@ -171,9 +171,19 @@
     "https://www.unifiedlawyers.com.au/family-law-for-dads/",
     "https://www.gcls.org.au/services/free-legal-advice/family-law/",
     "https://www.mannionlawyers.com.au/",
-    "https://www.youtube.com/watch?v=wlTB8B8tG9c"
+    "https://www.youtube.com/watch?v=wlTB8B8tG9c",
+    "https://thelegalhouse.com.au/a-fathers-guide-to-child-custody-in-queensland/",
+    "https://ramsdenfamilylaw.com.au/understanding-the-family-court-process-in-australia-a-step-by-step-guide/",
+    "https://www.austlii.edu.au/",
+    "https://www.dotlegal.com.au/understanding-the-family-court-process-from-start-to-finish/",
+    "https://delaneyrobertsfamilylawyers.com.au/guides/legal-guide-family-law-smart-start-guide-guide/",
+    "https://www.familycourt.wa.gov.au/_files/Legal_resources/Representing_Yourself_Guide_Parenting_Cases.pdf",
+    "https://www.ranzcp.org/getmedia/81ddec85-b7c8-439d-8154-361d750b2ce7/ppg-3-australian-family-court-proceedings.pdf",
+    "https://www.fcfcoa.gov.au/resources/practice-directions",
+    "https://www.nzherald.co.nz/nz/inside-the-family-court-do-custody-rulings-really-put-kids-first/NPJVKUF2F5EINMXSZAK4BP2WFE/",
+    "https://www8.austlii.edu.au/au/journals/ANZLawHisteJl/2005/1.pdf"
   ],
-  "last_updated": "2026-01-19T09:44:43.501372",
-  "total_scraped": 172,
+  "last_updated": "2026-01-26T09:43:55.322571",
+  "total_scraped": 182,
   "description": "Tracks URLs that have been scraped to prevent duplicates"
 }
