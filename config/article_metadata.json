@@ -161,9 +161,18 @@
       "generated_date": "2026-01-26T09:46:19.240176",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-116.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 117,
+      "filename": "dadassist-article-117.html",
+      "title": "Prenuptial agreements",
+      "source_url": "https://lawadvisor.com/au/questions/prenuptial-agreements",
+      "generated_date": "2026-02-02T10:04:58.043530",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-117.html",
+      "category": "Mental Health"
     }
   ],
-  "next_article_id": 117,
-  "last_updated": "2026-01-26T09:46:19.240183",
+  "next_article_id": 118,
+  "last_updated": "2026-02-02T10:04:58.043535",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
