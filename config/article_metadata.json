@@ -170,9 +170,18 @@
       "generated_date": "2026-02-02T10:04:58.043530",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-117.html",
       "category": "Mental Health"
+    },
+    {
+      "article_id": 118,
+      "filename": "dadassist-article-118.html",
+      "title": "\u201cDefacto couple\u201d or just \u201cboyfriend & girlfriend\u201d? What\u2019s the difference? - Websters Lawyers",
+      "source_url": "https://websterslawyers.com.au/defacto-couple-or-just-boyfriend-girlfriend-whats-the-difference",
+      "generated_date": "2026-02-09T10:11:45.760868",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-118.html",
+      "category": "Legal Procedures"
     }
   ],
-  "next_article_id": 118,
-  "last_updated": "2026-02-02T10:04:58.043535",
+  "next_article_id": 119,
+  "last_updated": "2026-02-09T10:11:45.760874",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
