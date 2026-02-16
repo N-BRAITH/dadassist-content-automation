@@ -179,9 +179,18 @@
       "generated_date": "2026-02-09T10:11:45.760868",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-118.html",
       "category": "Legal Procedures"
+    },
+    {
+      "article_id": 119,
+      "filename": "dadassist-article-119.html",
+      "title": "Sole \u2018Custody\u2019 of Children in Australia",
+      "source_url": "https://www.gotocourt.com.au/family-law/sole-custody-of-children/",
+      "generated_date": "2026-02-16T10:03:59.949334",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-119.html",
+      "category": "Parenting & Custody"
     }
   ],
-  "next_article_id": 119,
-  "last_updated": "2026-02-09T10:11:45.760874",
+  "next_article_id": 120,
+  "last_updated": "2026-02-16T10:03:59.949340",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
