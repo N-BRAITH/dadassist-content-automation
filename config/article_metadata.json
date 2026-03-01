@@ -197,9 +197,18 @@
       "generated_date": "2026-02-23T10:07:37.279514",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-120.html",
       "category": "Legal Procedures"
+    },
+    {
+      "article_id": 121,
+      "filename": "dadassist-article-121.html",
+      "title": "Tag:parenting plan template qld",
+      "source_url": "https://jamesnoblelaw.com.au/tag/parenting-plan-template-qld/",
+      "generated_date": "2026-03-01T10:04:36.269854",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-121.html",
+      "category": "Child Support"
     }
   ],
-  "next_article_id": 121,
-  "last_updated": "2026-02-23T10:07:37.279520",
+  "next_article_id": 122,
+  "last_updated": "2026-03-01T10:04:36.269859",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
