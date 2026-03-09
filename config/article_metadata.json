@@ -206,9 +206,18 @@
       "generated_date": "2026-03-01T10:04:36.269854",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-121.html",
       "category": "Child Support"
+    },
+    {
+      "article_id": 122,
+      "filename": "dadassist-article-122.html",
+      "title": "Family lawyersBrisbane trusts",
+      "source_url": "https://daykinfamilylaw.com.au/",
+      "generated_date": "2026-03-09T06:42:27.564157",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-122.html",
+      "category": "Legal Procedures"
     }
   ],
-  "next_article_id": 122,
-  "last_updated": "2026-03-01T10:04:36.269859",
+  "next_article_id": 123,
+  "last_updated": "2026-03-09T06:42:27.564163",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
