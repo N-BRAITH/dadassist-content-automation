@@ -13,15 +13,6 @@ on:
   repository_dispatch:
     types: [post_article]  # Triggered by content automation workflow
   workflow_dispatch:  # Allow manual triggering
-    inputs:
-      article_url:
-        description: 'Article URL'
-        required: true
-        type: string
-      article_title:
-        description: 'Article Title'
-        required: true
-        type: string
 
 jobs:
   social-media-posts:
