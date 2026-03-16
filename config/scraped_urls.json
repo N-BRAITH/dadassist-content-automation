@@ -251,9 +251,19 @@
     "https://stewartlaw.com.au/grandparents-rights-in-australian-family-law/",
     "https://miltons.com.au/understanding-grandparents-rights-in-family-law-cases-in-australia/",
     "https://rafton.com.au/grandparenting-children/",
-    "https://www.lexology.com/library/detail.aspx?g=946e4c79-7288-409e-af3f-c2ba8180a36f"
+    "https://www.lexology.com/library/detail.aspx?g=946e4c79-7288-409e-af3f-c2ba8180a36f",
+    "https://alliancelegal.com.au/step-parent-adoption-work/",
+    "https://justicefamilylawyers.com.au/child-custody/step-parent-adoption/",
+    "https://mediationsaustralia.com.au/stepparent-rights-and-family-law-in-australia/",
+    "https://www.qld.gov.au/community/caring-child/adoption/adopting-step-child",
+    "https://qmlawyers.com.au/adoption-laws-in-australia-the-legal-process-and-requirements/",
+    "https://www.kells.com.au/insights/family/legal-adoption-of-stepchildren",
+    "https://www.adoptchange.org.au/permanency-adoption-info/south-australia/",
+    "https://www.fuenteslegal.com.au/nsw-adoption-laws/",
+    "https://www.legalaid.qld.gov.au/Find-legal-information/Relationships-and-children/Children-and-parenting/Adoption",
+    "https://familylawyersmackay.com.au/how-to-adopt-a-child-in-australia-costs-eligibility-and-process/"
   ],
-  "last_updated": "2026-03-09T10:02:48.213573",
-  "total_scraped": 252,
+  "last_updated": "2026-03-16T10:11:58.399747",
+  "total_scraped": 262,
   "description": "Tracks URLs that have been scraped to prevent duplicates"
 }
