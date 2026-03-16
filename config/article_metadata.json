@@ -224,9 +224,18 @@
       "generated_date": "2026-03-09T10:08:05.077730",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-123.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 124,
+      "filename": "dadassist-article-124.html",
+      "title": "Step-parent adoption\u2014how does it work?",
+      "source_url": "https://alliancelegal.com.au/step-parent-adoption-work/",
+      "generated_date": "2026-03-16T10:12:37.475383",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-124.html",
+      "category": "Parenting & Custody"
     }
   ],
-  "next_article_id": 124,
-  "last_updated": "2026-03-09T10:08:05.077735",
+  "next_article_id": 125,
+  "last_updated": "2026-03-16T10:12:37.475389",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
