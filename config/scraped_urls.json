@@ -261,9 +261,19 @@
     "https://www.adoptchange.org.au/permanency-adoption-info/south-australia/",
     "https://www.fuenteslegal.com.au/nsw-adoption-laws/",
     "https://www.legalaid.qld.gov.au/Find-legal-information/Relationships-and-children/Children-and-parenting/Adoption",
-    "https://familylawyersmackay.com.au/how-to-adopt-a-child-in-australia-costs-eligibility-and-process/"
+    "https://familylawyersmackay.com.au/how-to-adopt-a-child-in-australia-costs-eligibility-and-process/",
+    "https://www.relationshipsnsw.org.au/blog/male-domestic-violence-victims/",
+    "https://mothersofsons.info/coercive-control/accused-falsely-2/",
+    "https://leierlawoffice.com/blog/domestic-violence-against-men-defending-against-false-allegations/",
+    "https://www.legalaid.qld.gov.au/Home",
+    "https://www.aihw.gov.au/family-domestic-and-sexual-violence/understanding-fdsv/coercive-control",
+    "https://ferrallco.com.au/false-accusations/",
+    "https://www.reddit.com/r/sydney/comments/1fipnm0/nearly_one_in_10_nsw_men_have_faced_legal_action/",
+    "https://nt.gov.au/law/crime/domestic-family-and-sexual-violence",
+    "https://www.farajdefencelawyers.com.au/blog/false-domestic-violence-allegations",
+    "https://www.dss.gov.au/help-and-support-ending-violence"
   ],
-  "last_updated": "2026-03-16T10:11:58.399747",
-  "total_scraped": 262,
+  "last_updated": "2026-03-23T10:11:50.820052",
+  "total_scraped": 272,
   "description": "Tracks URLs that have been scraped to prevent duplicates"
 }
