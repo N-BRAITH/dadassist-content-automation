@@ -271,9 +271,19 @@
     "https://www.reddit.com/r/sydney/comments/1fipnm0/nearly_one_in_10_nsw_men_have_faced_legal_action/",
     "https://nt.gov.au/law/crime/domestic-family-and-sexual-violence",
     "https://www.farajdefencelawyers.com.au/blog/false-domestic-violence-allegations",
-    "https://www.dss.gov.au/help-and-support-ending-violence"
+    "https://www.dss.gov.au/help-and-support-ending-violence",
+    "https://emergingminds.com.au/resources/fathers-mental-health-and-parenting-implications-for-promoting-childrens-mental-health/",
+    "https://www.tandfonline.com/doi/full/10.1080/13218719.2025.2546319",
+    "https://www.linkedin.com/pulse/mental-health-family-law-holmes-donnelly?trk=public_post",
+    "https://www.cominosfamilylawyers.com.au/mental-health-issues-in-the-context-of-family-law/",
+    "https://mhrm.mhcc.org.au/chapters/7-rights-in-the-community/7g-family-law-and-caring-for-your-children/",
+    "https://www.abc.net.au/news/2018-08-31/dads-mental-health-fathers-day-childhood-parenting/10187082",
+    "https://www.robertsonhayles.com.au/family-law-and-fathers-seeking-overnight-time-with-their-young-children/",
+    "https://www.justanswer.com/australian-law/2eukc-hi-15-month-old-son-currently-fathers.html",
+    "https://www.gotocourt.com.au/family-law",
+    "https://www.fcfcoa.gov.au/support-mental-health"
   ],
-  "last_updated": "2026-03-23T10:11:50.820052",
-  "total_scraped": 272,
+  "last_updated": "2026-03-30T10:24:49.534491",
+  "total_scraped": 282,
   "description": "Tracks URLs that have been scraped to prevent duplicates"
 }
