@@ -242,9 +242,18 @@
       "generated_date": "2026-03-23T10:13:58.723082",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-125.html",
       "category": "Family Violence"
+    },
+    {
+      "article_id": 126,
+      "filename": "dadassist-article-126.html",
+      "title": "Fathers\u2019 mental health and parenting: Implications for promoting children\u2019s mental health",
+      "source_url": "https://emergingminds.com.au/resources/fathers-mental-health-and-parenting-implications-for-promoting-childrens-mental-health/",
+      "generated_date": "2026-03-30T10:27:03.462042",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-126.html",
+      "category": "Parenting & Custody"
     }
   ],
-  "next_article_id": 126,
-  "last_updated": "2026-03-23T10:13:58.723087",
+  "next_article_id": 127,
+  "last_updated": "2026-03-30T10:27:03.462047",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
