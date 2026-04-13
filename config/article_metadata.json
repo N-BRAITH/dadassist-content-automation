@@ -260,9 +260,18 @@
       "generated_date": "2026-04-06T10:20:06.666116",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-127.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 128,
+      "filename": "dadassist-article-128.html",
+      "title": "Your Guide on Appealing a Court\u2019s Decision",
+      "source_url": "https://www.australianfamilylawyers.com.au/information-centre/guide-appealing-courts-decision",
+      "generated_date": "2026-04-13T10:56:11.055257",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-128.html",
+      "category": "Legal Procedures"
     }
   ],
-  "next_article_id": 128,
-  "last_updated": "2026-04-06T10:20:06.666121",
+  "next_article_id": 129,
+  "last_updated": "2026-04-13T10:56:11.055265",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
