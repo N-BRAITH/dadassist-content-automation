@@ -269,9 +269,18 @@
       "generated_date": "2026-04-13T10:56:11.055257",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-128.html",
       "category": "Legal Procedures"
+    },
+    {
+      "article_id": 129,
+      "filename": "dadassist-article-129.html",
+      "title": "Family Law Consent Orders",
+      "source_url": "https://www.armstronglegal.com.au/family-law/court-processes/family-law-consent-orders/",
+      "generated_date": "2026-04-20T10:56:40.032606",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-129.html",
+      "category": "Parenting & Custody"
     }
   ],
-  "next_article_id": 129,
-  "last_updated": "2026-04-13T10:56:11.055265",
+  "next_article_id": 130,
+  "last_updated": "2026-04-20T10:56:40.032612",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
