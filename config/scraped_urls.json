@@ -301,9 +301,19 @@
     "https://www.youtube.com/watch?v=iTzj4UPPeN8",
     "https://www.fcfcoa.gov.au/judgments",
     "https://www.dotlegal.com.au/a-successful-appeal-of-a-decision-of-the-family-court/",
-    "https://thejewishindependent.com.au/new-israeli-law-erodes-womens-rights"
+    "https://thejewishindependent.com.au/new-israeli-law-erodes-womens-rights",
+    "https://www.justanswer.com/australian-law/mdqag-information-changing-orders-consent.html",
+    "https://www.armstronglegal.com.au/family-law/court-processes/family-law-consent-orders/",
+    "https://lyonslaw.com.au/what-are-consent-orders-in-family-court/",
+    "https://lifelaw.com.au/consent-orders/",
+    "https://andrewsfamilylawyers.com.au/fcfcoa-consent-orders/",
+    "https://bainbridgelegal.com.au/family_law/consent-orders.html",
+    "https://www.thelegaldrafter.com.au/services/consent-orders/",
+    "https://astonlegalgroup.com.au/consent-orders-what-are-they-and-why-are-they-significant/",
+    "https://adamsunited.com.au/consent-orders-australia/",
+    "https://online.familylawassist.com.au/consent-orders"
   ],
-  "last_updated": "2026-04-13T10:54:06.766055",
-  "total_scraped": 302,
+  "last_updated": "2026-04-20T10:55:59.737035",
+  "total_scraped": 312,
   "description": "Tracks URLs that have been scraped to prevent duplicates"
 }
