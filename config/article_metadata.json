@@ -278,9 +278,18 @@
       "generated_date": "2026-04-20T10:56:40.032606",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-129.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 130,
+      "filename": "dadassist-article-130.html",
+      "title": "Hope for fathers - Men's Rights Agency",
+      "source_url": "https://mensrights.com.au/family-law/hope-for-fathers",
+      "generated_date": "2026-04-27T11:14:41.004858",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-130.html",
+      "category": "Parenting & Custody"
     }
   ],
-  "next_article_id": 130,
-  "last_updated": "2026-04-20T10:56:40.032612",
+  "next_article_id": 131,
+  "last_updated": "2026-04-27T11:14:41.004863",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
