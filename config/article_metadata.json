@@ -287,9 +287,18 @@
       "generated_date": "2026-04-27T11:14:41.004858",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-130.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 131,
+      "filename": "dadassist-article-131.html",
+      "title": "Common Parenting Arrangements For Children Up to School Age",
+      "source_url": "https://daykinfamilylaw.com.au/articles/common-parenting-arrangements/",
+      "generated_date": "2026-05-04T11:13:19.532660",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-131.html",
+      "category": "Parenting & Custody"
     }
   ],
-  "next_article_id": 131,
-  "last_updated": "2026-04-27T11:14:41.004863",
+  "next_article_id": 132,
+  "last_updated": "2026-05-04T11:13:19.532667",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
