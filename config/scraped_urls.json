@@ -331,9 +331,19 @@
     "https://www.lawhandbook.sa.gov.au/print/ch21s08.php",
     "https://hebblewhitelawyers.com.au/fathers-rights-in-nsw-australia/",
     "https://www.familyrelationships.gov.au/parenting/parenting-agreements",
-    "https://www.legalaid.nsw.gov.au/my-problem-is-about/my-family-or-relationship/parenting/parenting-agreements"
+    "https://www.legalaid.nsw.gov.au/my-problem-is-about/my-family-or-relationship/parenting/parenting-agreements",
+    "https://familylawyersmackay.com.au/child-support-guide/",
+    "https://www.childcustodysolutions.org/child-support-calculator-australia/",
+    "http://www.allaboutjack.org/data/Child%20support%20assessment%20-%20Basic%20formula%20-%20Services%20Australia.pdf",
+    "https://www.servicesaustralia.gov.au/child-support-assessment-formula?context=21911",
+    "https://umbrellafamilylaw.com.au/child-support-system-in-australia-a-guide-for-parents/",
+    "https://theaustralianlegalpractice.com.au/child-support-in-australia-calculating-your-financial-obligations/",
+    "https://guides.dss.gov.au/child-support-guide/3/1",
+    "https://www.deakin.edu.au/students/study-support/assessments-and-examinations/special-consideration",
+    "https://wlsq.org.au/wp-content/uploads/2024/10/Child-Support-Fact-Sheet-2024.pdf",
+    "https://guides.dss.gov.au/child-support-guide/2/2"
   ],
-  "last_updated": "2026-05-04T11:10:49.245806",
-  "total_scraped": 332,
+  "last_updated": "2026-05-11T12:18:54.223485",
+  "total_scraped": 342,
   "description": "Tracks URLs that have been scraped to prevent duplicates"
 }
