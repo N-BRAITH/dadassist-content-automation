@@ -296,9 +296,18 @@
       "generated_date": "2026-05-04T11:13:19.532660",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-131.html",
       "category": "Parenting & Custody"
+    },
+    {
+      "article_id": 132,
+      "filename": "dadassist-article-132.html",
+      "title": "Child Support Guide Australia: Getting the Way to Financial Security for Your Child",
+      "source_url": "https://familylawyersmackay.com.au/child-support-guide/",
+      "generated_date": "2026-05-11T12:21:32.012999",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-132.html",
+      "category": "Child Support"
     }
   ],
-  "next_article_id": 132,
-  "last_updated": "2026-05-04T11:13:19.532667",
+  "next_article_id": 133,
+  "last_updated": "2026-05-11T12:21:32.013004",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
