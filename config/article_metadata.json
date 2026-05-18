@@ -305,9 +305,18 @@
       "generated_date": "2026-05-11T12:21:32.012999",
       "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-132.html",
       "category": "Child Support"
+    },
+    {
+      "article_id": 133,
+      "filename": "dadassist-article-133.html",
+      "title": "Property Settlement - Loan or Gift from Parents",
+      "source_url": "https://www.hhlaw.com.au/eng/insights/view/14",
+      "generated_date": "2026-05-18T12:42:46.664079",
+      "live_url": "https://dadassist.com.au/posts/articles/dadassist-article-133.html",
+      "category": "Mental Health"
     }
   ],
-  "next_article_id": 133,
-  "last_updated": "2026-05-11T12:21:32.013004",
+  "next_article_id": 134,
+  "last_updated": "2026-05-18T12:42:46.664086",
   "description": "Tracks all generated DadAssist articles with source URLs and metadata. Starting from ID 99 to account for 98 existing articles with old naming scheme."
 }
