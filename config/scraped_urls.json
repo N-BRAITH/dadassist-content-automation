@@ -341,9 +341,19 @@
     "https://guides.dss.gov.au/child-support-guide/3/1",
     "https://www.deakin.edu.au/students/study-support/assessments-and-examinations/special-consideration",
     "https://wlsq.org.au/wp-content/uploads/2024/10/Child-Support-Fact-Sheet-2024.pdf",
-    "https://guides.dss.gov.au/child-support-guide/2/2"
+    "https://guides.dss.gov.au/child-support-guide/2/2",
+    "https://www.hhlaw.com.au/eng/insights/view/14",
+    "https://www.airlielegal.com.au/family-law-property-settlement-explained",
+    "https://wmdlaw.com.au/2026/03/03/property-settlements-in-australian-family-law/",
+    "https://www.dlegal.com.au/articles/family-law/financial-and-property-settlements-family-law-australia/",
+    "https://lifetimesaustralia.com/blog/family-law/how-does-family-law-property-settlement-work-in-australia",
+    "https://jbsolicitors.com.au/family-law-property-settlement/",
+    "https://pearsonslawyers.com.au/divorce-assets-split/",
+    "https://melbournefamilylawyers.com.au/",
+    "https://testartfamilylawyers.com.au/70-30-divorce-settlement-australia/",
+    "https://www.aitken.com.au/news/third-parties-property-settlement-disputes"
   ],
-  "last_updated": "2026-05-11T12:18:54.223485",
-  "total_scraped": 342,
+  "last_updated": "2026-05-18T12:42:11.837289",
+  "total_scraped": 352,
   "description": "Tracks URLs that have been scraped to prevent duplicates"
 }
