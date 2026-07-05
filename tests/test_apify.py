@@ -3,11 +3,12 @@
 Test script to verify Apify API token works
 """
 
+import os
 import requests
 
 def test_apify_token():
-    token = "apify_api_ZT7lvuSLrnvPYSHZA6sGzkzcYdGYfy2JDBHH"
-    
+    token = os.getenv('APIFY_TOKEN') or input("Enter Apify API token: ")
+
     # Test API connection
     url = f"https://api.apify.com/v2/users/me?token={token}"
     
